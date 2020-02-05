@@ -1,0 +1,673 @@
+<template>
+  <div>
+    <div class="container" :style="{height:hei+'px',width:wid+'px'}">
+      <div class="banner">
+        <div class="nav">
+          <div class="containerRef">
+            <div class="left">
+              <img src="../../../static/images/base/newIndex/smallLogo.png" alt>
+              <p style="float: left;line-height: 80px;padding-left: 8px"><span
+                style="font-size: 30px;color: #fff">奥松云课堂</span><b
+                style="font-size: 25px;color: #fff;font-weight: normal">（AEP）</b></p>
+            </div>
+            <div class="right">
+              <ul class="ulList">
+                <li>
+                  <router-link to="/home" replace>首页</router-link>
+                </li>
+                <li>
+                  <router-link to="/discover" replace>作品中心</router-link>
+                </li>
+                <li>
+                  <router-link to="/login" replace>教师社区</router-link>
+                </li>
+                <li>
+                  <a href="http://www.alsedu.cn/support.html" target="_blank" style="display: block">合作支持</a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="containerRef">
+          <div class="box">
+            <div class="loginBox left">
+              <div v-show="loginDivStatus==3">
+                <p>修改密码</p>
+                <el-form :model="pwdRuleForm" :rules="pwdRules" ref="pwdRuleForm" class="demo-ruleForm">
+                  <el-form-item prop="password">
+                    <el-input v-model="pwdRuleForm.password" placeholder="请输入新密码" @keydown.native.enter="updatePassword"
+                              type="password"></el-input>
+                  </el-form-item>
+                  <el-form-item prop="confirm">
+                    <el-input v-model="pwdRuleForm.confirm" placeholder="请确认新密码" @keydown.native.enter="updatePassword"
+                              type="password"></el-input>
+                  </el-form-item>
+                  <el-form-item>
+                    <el-button type="primary" class="login-btn" @click="updatePassword" :loading="isUpdateLoading">确认
+                    </el-button>
+                  </el-form-item>
+                </el-form>
+              </div>
+              <div v-show="loginDivStatus==2">
+                <p style="margin-bottom: 20px">忘记密码</p>
+                <el-form :model="phoneRuleForm" :rules="phoneRules" ref="phoneRuleForm" class="demo-ruleForm">
+                  <el-form-item prop="phone">
+                    <el-input v-model="phoneRuleForm.phone" placeholder="请输入手机号"
+                              @keydown.native.enter="verifyCodeEnter"></el-input>
+                  </el-form-item>
+                  <el-form-item prop="code">
+                    <el-input v-model="phoneRuleForm.code" placeholder="请输入验证码" style="width: 173px"
+                              @keydown.native.enter="verifyCodeEnter"></el-input>
+                    <el-button type="primary" @click="getCode" style="width: 90px;padding:0;margin:0;height: 40px;"
+                               :disabled="isVerifyBtnAble">{{verifyBtnContent}}
+                    </el-button>
+                  </el-form-item>
+                  <el-form-item>
+                    <el-button type="danger" class="login-btn" @click="verifyCodeEnter" :loading="isSMSLoading">确认
+                    </el-button>
+                  </el-form-item>
+                </el-form>
+                <el-link :underline="false" style="font-size: 12px;margin-left: 20px;margin-bottom: 10px" @click="goBackLogin">返回登录
+                </el-link>
+              </div>
+              <div v-show="loginDivStatus==1">
+                <p>{{$t(`message.login`)}}</p>
+                <el-form :model="ruleForm" :rules="rules" ref="ruleForm" class="demo-ruleForm">
+                  <el-form-item prop="username">
+                    <el-input
+                      v-model="ruleForm.username" placeholder="请输入账户或手机号"
+                      @keydown.native.enter="loginSubmit"
+                    ></el-input>
+                  </el-form-item>
+                  <el-form-item prop="password">
+                    <el-input
+                      v-model="ruleForm.password"
+                      placeholder="请输入密码"
+                      type="password"
+                      @keydown.native.enter="loginSubmit"
+                    ></el-input>
+                  </el-form-item>
+                  <el-form-item prop="verificationCode" v-show="showVerifyCode">
+                    <el-row>
+                      <el-col :span="14">
+                        <el-input
+                          v-model="ruleForm.verificationCode"
+                          placeholder="请输入验证码"
+                          type="text"
+                          @keydown.native.enter="loginSubmit"
+                        ></el-input>
+                      </el-col>
+                      <el-col :span="8" :offset="2">
+                        <img @click="changeVerificationCodeUrl" :src="verificationCodeUrl"
+                             style="display: block;margin-top: 33px;margin-left: 10px"
+                             alt="">
+                      </el-col>
+                    </el-row>
+                  </el-form-item>
+                  <el-form-item style="margin-top:-13px;margin-top: 8px">
+                    <el-checkbox v-model="ruleForm.agree">同意
+                      <el-link @click="onClickUserAgreement" style="margin-top:-1px"><span style="color:#409EFF">《奥松云课堂(AEP)用户服务协议》</span>
+                      </el-link>
+                    </el-checkbox>
+                  </el-form-item>
+                  <el-form-item>
+                    <el-button type="primary" style="margin-top: 6px" class="login-btn" @click="loginSubmit" :disabled="!ruleForm.agree">登录</el-button>
+                  </el-form-item>
+                </el-form>
+                <el-link :underline="false" style="font-size: 12px;margin-left: 20px;margin-bottom: 10px"
+                         @click="loginDivStatus=2">忘记密码？
+                </el-link>
+              </div>
+            </div>
+            <div class="loginBoxRight right"></div>
+          </div>
+          <!--          <p class="footer">版权所有 2019 奥松机器人技科技有限公司。保留一切权利。</p>-->
+          <div class="footer">奥松智能 ｜
+            <el-link :underline="false" href="http://www.beian.miit.gov.cn" target="_blank" style="color:#fff">
+              粤ICP备19107383号-1
+            </el-link>
+          </div>
+        </div>
+      </div>
+    </div>
+    <el-dialog
+      :close-on-click-modal="false"
+      :close-on-press-escape="false" :show-close="false"
+      width="800px" :visible.sync="innerVisible" append-to-body>
+      <als-user-agreement-wrapper @changeDialogStatus="changeParentDialogStatus($event)"/>
+    </el-dialog>
+  </div>
+</template>
+<script>
+  import $ from 'jquery'
+  import {
+    qs,
+    userLogin,
+    loginStatus,
+    smsVerify, // 验证验证码
+    smsCode, // 获取验证码
+    forgetPasswordBySMS, // 修改
+    checkAccountExist,//验证账号是否存在
+  } from "../../api/api";
+  import storageUtil from "../../utils/storageUtil";
+  import promptUtil from "../../utils/promptUtil";
+  import verifyUtil from '../../utils/verifyUtil';
+  import '../../api/restfulapi';
+  import userAgreementWrapper from '../component/userAgreementWrapper'
+  export default {
+    components: {'als-user-agreement-wrapper':userAgreementWrapper},
+    data() {
+      const validatePass = (rule, value, callback) => {
+        if (value === '') {
+          callback(new Error('请输入新密码'));
+        } else {
+          if (this.pwdRuleForm.password !== '') {
+            this.$refs.ruleForm.validateField('pwdRuleForm');
+          }
+          callback();
+        }
+      }
+      const validatePass2 = (rule, value, callback) => {
+        if (value === '') {
+          callback(new Error('请再次输入密码'));
+        } else if (value !== this.pwdRuleForm.password) {
+          callback(new Error('两次输入密码不一致!'));
+        } else {
+          callback();
+        }
+      }
+      const validateUsername=(rule, value, callback)=>{
+        if (value === '') {
+          callback(new Error('请输入账号或手机号'));
+        } else {
+          //验证账号是否存在
+          if(value.length<=5){
+            callback();
+          }else{
+            checkAccountExist(qs.stringify({
+              username: value,
+            })).then(res=>{
+              if (res.code==SUCCESS_CODE){
+              } else if(res.code==ERROR_CODE){
+                callback(new Error('账号不存在'));
+              }else if(res.code==3011){//3011弹出验证码
+                this.showVerifyCode=true
+              }
+              callback();
+            }).catch(err=>{
+              callback();
+              promptUtil.LOG('checkAccountExist-err',err)
+            })
+          }
+        }
+      }
+      const validatePhone = (rule, value, callback) => {
+        if (value === '') {
+          callback(new Error('请输入手机号'));
+        } else if (!verifyUtil.isPhone(value)) {
+          callback(new Error('手机号格式错误'));
+        } else {
+          if (this.phoneRuleForm.phone !== '') {
+            this.$refs.ruleForm.validateField('phoneRuleForm');
+          }
+          callback();
+        }
+      }
+      const validateCode = (rule, value, callback) => {
+        if (value === '') {
+          callback(new Error('请输入验证码'));
+        } else if (value != '' && value.length != 6) {
+          callback(new Error('验证码格式错误'));
+        } else {
+          if (this.phoneRuleForm.code !== '') {
+            this.$refs.ruleForm.validateField('phoneRuleForm');
+          }
+          callback();
+        }
+      }
+      return {
+        isShowDrag: true, // 是否显示drag
+        token: '',
+        hei: "",
+        wid: "",
+        ruleForm: {username: "", password: "", verificationCode: '', agree: true},
+        rules: {
+          username: [
+            {validator: validateUsername, trigger: 'blur'}
+          ],
+          password: [{required: true, message: "请输入密码", trigger: "blur"},],
+        },
+        loginDivStatus: 1, // 1 登录 2 忘记密码
+        phoneRuleForm: {phone: "", code: ""},
+        phoneRules: {
+          phone: [{validator: validatePhone, trigger: 'blur'}],
+          code: [{validator: validateCode, trigger: 'blur'}]
+        },
+        pwdRuleForm: {password: "", confirm: ""},
+        pwdRules: {
+          password: [{validator: validatePass, trigger: 'blur'}],
+          confirm: [{validator: validatePass2, trigger: 'blur'}]
+        },
+        verifyBtnContent: '获取验证码',
+        timeWithVerify: 0, // 默认验证码时间
+        isVerifyBtnAble: false, // 是否可用
+        isSMSLoading: false, // 验证code 是否可用
+        isUpdateLoading: false, // 修改密码是否可用
+        verificationCodeUrl: '',
+        innerVisible: false,
+        showVerifyCode:false,
+      };
+    },
+    mounted() {
+      window.onresize = () => {
+        this.setWindowStyle()
+      }
+      if (storageUtil.readOverdue() == 1) { // 证明已经过期，需要重新登录提示
+        this.$notify({
+          duration: 4000,
+          title: '账户警告',
+          dangerouslyUseHTMLString: true,
+          message: '<div style="color:#F56C6C">您的账号存在异地登陆的情况，建议您尽快更换账户密码！</div>'
+        });
+      }
+      if (localStorage.getItem('timeDown')) {
+        this.timeWithVerify = localStorage.getItem('timeDown')
+        this.verifyBtnContent = this.timeWithVerify + '秒'
+        this.timeDown()
+      }
+      setTimeout(() => {
+        storageUtil.saveOverdue(0)
+      }, 1000) // 重置 登录过期提示
+      if (storageUtil.readTempLogin() && storageUtil.readTempLogin() != '') {
+        this.ruleForm.username = storageUtil.readTempLogin()
+      }
+      // this.ruleForm.username
+      // this.initLogin()
+      this.verificationCode()
+    },
+    methods: {
+      onClickUserAgreement() {
+        this.innerVisible = true
+      },
+      changeParentDialogStatus(type){
+        if(type==1){
+          this.ruleForm.agree = true
+        }else{
+          this.ruleForm.agree = false
+        }
+        this.innerVisible = false
+      },
+      dragSuccess() {
+        console.log("拖拽成功")
+      },
+      dragFail() {
+        console.log("拖拽失败")
+      },
+      setWindowStyle() {
+        this.hei =
+          window.innerHeight ||
+          document.documentElement.clientHeight ||
+          document.body.clientHeight;
+        this.wid =
+          window.innerWidth ||
+          document.documentElement.clientWidth ||
+          document.body.clientWidth;
+      },
+      // 获取验证码
+      getCode() {
+        if (this.phoneRuleForm.phone && verifyUtil.isPhone(this.phoneRuleForm.phone)) {
+          smsCode(qs.stringify({
+            mobile: this.phoneRuleForm.phone
+          })).then(res => {
+            if (res.code == SUCCESS_CODE) {
+              promptUtil.success(this, '验证码已发送')
+              this.timeDown()
+            } else if (res.code == USER_NOT_EXIST) {
+              promptUtil.error(this, res.msg)
+            } else {
+              promptUtil.error(this, res.msg)
+            }
+          }).catch(err => promptUtil.LOG("smsCode-err", err))
+
+        } else {
+          promptUtil.warning(this, '请输入正确的手机号')
+        }
+      },
+      // 修改密码按钮触发
+      updatePassword() {
+        this.$refs['pwdRuleForm'].validate((valid) => {
+          if (valid) {
+            this.isUpdateLoading = true
+            forgetPasswordBySMS(qs.stringify({
+              new_pass: this.pwdRuleForm.password,
+              confirm_pass: this.pwdRuleForm.password,
+              mobile: this.phoneRuleForm.phone,
+              code: this.phoneRuleForm.code
+            })).then(res => {
+              if (res.code == SUCCESS_CODE) {
+                promptUtil.success(this, res.msg)
+                this.$refs['pwdRuleForm'].resetFields()
+                this.$refs['phoneRuleForm'].resetFields()
+                this.loginDivStatus = 1
+              } else {
+                promptUtil.error(this, res.msg + '请' + res.last_time + '后重试')
+              }
+              this.isUpdateLoading = false
+            }).catch(err => {
+              this.isUpdateLoading = false
+              promptUtil.LOG('forgetPasswordBySMS-err', err)
+            })
+          } else {
+            return false;
+          }
+        });
+      },
+      // 验证码页面确认按钮触发
+      verifyCodeEnter() {
+        this.$refs['phoneRuleForm'].validate((valid) => {
+          if (valid) {
+            this.isSMSLoading = true
+            smsVerify(qs.stringify({
+              mobile: this.phoneRuleForm.phone,
+              code: this.phoneRuleForm.code
+            })).then(res => {
+              if (res.code == SUCCESS_CODE) {
+                this.loginDivStatus = 3
+              } else {
+                promptUtil.error(this, res.msg)
+              }
+              this.isSMSLoading = false
+            }).catch(err => {
+              this.isSMSLoading = false
+              promptUtil.LOG('smsVerify-err', err)
+            })
+          } else {
+            return false;
+          }
+        });
+      },
+      // 倒计时
+      timeDown() {
+        if (localStorage.getItem('timeDown')) {
+          this.timeWithVerify = localStorage.getItem('timeDown') * 1
+        } else {
+          this.timeWithVerify = 60
+        }
+        this.isVerifyBtnAble = true
+        let result = setInterval(() => {
+          this.verifyBtnContent = this.timeWithVerify + '秒'
+          --this.timeWithVerify;
+          localStorage.setItem('timeDown', this.timeWithVerify)
+          if (this.timeWithVerify < 0) {
+            this.timeWithVerify = 10
+            this.verifyBtnContent = '获取验证码'
+            localStorage.removeItem('timeDown')
+            clearInterval(result);
+            this.isVerifyBtnAble = false
+          }
+        }, 1000);
+      },
+      // 返回登录页面触发
+      goBackLogin() {
+        this.loginDivStatus = 1;
+        if (!this.isVerifyBtnAble) {
+          this.$refs['phoneRuleForm'].resetFields()
+        }
+      },
+      initLogin() {
+        loginStatus(qs.stringify({
+          token: this.token
+        })).then(res => {
+          if (res.code == SUCCESS_CODE) {
+            // this.$router.push({ path: "/user" });
+            this.$router.push({path: "/index"});
+          } else {
+            this.$router.push({path: "/login"});
+          }
+        }).catch(err => {
+          promptUtil.LOG('loginStatus-err', err)
+        })
+
+      },
+      verificationCode() {
+        let url = baseURL + '/page/yzm'
+        this.verificationCodeUrl = url + '?abc=' + Math.random()
+      },
+      loginSubmit() {
+        this.verificationCodeUrl = ''
+        if (this.ruleForm.username) {
+          this.ruleForm.username = this.ruleForm.username.trim();
+        }
+        if (this.ruleForm.username.trim() == "") {
+          promptUtil.warning(this, "请输入账户或手机号");
+          return;
+        }
+        if (this.ruleForm.password.trim() == "") {
+          promptUtil.warning(this, "请输入密码");
+          return;
+        }
+        // if (this.ruleForm.verificationCode.trim() == "") {
+        //   promptUtil.warning(this, "请输入验证码");
+        //   this.verificationCode()
+        //   return;
+        // }
+        const loading = promptUtil.loading(this);
+        userLogin(qs.stringify(this.ruleForm))
+          .then(res => {
+            loading.close();
+            this.verificationCode()
+            if (res.code == SUCCESS_CODE) {
+              //跳转后台
+              storageUtil.saveToken(res.data.token)
+              storageUtil.saveTeacherInfo(res.data);
+              storageUtil.setLoginStatus(res.data.role_id);
+              // this.$router.push({ path: "/index" });
+              storageUtil.saveOverdue(0)
+              storageUtil.saveTempLogin(this.ruleForm.username)
+              this.$router.push({path: "/index"});
+              // this.$router.push({ path: "/user" });
+            } else if(res.code==3011){ // 需要显示验证码
+              this.showVerifyCode = true
+            } else {
+              promptUtil.error(this, res.msg);
+            }
+          })
+          .catch(err => {
+            loading.close();
+            promptUtil.LOG('userLogin-err', err);
+          });
+      },
+      changeVerificationCodeUrl() {
+        this.verificationCode()
+      }
+
+    },
+    created() {
+      this.setWindowStyle()
+    }
+  };
+</script>
+
+<style scoped>
+  * {
+    margin: 0;
+    padding-left: 0;
+  }
+
+  ul li {
+    list-style: none;
+  }
+
+  .container {
+    width: 100%;
+    height: 100%;
+  }
+
+  .containerRef {
+    width: 1200px;
+    margin: 0 auto;
+    overflow: hidden;
+  }
+
+  .banner {
+    background: url("../../../static/images/base/index/loginBg.jpg") no-repeat;
+    width: 100%;
+    height: 100%;
+    /* overflow: hidden; */
+    /* margin-top: 0px; */
+    background-size: 100% 100%;
+    /* position: relative;
+      overflow: hidden; */
+    /* background-size:cover;
+      background-size:100%; */
+    /* background-attachment:fixed;
+      min-height: 100vh; */
+    position: relative;
+  }
+
+  .loginBoxRight {
+    background: url("../../../static/images/base/index/loginRight.png") no-repeat;
+    width: 605px;
+    height: 485px;
+    /* position:absolute;
+      right: 20%;
+      top: 25%; */
+  }
+
+  .nav {
+    line-height: 80px;
+    /* border-bottom: 2px #008ccf solid; */
+    border-bottom: 2px #fff solid;
+    overflow: hidden;
+  }
+
+  .left {
+    float: left;
+    font-family: 'syRegular';
+    padding-top: 5px;
+  }
+
+  .left img {
+    float: left;
+    /*display: block;*/
+  }
+
+  .lastleft {
+    float: left;
+    margin-top: 10px;
+  }
+
+  .lastleft img {
+    float: left;
+    margin-top: 10px;
+    display: block;
+  }
+
+  .right {
+    float: right;
+  }
+
+  .f-l {
+    float: left;
+    line-height: 80px;
+    font-size: 30px;
+    display: block;
+    color: #008ccf;
+    padding-left: 8px;
+    overflow: hidden;
+  }
+
+  .ulList {
+    list-style: none;
+    font-size: 20px;
+    overflow: hidden;
+  }
+
+  .ulList li {
+    float: left;
+    line-height: 86px;
+    margin-left: 40px;
+    font-family: SimHei;
+    /* color: #008ccf; */
+    color: #fff;
+  }
+
+  .ulList a,
+  .contentLeft a {
+    text-decoration: none;
+    /* color: #008ccf; */
+    color: #fff;
+  }
+
+  .ulList li:hover {
+    border-bottom: 3px #fff solid;
+  }
+
+  .ulList a:hover {
+    color: #008ccf;
+    /*color: #fff;*/
+  }
+
+  .footer {
+    font-size: 12px;
+    color: #fff;
+    text-align: center;
+    /*font-family: SimHei;*/
+    font-family: 'syRegular';
+    position: absolute;
+    left: 50%;
+    bottom: 10px;
+    margin-left: -162px;
+  }
+
+  .loginBox {
+    width: 310px;
+    /*height: 320px;*/
+    background-color: #fff;
+    /* position: absolute;
+      left: 28%;
+      top:30%; */
+    border-radius: 10px;
+    margin-top: 50px;
+  }
+
+  .loginBox p {
+    font-family: SimHei;
+    font-size: 20px;
+    color: #008ccf;
+    line-height: 50px;
+    padding-left: 20px;
+    border-bottom: 1px #008ccf solid;
+  }
+
+  .el-form {
+    padding: 10px 20px;
+  }
+
+  .el-input {
+    padding-top: 30px;
+  }
+
+  .login-btn {
+    width: 100%;
+    margin-top: 25px;
+    text-align: center;
+    font-family: SimHei;
+  }
+
+  .el-form-item {
+    margin-bottom: 0px !important;
+  }
+
+  .box {
+    width: 1052px;
+    height: 495px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-top: -214px;
+    margin-left: -526px;
+  }
+</style>
+
+

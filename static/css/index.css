@@ -1,0 +1,132 @@
+html,
+body {
+    width: 100%;
+    height: 100%;
+    font-family: SimHei;
+}
+
+* {
+    margin: 0px;
+    padding: 0px;
+}
+
+.containersecond {
+    width: 1000px;
+    height: 500px;
+    margin: 0 auto;
+
+}
+
+.my_swiper {
+    height: 100%;
+    overflow: hidden;
+    position: relative;
+
+}
+
+.swiper-container {
+    margin: 0 auto;
+}
+
+.auto {
+    margin: 0 auto !important;
+}
+
+.slide1,.slide2,.slide3,.slide4 {
+    width: 100%;
+    height: 100%;
+    overflow: none;
+}
+.slide1 img,.slide2 img,.slide3 img,.slide4 img{
+    width: 100%;
+    height: 100%;
+    display: block; 
+}
+
+
+
+.bottom {
+    width: 100%;
+    height: 50px;
+    position: absolute;
+    bottom: 0px;
+    left: 0px;
+    background: #eee;
+    overflow: hidden;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    z-index: 2222;
+}
+
+/*播放*/
+.autoplay {
+
+    background: url(../images/start.jpg) no-repeat;
+    background-repeat: no-repeat;
+    width: 40px;
+    height: 25px;
+    cursor: pointer;
+    position: absolute;
+    top: 50%;
+    left: 10px;
+    transform: translateY(-50%);
+
+}
+
+/*全屏*/
+.up {
+    width: 25px;
+    height: 25px;
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.up img {
+    width: 25px;
+    height: 25px;
+}
+
+/*上一页*/
+.swiper-button-prev {
+    background: url(../images/left_arr.jpg) no-repeat;
+    background-repeat: no-repeat;
+    width: 62px;
+    height: 25px;
+    line-height: 25px;
+    text-align: center;
+    cursor: pointer;
+    z-index: 999 !important;
+    outline: none;
+    padding-left: 2px;
+    top: 50%;
+    left: 70%;
+    transform: translateY(50%);
+}
+
+/*下一页*/
+.swiper-button-next {
+    display: inline-block;
+    background: url(../images/right_arr.jpg) no-repeat;
+    background-repeat: no-repeat;
+    top: 50%;
+    left: 80%;
+    width: 64px;
+    margin-right: 10px;
+    height: 25px;
+    line-height: 25px;
+    text-align: center;
+    outline: none;
+    transform: translateY(50%);
+
+}
+
+.font_color {
+    color: #fff;
+    font-size: 14px;
+}
+
+#close {
+    display: none;
+}

@@ -1,0 +1,27 @@
+
+@font-face {
+    /* 重命名字体名 */
+    font-family: 'hkyt5';
+    /* 引入字体 */
+    src: url('41华康圆体W5.ttf');
+    font-family: 'hkyt9';
+    src: url('43华康圆体W9.ttf');
+
+  font-family: 'sy1';
+  src: url('DroidSansChinese.ttf');
+
+  font-family: 'syBold';
+  src: url('SourceHanSansCN-Bold.otf');
+
+  font-family: 'syMedium';
+  src: url('SourceHanSansCN-Medium.ttf');
+
+
+  font-family: 'syRegular';
+  src: url('SourceHanSansCN-Regular.ttf');
+
+
+
+    font-weight: normal;
+    font-style: normal;
+}
