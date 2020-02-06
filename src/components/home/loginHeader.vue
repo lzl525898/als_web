@@ -76,21 +76,21 @@
           </div>
         </div>
         <div class="dropmenu-avatar" style="display:flex">
-          <div style="position: absolute;left:-200px;">
-            <el-dropdown placement="bottom-start">
-              <div class="help">
-                <a href="javascript:void(0)">
-                  <i class="el-icon-s-tools"></i>
-                  <span>{{localLang}}</span>
-                </a>
-              </div>
-              <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item @click.native="switchLang('zh')">简体中文</el-dropdown-item>
-                <el-dropdown-item @click.native="switchLang('cht')">繁体中文</el-dropdown-item>
-                <el-dropdown-item @click.native="switchLang('en')">English</el-dropdown-item>
-              </el-dropdown-menu>
-            </el-dropdown>
-          </div>
+<!--          <div style="position: absolute;left:-200px;">-->
+<!--            <el-dropdown placement="bottom-start">-->
+<!--              <div class="help">-->
+<!--                <a href="javascript:void(0)">-->
+<!--                  <i class="el-icon-s-tools"></i>-->
+<!--                  <span>{{localLang}}</span>-->
+<!--                </a>-->
+<!--              </div>-->
+<!--              <el-dropdown-menu slot="dropdown">-->
+<!--                <el-dropdown-item @click.native="switchLang('zh')">简体中文</el-dropdown-item>-->
+<!--                <el-dropdown-item @click.native="switchLang('cht')">繁体中文</el-dropdown-item>-->
+<!--                <el-dropdown-item @click.native="switchLang('en')">English</el-dropdown-item>-->
+<!--              </el-dropdown-menu>-->
+<!--            </el-dropdown>-->
+<!--          </div>-->
 
           <el-dropdown>
             <div v-if="explain" class="help">

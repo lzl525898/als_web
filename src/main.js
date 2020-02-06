@@ -229,7 +229,7 @@ router.beforeEach((to, from, next) =>{//如果未匹配到路由 如果上级也
           }
         } else if (storageUtil.readUserRole()==2) { // 教师
           if (to.fullPath==="/teacherMan" || to.fullPath==="/liveManagement" || to.fullPath==="/student" || to.fullPath==="/dashboard"
-            || to.fullPath==='/sturep'|| stringUtil.searchString(to.fullPath,"/admin")) {// 防止跳转到学生、教师管理页面
+            || to.fullPath==='/sturep'|| to.fullPath==='/onlineEducation' || stringUtil.searchString(to.fullPath,"/admin")) {// 防止跳转到学生、教师管理页面
             if (from.name==null) {
               next({ name : 'user'})
             } else {
@@ -256,7 +256,7 @@ router.beforeEach((to, from, next) =>{//如果未匹配到路由 如果上级也
           }
         }
         else { // 学生
-          if ( to.fullPath!='/dashboard' && to.fullPath!='/student' && to.fullPath!='/sturep'&& to.fullPath!='/stuLiveManage' && to.fullPath!='/create'
+          if ( to.fullPath!='/dashboard' && to.fullPath!='/student' && to.fullPath!='/sturep'&& to.fullPath!='/stuLiveManage' && to.fullPath!='/create' && to.fullPath!='/onlineEducation'
             && to.fullPath.indexOf("/resourcesLiveList/") == -1 && to.fullPath.indexOf("/create?id") == -1 && to.fullPath.indexOf("/workContent") == -1 && to.fullPath!='/personCenter') {
             next('/dashboard')
           } else {

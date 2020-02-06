@@ -6,6 +6,7 @@ import reportDialog from '@/components/teachers/report/reportDialog'
 
 import './router'
 // 使用这种方法可以实现按需加载，一个组件生成一个js文件
+const onlineEducation = resolve => require(['@/components/students/onlineEducation'], resolve)
 const dashboard = resolve => require(['@/components/students/dashboard'], resolve)
 const classMan = resolve => require(['@/components/teachers/classroom/classMan'], resolve)
 const classRoom = resolve => require(['@/components/teachers/classroom/classRoom'], resolve)
@@ -360,6 +361,11 @@ export default new Router({
           name: 'dashboard',
           meta: { requireAuth: true},
           component: dashboard
+        },{
+          path: ROUTER_STUDENT_ONLINE, // 学生直播
+          name: 'onlineEducation',
+          meta: { requireAuth: true},
+          component: onlineEducation
         },{
           path: '/sturep', //学生学情报告
           name: 'studentReport',
