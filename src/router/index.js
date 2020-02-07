@@ -347,7 +347,7 @@ export default new Router({
           meta: { requireAuth: true },
           component: notice
         },{
-          path: '/remind',  // 提醒页面
+          path: '/mail',  // 提醒页面
           name: 'remind',
           meta: { requireAuth: true },
           component: remind

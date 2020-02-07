@@ -1,4 +1,5 @@
 <template>
+  <el-timeline-item :timestamp="time" placement="top" color="#409EFF">
     <div style="border:1px solid #EBEEF5;border-radius:5px;padding:10px 20px;display:flex;align-items:center;margin-bottom:10px">
       <div class="image-wrapper">
         <img src="https://www.alsrobot.vip/als_classroom/public/zh/images/default-res.jpg" class="image"/>
@@ -6,7 +7,7 @@
       <div style="display:flex;flex-direction:column">
         <div style="height:40px;">
           <el-tooltip class="item" effect="dark" :content="educationName" placement="top">
-          <div style="width:600px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:bold">课程名称 ：{{educationName}}</div>
+          <div style="width:500px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:bold">课程名称 ：{{educationName}}</div>
           </el-tooltip>
         </div>
         <div style="display:flex;align-items:center">
@@ -27,18 +28,22 @@
           </div>
         </div>
       </div>
-      <div style="display:flex;justify-content:flex-end;align-items:center;flex:1">
-        <el-button type="primary" @click="showDialog">进入教室</el-button>
+      <div style="display:flex;justify-content:flex-end;align-items:center;flex:1;">
+        <el-button type="primary" @click="showDialog" style="margin-right:20px">进入教室</el-button>
       </div>
     </div>
+  </el-timeline-item>
 </template>
 
 <script>
-    import storageUtil from "../../../../utils/storageUtil";
     import promptUtil from "../../../../utils/promptUtil";
     export default {
         name: "onlineEducationItem",
         props:{
+            time: {
+                type:String,
+                default:''
+            },
             room: {
                 type:String,
                 default: '',
@@ -71,6 +76,10 @@
                 type:String,
                 default: '',
             },
+            clientUrl: {
+                type:String,
+                default: '',
+            }
         },
         data(){
             return {
@@ -107,20 +116,7 @@
                 }
             },
             genClientUrl(){
-                const params = {
-                    room_id:1234567890,
-                    user_number:storageUtil.readTeacherInfo().id,
-                    user_role:0,  // 0:学生 1:老师 2:管理员
-                    user_name:storageUtil.readTeacherInfo().real_name,
-                    user_avatar:storageUtil.readTeacherInfo().avatar,
-                    sign:this.sign
-                }
-                const web_url = "http://b62335672.at.baijiayun.com/web/room/enter?room_id="
-                    +params.room_id+"&user_number="+params.user_number+"&user_name="+encodeURI(params.user_name)
-                    +"&user_role="+params.user_role+"&user_avatar="+encodeURI(params.user_avatar)+"&sign="+params.sign
-                let url = 'bjylive://token=token&ts=ts&urlpath='+encodeURIComponent(web_url)
-                console.log(url)
-                return url
+                return this.clientUrl
             },
             showDialog(){
                 this.$emit('statusFunc',{status:true,webUrl:this.webUrl,clientUrl:this.genClientUrl()})

@@ -9,6 +9,7 @@ Vue.use(Vuex)
 
 // 状态对象
 const state = { // 初始化状态
+  mailCount: 0, // 通知数
   userAvatar:'', //头像地址
   userName: '',
   schoolName:'',
@@ -42,6 +43,10 @@ const state = { // 初始化状态
 
 // 包含多个更新state函数的对象
 const mutations = {
+  // 设置未阅读通知总数
+  SET_MAIL_COUNT(state, count) {
+    state.mailCount = count
+  },
   // 设置考试id进入分析考试
   SET_EXAM_ID(state, examId) {
     state.examId = examId
@@ -131,6 +136,9 @@ const mutations = {
 
 // 包含多个对应事件回调函数
 const actions ={
+  setMailCount({commit, state}, count) {
+    commit('SET_MAIL_COUNT', count)
+  },
   setExamId({commit, state}, examId) {
     commit('SET_EXAM_ID',examId)
   },

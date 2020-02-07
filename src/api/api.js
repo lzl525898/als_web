@@ -527,9 +527,21 @@ const getTaskTypeInformation = params => {
 
 
 //====================================直播管理=======================================
+//获取学生所有直播课数据
+const getAllLivingWithStudent = params => {
+  return axios.post(`live_school/student_select_room_all`, params).then(res => res.data)
+}
+//搜索当前学生的直播中 课程列表
+const getLivingWithStudent = params => {
+  return axios.post(`live_school/student_select_room`, params).then(res => res.data)
+}
+// 获取直播课回放列表
+const getPlaybackListWithStudent = params => {
+  return axios.post(`live_school/get_playback_list`, params).then(res => res.data)
+}
 //获取直播信息列表
 const getLiveManagementList = params => {
-  return axios.post(`live/select_subject `, params).then(res => res.data)
+  return axios.post(`live/select_subject`, params).then(res => res.data)
 }
 
 //保存添加信息
@@ -947,6 +959,16 @@ const remindList = params => {
   return axios.post('notice/notice_school_list', params).then(res => res.data)
 }
 
+// 设置提醒已读
+const remindStatus = params => {
+  return axios.post('notice/notice_school_con', params).then(res => res.data)
+}
+
+// 获取未阅读总数
+const getNoReadCount = params => {
+  return axios.post('notice/notice_school_count', params).then(res => res.data)
+}
+
 //获取公告详情
 const noticeDetail = params => {
   return axios.post('notice/notice_con', params).then(res => res.data)
@@ -1299,6 +1321,9 @@ export {
   delTeacherUpdate,
   saveAboutUsInformation,
   saveAddInformation,
+  getLivingWithStudent,
+  getPlaybackListWithStudent,
+  getAllLivingWithStudent,
   getLiveManagementList,
   getAllSchool,
   // searchLiveList,
@@ -1335,6 +1360,8 @@ export {
   contact,
   noticeList,
   remindList,
+  remindStatus,
+  getNoReadCount,
   noticeDetail,
   remindDetail,
   addConsultingManagement,

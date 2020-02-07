@@ -3,7 +3,7 @@
 */
 import '../api/api'
 import '../api/restfulapi'
-import {qs, getUserRoleWithOverdue} from '../api/api'
+import {qs, getUserRoleWithOverdue,getNoReadCount} from '../api/api'
 const PROGRAM_STATUS='release' // release  debug
 const TIME_OUT=2000
 const MESSAGE_TYPE={
@@ -82,6 +82,11 @@ export default {
   checkOverdue(that,uid) { // 检验是否过期
     const _that = that
     getUserRoleWithOverdue(qs.stringify({user_id:uid})).then(res=>{
+      getNoReadCount(qs.stringify({user_id:uid})).then(res=>{
+        if(res.code==1 && res.data){
+          _that.$store.dispatch('setMailCount',res.data)
+        }
+      }).catch(err=>console.log("getNoReadCount-ERR",err))
       let status = false
       if(res.code==USER_NOT_OVERDUE){ // 证明已经过期
         status = true

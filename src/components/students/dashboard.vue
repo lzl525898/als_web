@@ -22,7 +22,7 @@
           <el-card shadow="hover" style="width:260px;padding:10px;">
             <div class="div-wrapper" @click="goToLiving">
               <div style="text-align: center">直播课</div>
-              <div style="text-align: center;font-size:24px;font-weight:bold;margin-top:10px;">{{statistics.works}}</div>
+              <div style="text-align: center;font-size:24px;font-weight:bold;margin-top:10px;">{{statistics.live}}</div>
             </div>
           </el-card>
           <el-card shadow="hover" style="width:260px;margin-left:20px;padding:10px;">
@@ -73,7 +73,7 @@
             return{
                 tools:[],
                 colors: ['#99A9BF', '#F7BA2A', '#FF9900'],
-                statistics:{works:'',passRate:'',average:0,max:0}
+                statistics:{works:'',passRate:'',average:0,max:0,live:0}
             }
         },
         mounted() {
@@ -100,7 +100,7 @@
                 this.checkPassword()
                 getStudentStatistics(qs.stringify({user_id:storageUtil.readTeacherInfo().id})).then(res=>{
                     if(res.code==SUCCESS_CODE){
-                        this.statistics = {works:res.data.works,passRate:res.data.passRate,average:res.data.average*1,max:res.data.max*1}
+                        this.statistics = {works:res.data.works,passRate:res.data.passRate,average:res.data.average*1,max:res.data.max*1,live:res.data.live*1}
                     }
                 }).catch(err=>promptUtil.LOG('getStudentStatistics-err',err))
                 getTools().then(res=>{

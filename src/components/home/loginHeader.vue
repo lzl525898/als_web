@@ -109,6 +109,11 @@
               </div>
             </el-dropdown-menu>
           </el-dropdown>
+          <div class="badge-wrapper" @click="handleClickIntoNotice">
+            <el-badge :value="$store.state.mailCount" class="item" :max="99" :hidden="$store.state.mailCount==0">
+              <i class="el-icon-bell" style="color:#fff"/>
+            </el-badge>
+          </div>
           <!-- 下拉菜单 -->
           <el-dropdown @command="handleCommand" class="logoout">
           <span class="el-dropdown-link">
@@ -116,7 +121,7 @@
               <div style="width: 40px;">
                 <el-avatar style="width: 36px;height:36px;" :src="$store.state.userAvatar"></el-avatar>
               </div>
-              <div class="userName" style="margin-left: 5px;margin-right:20px;">{{$store.state.userName}}</div>
+              <div class="userName" style="margin-left: 5px;">{{$store.state.userName}}</div>
             </div>
           </span>
             <el-dropdown-menu slot="dropdown">
@@ -125,7 +130,7 @@
               <el-dropdown-item command="logout">退出系统</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
-          <div class="logout-btn" @click="onClickLogout">退出系统</div>
+<!--          <div class="logout-btn" @click="onClickLogout">退出系统</div>-->
         </div>
       </el-header>
     </div>
@@ -406,6 +411,9 @@
                 langLocal = 'English'
               }
               return langLocal
+            },
+            handleClickIntoNotice(){
+                this.$router.push({path:'/mail'})
             },
             down(type) {
                 // event.preventDefault()
@@ -985,6 +993,62 @@
   .logout-btn:hover{
     cursor: pointer;
   }
+  .badge-wrapper {
+    height:60px;
+    display:flex;
+    align-items: center;
+    margin-right:30px;
+    margin-left:10px;
+    cursor: pointer;
+  }
+  .badge-wrapper .item:hover{
+    -webkit-animation: tada 1s .2s ease both;
+    -moz-animation: tada 1s .2s ease both;
+    font-weight: bold;
+  }
+  @-webkit-keyframes tada{0%{-webkit-transform:scale(1);}
+
+    10%, 20%{-webkit-transform:scale(0.9) rotate(-3deg);}
+
+    30%, 50%, 70%, 90%{-webkit-transform:scale(1.1) rotate(3deg);}
+
+    40%, 60%, 80%{-webkit-transform:scale(1.1) rotate(-3deg);}
+
+    100%{-webkit-transform:scale(1) rotate(0);}}
+
+  @-moz-keyframes tada{0%{-moz-transform:scale(1);}
+
+    10%, 20%{-moz-transform:scale(0.9) rotate(-3deg);}
+
+    30%, 50%, 70%, 90%{-moz-transform:scale(1.1) rotate(3deg);}
+
+    40%, 60%, 80%{-moz-transform:scale(1.1) rotate(-3deg);}
+
+    100%{-moz-transform:scale(1) rotate(0);}}
+
+  @-webkit-keyframes flipInY{0%{-webkit-transform:perspective(400px) rotateY(90deg);
+
+    opacity:0;}
+
+    40%{-webkit-transform:perspective(400px) rotateY(-10deg);}
+
+    70%{-webkit-transform:perspective(400px) rotateY(10deg);}
+
+    100%{-webkit-transform:perspective(400px) rotateY(0deg);
+
+      opacity:1;}}
+
+  @-moz-keyframes flipInY{0%{-moz-transform:perspective(400px) rotateY(90deg);
+
+    opacity:0;}
+
+    40%{-moz-transform:perspective(400px) rotateY(-10deg);}
+
+    70%{-moz-transform:perspective(400px) rotateY(10deg);}
+
+    100%{-moz-transform:perspective(400px) rotateY(0deg);
+
+      opacity:1;}}
 </style>
 
 

@@ -2,114 +2,151 @@
   <div class="remind">
     <el-row>
       <el-col :span="24">
-        <div class="grid-content bg-purple-dark">
-          <el-breadcrumb separator="/">
-            <el-breadcrumb-item :to="{ path: '/index' }">首页</el-breadcrumb-item>
-            <el-breadcrumb-item>提醒</el-breadcrumb-item>
-          </el-breadcrumb>
-        </div>
+        <als-child-header :config="routerConfig"/>
       </el-col>
     </el-row>
-    <div v-if="remind.length == 0" class="noData">暂无数据</div>
-    <!--<el-table v-else-if="remind.length > 0"
-              :data="remind"
-              style="width: 70%;margin:0 15%;">
-      <el-table-column width="calc(100% - 200px)">
-        <template slot-scope="scope">
-          <el-popover placement="top-start" width="400" trigger="hover" :content="scope.row.con">
-            <span style="cursor: pointer;white-space: nowrap" slot="reference">{{scope.row.con}}</span>
-          </el-popover>
-        </template>
-      </el-table-column>
-      <el-table-column prop="time" width="200">
-        <template slot-scope="scope">{{scope.row.add_time > 0 ? moment(parseInt(scope.row.add_time)*1000).format('YYYY-MM-DD'):""}}</template>
-      </el-table-column>
-    </el-table>
-    <el-row type="flex" justify="center" style="margin-top: 20px;" v-show="pageShow">&lt;!&ndash;pageShow&ndash;&gt;
-      <el-pagination background @current-change="handleCurrentChange" :current-page="currentPage" :page-size="pageSize"
-                     layout="total, prev, pager, next, jumper" :total="permitList"
-      ></el-pagination>
-    </el-row>-->
+    <el-card shadow="always" style="margin-top: 20px;min-height: 600px" body-style="padding:0">
+      <div v-show="!already"></div>
+      <div v-show="already">
+        <div v-show="remind.length == 0" class="noData">暂无数据</div>
+        <div style="margin:20px;">
+          <div style="display:flex;">
+            <div>
+              <el-input v-model="keywords" placeholder="请输入" size="small" style="width:220px" suffix-icon="el-icon-search" @keydown.native.enter="handleClickSearch"></el-input>
+              <el-button type="primary" size="small" @click="handleClickSearch" :loading="searchLoading">搜索</el-button>
+            </div>
+            <!--          <div style="flex:1;display:flex;justify-content:flex-end">-->
+            <!--            <el-link :underline="false">全部已读</el-link>-->
+            <!--          </div>-->
+          </div>
+        </div>
+        <div style="border:none;height:1px;background-color:#ebeef5"></div>
+        <div v-show="remind.length != 0" style="padding-left:20px;padding-right:20px">
+          <als-mail-wrap v-for="(item,index) in remind"
+                         :key="index"
+                         :id="item.id*1"
+                         :title="item.title"
+                         :content="item.content"
+                         :status="item.status*1"
+                         :time="item.time"
+                         @detail="setMailDetailInfo($event)"
+                         @read="changeReadStatus($event)"
+          />
+        </div>
+        <als-pageination  :size="10" @tableData="changeRemindData($event)" ref="alsPageinationMails" style="margin-top:20px;margin-bottom:20px"></als-pageination>
+      </div>
+    </el-card>
+    <el-dialog
+      :visible.sync="descDialogVisible"
+      custom-class="mail-desc-dialog"
+      width="800px"
+      destroy-on-close
+      center>
+      <div>
+        <div class="desc-dialog-title">{{dialogContent.title}}</div>
+        <div class="desc-dialog-content" v-html="dialogContent.content"></div>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-  const moment = require("moment")
-  import storageUtil from "../../utils/storageUtil"
-  import promptUtil from '../../utils/promptUtil'
-  import {
-    qs,
-    remindList
-  }from "@/api/api.js";
+    const moment = require("moment")
+    import storageUtil from "../../utils/storageUtil"
+    import promptUtil from '../../utils/promptUtil'
+    import childHeader from '../component/childHeader'
+    import mailWrap from "../component/mailWrap"
+    import pageination from '../commons/pagination/pagination'
+    import {
+        qs,
+        remindList
+    }from "@/api/api.js";
     export default {
-      name: "remind",
-      data(){
-        return{
-          remind:[],
-          pageShow:false,
-          permitList:0,
-          currentPage:1,
-          pageSize:10,
-          moment:moment
-        }
-      },
-      mounted(){
-        promptUtil.checkOverdue(this, storageUtil.readTeacherInfo().id) // true 表示已过期 false表示未过期
-      //  this.initRemind();
-        /*this.remind = [
-          {title:"欢迎等等老师加入新家庭！",time:"2016-07-11"},
-          {title:"即将上线新课程",time:"2016-07-11"},
-          {title:"教师管理增加新功能",time:"2016-07-11"},
-          {title:"欢迎等等老师加入新家庭欢迎等等老师加入新家庭欢迎等等老师加入新家庭欢迎等等老师加入新家庭欢迎等等老师加入新家庭欢迎等等老师加入新家庭！",time:"2016-07-11"},
-          {title:"即将上线新课程",time:"2016-07-11"},
-          {title:"教师管理增加新功能",time:"2016-07-11"},
-          {title:"欢迎等等老师加入新家庭！",time:"2016-07-11"},
-          {title:"欢迎等等老师加入新家庭！",time:"2016-07-11"},
-          {title:"欢迎等等老师加入新家庭！",time:"2016-07-11"},
-          {title:"欢迎等等老师加入新家庭！",time:"2016-07-11"},
-          {title:"即将上线新课程",time:"2016-07-11"},
-          {title:"教师管理增加新功能",time:"2016-07-11"},
-          {title:"欢迎等等老师加入新家庭！",time:"2016-07-11"},
-          {title:"即将上线新课程",time:"2016-07-11"},
-          {title:"教师管理增加新功能",time:"2016-07-11"},
-          {title:"奥松只能期待您的加入，啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦",time:"2016-07-11"}
-        ];*/
-      },
-      methods:{
-        // 列表分页函数
-        handleCurrentChange(val) {
-          debugger;
-          this.currentPage = val;
-          this.initRemind();
+        name: "remind",
+        components:{"als-child-header": childHeader, "als-mail-wrap":mailWrap,"als-pageination":pageination},
+        data(){
+            return{
+                routerConfig: [{name:'站内通知',to:''}],
+                already:false,
+                keywords: '',
+                descDialogVisible: false,
+                dialogContent: {
+                    title: '',
+                    content: ''
+                },
+                remindServer: [],
+                remind:[],
+                currentPage: 1,
+                searchLoading: false
+            }
         },
-        initRemind(){
-          remindList(
-            qs.stringify({
-              user_id: storageUtil.readTeacherInfo().id,
-              page: this.currentPage,
-              pagenum: this.pageSize,
-            })
-          )
-            .then(res => {
-              if (res.code == SUCCESS_CODE) {
-                debugger;
-                if(res.data && res.data!='[]'){
-                  this.remind = res.data.data;
-                  this.permitList = res.data.count;
-                  this.pageShow = this.permitList > this.pageSize ? true:false;
+        mounted(){
+            promptUtil.checkOverdue(this, storageUtil.readTeacherInfo().id) // true 表示已过期 false表示未过期
+             this.initRemind();
+        },
+        methods:{
+            handleClickSearch(){
+                if(this.keywords && this.keywords!=''){
+                    this.searchLoading = true
+                    this.initRemind(this.keywords)
                 }
-              } else {
-                promptUtil.wait(this);
-              }
-            })
-            .catch(err => {
-              promptUtil.LOG('remindList-err',err);
-            });
+            },
+            changeRemindData(data){
+                this.remind = data
+            },
+            changeReadStatus(data){
+                try{
+                    const index = this.remindServer.findIndex(item=>item.id==data.id)
+                    this.remindServer[index].status = data.status
+                    this.currentPage = this.$refs.alsPageinationMails.getCurrentPage()
+                    this.$refs.alsPageinationMails.setCurrentPage(this.currentPage)
+                    this.$refs.alsPageinationMails.setServerData(this.remindServer)
+                }catch (e) {promptUtil.LOG('changeReadStatus-err',e)}
+            },
+            setMailDetailInfo(data){
+                const {title, content} = data
+                this.dialogContent.title = title
+                this.dialogContent.content = content
+                this.descDialogVisible = true
+            },
+            initRemind(text=''){
+                const data = {
+                    user_id: storageUtil.readTeacherInfo().id,
+                    status: 2
+                }
+                if(text && text!=''){
+                    data.text = text
+                }
+                remindList(qs.stringify(data)).then(res => {
+                    if (res.code == SUCCESS_CODE) {
+                        this.searchLoading = false
+                        this.keywords = ''
+                        if(res.data && res.data!='[]'){
+                            this.remindServer = res.data
+                            if(text&&text!=''){
+                                this.currentPage = 1
+                            }
+                        }else{
+                            this.currentPage = 1
+                            this.remindServer = []
+                        }
+                        this.$refs.alsPageinationMails.setCurrentPage(this.currentPage)
+                        this.$refs.alsPageinationMails.setServerData(this.remindServer)
+                    }
+                    this.already =true
+                }).catch(err => {
+                    this.already =true
+                    promptUtil.LOG('remindList-err',err);
+                })
+            }
         }
-      }
     }
 </script>
-
+<style>
+  .mail-desc-dialog{
+    border-radius: 10px;
+  }
+</style>
 <style scoped>
   .el-table .warning-row {
     background: oldlace;
@@ -118,39 +155,8 @@
   .el-table .success-row {
     background: #f0f9eb;
   }
-  .el-row {
-    margin-bottom: 20px;
-  }
-  .el-row:last-child {
-    margin-bottom: 0;
-  }
-  .el-col {
-    border-radius: 4px;
-  }
-  .bg-purple-dark {
-    background: #eee;
-  }
-  .bg-purple {
-    background: #fff;
-  }
-  .bg-purple-light {
-    background: #fff;
-  }
-  .grid-content {
-    border-radius: 4px;
-    min-height: 36px;
-  }
-  .grid1-content {
-    border-radius: 4px;
-    min-height: 46px;
-  }
-  .row-bg {
-    padding: 10px 0;
-    background-color: #f9fafc;
-  }
-  .el-breadcrumb {
-    line-height: 2.5;
-    margin-left: 10px;
+  .el-card.is-always-shadow, .el-card.is-hover-shadow:focus, .el-card.is-hover-shadow:hover {
+    box-shadow: 0 5px 12px 0 #00a2ff30;
   }
   .remind{
     position: relative;
@@ -172,5 +178,18 @@
     border-bottom: 1px solid #EBEEF5;
     line-height: 25px;
     cursor: pointer;
+  }
+  .desc-dialog-title{
+    height: 25px;
+    line-height: 25px;
+    color:#333;
+    text-align: center;
+    font-size: 18px;
+    margin-bottom: 10px;
+  }
+  .desc-dialog-content{
+    min-height: 100px;
+    max-height: 440px;
+    overflow-y:auto;
   }
 </style>
