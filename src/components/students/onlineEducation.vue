@@ -4,7 +4,7 @@
         <div style="font-size: 20px;font-weight:bold">直播课</div>
         <el-card v-if="livingList.length>0" class="box-card" style="width: 100%;margin-top: 20px;" body-style="padding-bottom:10px;padding-right:40px">
           <div style="display:flex;align-items:center;margin-bottom:16px">
-            <div style="font-size:16px;font-weight:bold;color:#409EFF;">直播中</div>
+            <div style="font-size:16px;font-weight:bold;color:#409EFF;">今日直播</div>
             <div style="display:flex;justify-content:flex-end;flex:1">
               <el-button type="primary" size="mini" plain @click="getLiveList(true)" :loading="refreshLoading">刷新</el-button>
             </div>
