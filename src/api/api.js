@@ -1208,6 +1208,31 @@ const getQuestionListFromExam = params => {
   return axios.post(`kaoshi/paper_ti`, params).then(res => res.data)
 }
 
+//================================直播课=====================================
+//添加直播课
+const addLiveClass = params => {
+  return axios.post(`live_school/room_create`, params).then(res => res.data)
+}
+//修改直播课
+const editLiveClass = params => {
+  return axios.post(`live_school/room_update`, params).then(res => res.data)
+}
+
+//获取直播课列表
+const getLiveList = params => {
+  return axios.post(`live_school/select_room`, params).then(res => res.data)
+}
+
+//删直播多选列表程信息
+const delTableListLiveInformation = params => {
+  return axios.post(`live_school/room_delete`, params).then(res => res.data)
+}
+
+//禁用直播课
+const disableLive = params => {
+  return axios.post(`live_school/waste_in`, params).then(res => res.data)
+}
+
 export {
   qs,
   baseUrl,
@@ -1471,7 +1496,12 @@ export {
   submitCollectionForm,
   equipmentList,
   equipmentDesc,
-  checkAccountExist
+  checkAccountExist,
+  addLiveClass,
+  editLiveClass,
+  getLiveList,
+  disableLive,
+  delTableListLiveInformation,
 }
 
 

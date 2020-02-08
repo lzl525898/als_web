@@ -5,6 +5,8 @@ global.ROUTER_INDEX_DISCOVER = '/discover' // 作品中心
 global.ROUTER_STUDENT_INDEX = '/dashboard' // 学生教室首页
 global.ROUTER_STUDENT_ONLINE = '/onlineEducation' // 学生直播教学
 
+global.ROUTER_ONELINE = '/online' // 直播课
+
 global.ROUTER_SCRATCH = '/create' // 创作scratch
 global.ROUTER_TOOL = '/tool' // 创作工具
 global.ROUTER_CERT = '/cert' // 证书制作

@@ -65,6 +65,7 @@ const seeCustom = resolve => require(['@/components/teachers/custom/customList']
 const editCustom = resolve => require(['@/components/teachers/custom/edit'], resolve)
 const itemCustom = resolve => require(['@/components/teachers/custom/customItem'], resolve)
 const seeItemDetail = resolve => require(['@/components/teachers/custom/detail'], resolve)
+const online = resolve => require(['@/components/teachers/online/online'], resolve)
 const feedback = resolve => require(['@/components/teachers/feedback/feedback'], resolve)
 const addFeedback = resolve => require(['@/components/teachers/feedback/add'], resolve)
 const seeFeedback = resolve => require(['@/components/teachers/feedback/detail'], resolve)
@@ -234,6 +235,12 @@ export default new Router({
         meta: { requireAuth: true},
         component: seeItemDetail,
       },
+        {
+          path: ROUTER_ONELINE, // 直播课程
+          name: 'online',
+          meta: { requireAuth: true },
+          component: online
+        },
         {
         path: '/resourcesList/:id', // 课程列表
         name: 'resourcesList',
