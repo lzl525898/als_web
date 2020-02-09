@@ -6,11 +6,11 @@ import router from '../router'
 import './restfulapi'
 //const baseURL = 'http://101.200.56.18:9528/als_classroom/public/index.php/index'
 // const baseURL = 'https://company.alsrobot.vip/als_classroom/public/index.php/index'
-// const baseURL = 'https://www.alsrobot.vip/als_classroom/public/index.php/index'
+const baseURL = 'https://www.alsrobot.vip/als_classroom/public/index.php/index'
 //const baseURL = 'http://vip.alsrobot.com/als_classroom/public/index.php/index'
 //const baseURL = 'http://101.200.56.18:9528/als_classroom/public/index.php/index'
 // const baseURL = 'http://192.168.1.177:9527/admin.php/index'
-const baseURL = 'http://101.200.56.18:9528/als_classroom/public/index.php/index'
+// const baseURL = 'http://101.200.56.18:9528/als_classroom/public/index.php/index'
 // const baseURL = '/api'
 window.baseURL=baseURL
 global.DEBUG = true

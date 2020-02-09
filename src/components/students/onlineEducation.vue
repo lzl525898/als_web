@@ -222,12 +222,12 @@
             showOnlineDialog(obj){
                 const {status, webUrl, clientUrl} = obj
                 this.webLiveUrl = webUrl
-                window.location.href = clientUrl
+                window.open(clientUrl)
                 this.centerDialogVisible = status
             },
             // 进入教室
             handleClickIntoClassroom(obj){
-                window.location.href = obj.row.clientUrl
+                window.open(obj.row.clientUrl)
                 this.webLiveUrl = obj.row.url
                 this.centerDialogVisible = true
             },
