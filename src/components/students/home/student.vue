@@ -267,7 +267,7 @@
         },
         methods: {
             initData() {
-                this.mineWorkFilter.updateDate = [((timeUtil.getCurrWeekDays("/")).split("-"))[0], ((timeUtil.getCurrWeekDays("/")).split("-"))[1]]
+                this.mineWorkFilter.updateDate = []//[((timeUtil.getCurrWeekDays("/")).split("-"))[0], ((timeUtil.getCurrWeekDays("/")).split("-"))[1]]
                 this.examFilter.updateDate = [((timeUtil.getCurrWeekDays("/")).split("-"))[0], ((timeUtil.getCurrWeekDays("/")).split("-"))[1]]
             },
             seeWorksDetail(data) {

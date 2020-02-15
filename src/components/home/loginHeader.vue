@@ -91,12 +91,21 @@
 <!--              </el-dropdown-menu>-->
 <!--            </el-dropdown>-->
 <!--          </div>-->
-
+          <el-dropdown @command="handleRoleCommand" v-show="demoStatus">
+            <div style="height:100%;display:flex;align-items: center;color:#fff;margin-right:30px;cursor:pointer;">
+              <i class="el-icon-s-custom"/><span>角色切换</span>
+            </div>
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item command="master">校长账号</el-dropdown-item>
+              <el-dropdown-item command="teacher">教师账号</el-dropdown-item>
+              <el-dropdown-item command="student">学生账号</el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
           <el-dropdown>
             <div v-if="explain" class="help">
               <a href="javascript:void(0)">
                 <i class="el-icon-s-grid"></i>
-                <span>家长端</span>
+                <span>家长端入口</span>
               </a>
             </div>
             <el-dropdown-menu slot="dropdown">
@@ -268,6 +277,7 @@
     import '../../api/restfulapi';
     import {
         qs,
+        userLogin,
         getTeacherInfoById,
         updateUserInfo,
         forgetPasswordBySMS,
@@ -285,6 +295,7 @@
         name: "loginHeader",
         data() {
             return {
+                demoStatus: false, // 1 显示角色切换  0 不显示
                 localLang: this.getLangContent(),
                 schoolType: {type: '', label: ''},
                 qrCodeMobileImg: require('../../../static/images/base/moblie.png'),
@@ -379,6 +390,7 @@
             };
         },
         mounted() {
+            this.demoStatus = storageUtil.readTeacherInfo().demoStatus && storageUtil.readTeacherInfo().demoStatus==1 ? true : false
             promptUtil.checkOverdue(this, storageUtil.readTeacherInfo().id) // true 表示已过期 false表示未过期
             // this.qrCodeMobileImg = "https://alseduline.oss-cn-shenzhen.aliyuncs.com/alsclassroom/statics/moblie.png"
             this.userRole = storageUtil.readUserRole();
@@ -655,6 +667,66 @@
               this.logout();
             },
             //初始化列表数据
+            // 下拉菜单 切换角色
+            handleRoleCommand(command) {
+                const localUserInfo = storageUtil.readTeacherInfo();
+                if(command==='master'){ // 校长
+                    if(localUserInfo.role_id==1 && localUserInfo.school_admin==1){
+                        promptUtil.warning(this,'当前已经是【校长】账号')
+                        return
+                    }
+                }else if(command==='teacher'){ // 教师
+                    if(localUserInfo.role_id==1 && localUserInfo.school_admin!=1){
+                        promptUtil.warning(this,'当前已经是【教师】账号')
+                        return
+                    }
+                }else if(command==='student'){ // 学生
+                    if(localUserInfo.role_id==2){
+                        promptUtil.warning(this,'当前已经是【学生】账号')
+                        return
+                    }
+                }
+                const loading = promptUtil.loading(this)
+                loginOut().then(res => {
+                    if (res.code == SUCCESS_CODE) {
+                        storageUtil.logout();
+                        const userArray = [
+                            {username:'ALS2892535927',password:'111000'}, // 校长 吕洋
+                            {username:'ALS2420973387',password:'111000'}, // 教师 聪聪老师
+                            {username:'ALS4684433520',password:'111000'}  // 学生 李艾泽
+                        ]
+                        let userInfo = null;
+                        if (command==='master') {
+                            userInfo = userArray[0];
+                        } else if (command==='teacher') {
+                            userInfo = userArray[1];
+                        } else if (command==='student') {
+                            userInfo = userArray[2];
+                        }
+                        userLogin(qs.stringify({
+                            username:userInfo.username,
+                            password:userInfo.password,
+                            verificationCode:'demoStatus',
+                        })).then(res=>{
+                            storageUtil.saveToken(res.data.token)
+                            storageUtil.saveTeacherInfo(res.data);
+                            storageUtil.setLoginStatus(res.data.role_id);
+                            storageUtil.saveOverdue(0);
+                            this.$router.replace({path: "/index"});
+                            location.reload();
+                            setTimeout(()=>{
+                                loading.close();
+                            },1500)
+                        }).catch(err=>{
+                            loading.close()
+                            promptUtil.warning(this,'切换失败，请联系开发人员')
+                        })
+                    }else{
+                        loading.close();
+                        promptUtil.warning(this,'切换失败，请联系开发人员')
+                    }
+                })
+            },
             //下拉菜单  退出
             handleCommand(command) {
                 if (command === "logout") {

@@ -329,6 +329,7 @@
                     this.pageSize + (this.currentPage - 1) * this.pageSize)
             },
             genNewfFowChart() {
+                const userValue = (10000 - this.statisticalData.surplusPercentage*100) / 100
                 const option = {
                     tooltip: {
                         formatter: "{a} <br/>{b} : {c}%"
@@ -345,7 +346,7 @@
                             type: 'gauge',
                             detail: {formatter: '{value}%'},
                             data: [{
-                                value: this.statisticalData.surplusPercentage,
+                                value: userValue,
                                 name: `总计(${this.statisticalData.total}G)\n已用(${this.statisticalData.used})`
                             }]
                         }

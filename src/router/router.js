@@ -1,4 +1,4 @@
-global.ROUTER_SCRATCH_CREATE = 'https://www.alsrobot.vip/scratch3/index.html' // scratch作品基本路径
+global.ROUTER_SCRATCH_CREATE = 'https://www.alsrobot.vip/scratch' // scratch作品基本路径 'http://101.200.56.18:9528/scratch'//
 global.ROUTER_INDEX_CENTER = '/personCenter' // 个人中心
 global.ROUTER_INDEX_WORKS = '/workContent' // 更多作品
 global.ROUTER_INDEX_DISCOVER = '/discover' // 作品中心

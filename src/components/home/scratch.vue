@@ -40,36 +40,53 @@
       this.scratchUrl =  ROUTER_SCRATCH_CREATE
     },
     mounted() {
-      this.listenLoginStatus()
-      let query = decodeURI(window.location.search.substring(1))
-      let vars = query.split("=")
-      for(let i=0;i<100;i++){
-        setTimeout(()=>{
-          this.percentage = this.percentage + 1
-        },10*i)
-      }
-      if(vars.length && vars.length==2){ // 进行查询
-        checkWorksExist(qs.stringify({worksUrl:vars[1]})).then(res=>{
-          if(res.code==SUCCESS_CODE){ // 能够查到作品
-            if(res.data && res.data.id==storageUtil.readTeacherInfo().id){ // 作品时当前学生的
-              console.log("作品时当前学生的")
-              this.scratchUrl = this.scratchUrl + "?id=" + vars[1] + "&edit=true"
-            }else{ // 作品是其他学生的
-              console.log("作品是其他学生的")
-              this.scratchUrl
+        this.listenLoginStatus()
+        let query = decodeURI(window.location.search.substring(1))
+        let vars = query.split("=")
+        for(let i=0;i<100;i++){
+          setTimeout(()=>{
+            this.percentage = this.percentage + 1
+          },10*i)
+        }
+              // ?user_id=用户id&id=任务id&type=1&role=2&device=1
+        if(vars.length && vars.length==6){ // 进行查询
+            const webParams = {userId: 0, type: 0, id: 0, role: 2, terminal:0}
+            webParams.userId = vars[1].split("&")[0]; // 用户id
+            webParams.type = vars[3].split("&")[0]; // 类型  1、作品   2、任务
+            webParams.id =  vars[2].split("&")[0]; // 任务id 或 作品id
+            webParams.role = vars[4].split("&")[0]; //1老师 2学生
+            webParams.terminal = vars[5]; // 0 pc 1 mobile 2 tablet
+            if(webParams.type!=1){
+                this.showFrame = true
+                this.listenScratchLoading()
+                return
             }
-          }
-          this.showFrame = true
-          this.listenScratchLoading()
-        }).catch(err=>{
-          promptUtil.LOG('checkWorksExist-err',err)
-          this.showFrame = true
-          this.listenScratchLoading()
-        })
+            // ?user_id='+this.data.student_id+'&id='+this.data.worksId+'&type=1&role='+roleId+'&device=1'
+            this.scratchUrl = this.scratchUrl + "?user_id=" + webParams.userId + "&id="+webParams.id+'&type=1&role='+webParams.role+'&device=1'
+            console.log("scratchUrl==>",this.scratchUrl)
+            this.showFrame = true
+            this.listenScratchLoading()
+            // checkWorksExist(qs.stringify({worksUrl:vars[1]})).then(res=>{
+            //   if(res.code==SUCCESS_CODE){ // 能够查到作品
+            //     if(res.data && res.data.id==storageUtil.readTeacherInfo().id){ // 作品时当前学生的
+            //       console.log("作品时当前学生的")
+            //
+            //     }else{ // 作品是其他学生的
+            //       console.log("作品是其他学生的")
+            //       this.scratchUrl
+            //     }
+            //   }
+            //   this.showFrame = true
+            //   this.listenScratchLoading()
+            // }).catch(err=>{
+            //   promptUtil.LOG('checkWorksExist-err',err)
+            //   this.showFrame = true
+            //   this.listenScratchLoading()
+            // })
       }else{ // 无法查询到作品id
-        console.log("参数不合法，直接进入创作页")
-        this.showFrame = true
-        this.listenScratchLoading()
+          console.log("参数不合法，直接进入创作页")
+          this.showFrame = true
+          this.listenScratchLoading()
       }
     },
     methods:{

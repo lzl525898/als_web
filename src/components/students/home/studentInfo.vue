@@ -2,48 +2,48 @@
   <div>
     <div v-if="valId==1" class="home" :style="{height:hei+'px'}">
       <el-container>
-        <div class="close" v-show="closeShow">
-          <el-tooltip class="item" effect="light" content="显示顶部" placement="bottom">
-            <i class="el-icon-arrow-down closeIcon" @click="closeIcon"></i>
-          </el-tooltip>
-        </div>
+<!--        <div class="close" v-show="closeShow">-->
+<!--          <el-tooltip class="item" effect="light" content="显示顶部" placement="bottom">-->
+<!--            <i class="el-icon-arrow-down closeIcon" @click="closeIcon"></i>-->
+<!--          </el-tooltip>-->
+<!--        </div>-->
         <!-- header部分 -->
-        <el-header v-if="toggElHeader">
-          <!--          scratch3.0-->
-          <div style="display:flex;align-items:center">
-            <div style="flex:1;display:flex;justify-items:flex-start">
-              <div class="goBack line_height">
-                <router-link to="/student">返回</router-link>
-              </div>
-              <div v-if="$store.state.studentTaskId.complete==0" style="margin-left:30px;">
-                <el-button type="primary" round @click="release" :disabled="isPublish"
-                           style="margin-top: 16px; background-color: #fff;border-color: #fff;color: #9966ff;">发布
-                </el-button>
-              </div>
-              <div v-if="$store.state.studentTaskId.complete==0" style="margin-left:30px;" >
-                <el-button type="primary" round @click="workRequirement"
-                           style="margin-top: 16px; background-color: #fff;border-color: #fff;color: #9966ff;">作品要求
-                </el-button>
-              </div>
-            </div>
-            <div style="flex:1;text-align:center">
-              <div class="system-title">
-                <div v-if="$store.state.studentTaskId.complete==1">恭喜你完成任务！！</div>
-                <div v-else>未完成任务，加油！！</div>
-              </div>
-            </div>
-            <div style="flex:1;display:flex;justify-content:flex-end;">
-              <div style="position:relative">
-                <div class="open" v-show="openShow">
-                  <el-tooltip class="item" effect="light" content="隐藏顶部" placement="bottom">
-                    <i class="el-icon-arrow-up openIcon" @click="openIcon"></i>
-                  </el-tooltip>
-                </div>
-                <login-header style="margin-right:-20px;"></login-header>
-              </div>
-            </div>
-          </div>
-        </el-header>
+<!--        <el-header v-if="toggElHeader">-->
+<!--          &lt;!&ndash;          scratch3.0&ndash;&gt;-->
+<!--          <div style="display:flex;align-items:center">-->
+<!--            <div style="flex:1;display:flex;justify-items:flex-start">-->
+<!--              <div class="goBack line_height">-->
+<!--                <router-link to="/student">返回</router-link>-->
+<!--              </div>-->
+<!--              <div v-if="$store.state.studentTaskId.complete==0" style="margin-left:30px;">-->
+<!--                <el-button type="primary" round @click="release" :disabled="isPublish"-->
+<!--                           style="margin-top: 16px; background-color: #fff;border-color: #fff;color: #9966ff;">发布-->
+<!--                </el-button>-->
+<!--              </div>-->
+<!--              <div v-if="$store.state.studentTaskId.complete==0" style="margin-left:30px;" >-->
+<!--                <el-button type="primary" round @click="workRequirement"-->
+<!--                           style="margin-top: 16px; background-color: #fff;border-color: #fff;color: #9966ff;">作品要求-->
+<!--                </el-button>-->
+<!--              </div>-->
+<!--            </div>-->
+<!--            <div style="flex:1;text-align:center">-->
+<!--              <div class="system-title">-->
+<!--                <div v-if="$store.state.studentTaskId.complete==1">恭喜你完成任务！！</div>-->
+<!--                <div v-else>未完成任务，加油！！</div>-->
+<!--              </div>-->
+<!--            </div>-->
+<!--            <div style="flex:1;display:flex;justify-content:flex-end;">-->
+<!--              <div style="position:relative">-->
+<!--                <div class="open" v-show="openShow">-->
+<!--                  <el-tooltip class="item" effect="light" content="隐藏顶部" placement="bottom">-->
+<!--                    <i class="el-icon-arrow-up openIcon" @click="openIcon"></i>-->
+<!--                  </el-tooltip>-->
+<!--                </div>-->
+<!--                <login-header style="margin-right:-20px;"></login-header>-->
+<!--              </div>-->
+<!--            </div>-->
+<!--          </div>-->
+<!--        </el-header>-->
         <!-- el-main部分 -->
         <el-main style="height: 100%">
           <div style="background-color: #00a2ff;height: 100%" v-loading="stratchloading">

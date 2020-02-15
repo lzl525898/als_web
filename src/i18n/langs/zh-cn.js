@@ -216,7 +216,7 @@ const cn = {
     student_management_studentEditDialogVisible_select_data: '选择日期',
     student_management_studentEditDialogVisible_input_school: '请输入学校',
     student_management_create_student:'创建新的学生',
-    student_management_create_student_tips:'【提示】一次性班级创建学生不能超过100个，学生姓名必须\n 为纯汉字，名字长度不大于5.\n【示例】每行增加一个学生姓名。格式如下:\n 张萌萌\n 刘朝阳\n 何宇飞\n',
+    student_management_create_student_tips:'【提示】一次性班级创建学生不能超过100个，学生姓名不能包含特殊字符，字符长度不大于30.\n【示例】每行增加一个学生姓名。格式如下:\n 张萌萌\n 刘朝阳\n 何宇飞\n',
     student_management_create_student_tips2:'确认后将自动添加学生，请注意查看！',
     student_management_create_student_tips3:'新生成学生账号的默认密码为： 111000',
     student_management_create_student_conversion:'转化记录学生',

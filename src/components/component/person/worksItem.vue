@@ -11,7 +11,26 @@
       <div style="border:none;height:1px;margin-top:5px;background-color:#cccccc"></div>
       <div style="display:flex;justify-content:center;align-items:center;">
         <div v-if="data.is_submit!=1" class="works-item-button" @click="onClickWorksPublish"><i class="el-icon-position"></i><span style="margin-left:5px">发布</span></div>
-<!--        <div v-else class="works-item-button"><i class="el-icon-share"></i><span style="margin-left:5px">分享</span></div>-->
+        <div v-else class="works-item-button"><i class="el-icon-share"></i><span style="margin-left:5px">
+          <el-dropdown>
+            <span>分享</span>
+            <el-dropdown-menu slot="dropdown">
+              <div style="width:160px;height: 176px;display:flex;flex-direction:column;justify-content: center;align-items: center;padding:5px 5px 0 5px">
+                <vue-qr
+                  :text="data.shareUrl"
+                  :logoSrc="require('../../../../static/images/base/logo.jpg')"
+                  colorDark="#000"
+                  colorLight="#fff"
+                  :margin="0"
+                  :logoScale="0.4"
+                  :size="150"
+                ></vue-qr>
+                <div style="display:flex;align-items:flex-end;font-size:12px;justify-content:center;flex:1;height:16px;color:#3e3e3e">手机扫一扫</div>
+              </div>
+            </el-dropdown-menu>
+          </el-dropdown>
+
+        </span></div>
         <div class="works-item-button" @click="onClickEdit"><i class="el-icon-edit"></i><span style="margin-left:5px">编辑</span></div>
         <div class="works-item-button" @click="onClickDelete"><i class="el-icon-delete"></i><span style="margin-left:5px">删除</span></div>
       </div>
@@ -20,9 +39,12 @@
 </template>
 
 <script>
+  import vueQr from "vue-qr";
   import '../../../api/restfulapi'
   import PubSub from 'pubsub-js'
+  import storageUtil from "../../../utils/storageUtil";
   export default {
+    components: {vueQr},
     name: "worksItem",
     props:{
       data:{
@@ -46,8 +68,9 @@
     },
     methods:{
       onClickEdit(){
-        let {href} = this.$router.resolve({path: '/create?id='+this.data.worksUrl})
-        window.open(href, '_blank')
+          const roleId = storageUtil.readTeacherInfo().role_id
+          let {href} = this.$router.resolve({path: '/create?user_id='+this.data.student_id+'&id='+this.data.worksId+'&type=1&role='+roleId+'&device=1'})
+          window.open(href, '_blank')
       },
       onClickImage(){
         if(this.data.is_submit==1){

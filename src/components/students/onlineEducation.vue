@@ -12,6 +12,7 @@
           <el-timeline>
             <als-education-item v-for="(liveItem,index) in livingList" :key="index" @statusFunc="showOnlineDialog($event)"
                                 :sign="liveItem.sign"
+                                :cover="liveItem.cover"
                                 :time="liveItem.time"
                                 :code="liveItem.code"
                                 :room="liveItem.room"
@@ -38,14 +39,21 @@
             style="width: 100%"
             :header-row-style="{'color':'#409EFF'}"
           >
-            <el-table-column prop="name" label="课程名称" show-overflow-tooltip>
+            <el-table-column label="课程名称">
               <template slot-scope="scope">
-                <div>{{scope.row.name}}</div>
-                <div style="font-size:12px;display:flex;align-items:center">
-                  <el-tooltip class="item" effect="dark" :content="scope.row.teacher.phone" placement="bottom">
-                    <i class="el-icon-phone" style="color:#409EFF;cursor:pointer"></i>
-                  </el-tooltip>
-                  <div>{{scope.row.teacher.name}}</div>
+                <div style="display:flex;padding:10px 0 0 10px;">
+                  <div class="list-image-wrapper">
+                    <img :src="scope.row.cover" class="list-image"/>
+                  </div>
+                  <div style="flex:1">
+                    <el-tooltip class="item" effect="dark" :content="scope.row.name" placement="right">
+                      <div style="overflow: hidden;text-overflow:ellipsis;white-space: nowrap;width:250px">
+                        <span style="font-weight:600">{{scope.row.name}}</span>
+                      </div>
+                    </el-tooltip>
+                    <div style="margin-top:10px"><i class="el-icon-user-solid" style="color:#409EFF;margin-right:5px"/>教师: <span>{{scope.row.teacher.name}}</span></div>
+                    <div><i class="el-icon-phone" style="color:#409EFF;margin-right:5px"/>电话: <span>{{scope.row.teacher.phone}}</span></div>
+                  </div>
                 </div>
               </template>
             </el-table-column>
@@ -249,7 +257,7 @@
             },
             handleClickDownload(){
                 this.centerDialogVisible = false
-                window.location.href="http://111.40.195.240/cache/img.baijiayun.com/video/bjyclient/win/www/bjyclient6.9.3.zip?ich_args2=641-05153611002820_4a77fa21a15b1d1ff223ba6409e5bf3f_10001002_9c896c2cdfcbf9d0913b518939a83798_e3244c0c04322c1f6363d3e2cf7c3172"
+                window.open('https://alseduline.oss-cn-shenzhen.aliyuncs.com/uploads/live/clientinstaller.zip', "_blank");
             },
             handleClickIntoWebClassroom(){
                 window.open(this.webLiveUrl,"_blank")
@@ -267,5 +275,20 @@
   .handle-item:hover{
     cursor: pointer;
     color:#409EFF;
+  }
+  .list-image-wrapper{
+    position: relative;
+    cursor: pointer;
+    margin-right: 20px;
+  }
+  .list-image{
+    width: 105px;
+    height: 84px;
+    border-radius: 5px;
+    object-fit: cover;
+    transition: all 0.2s ease-out 0.1s;
+  }
+  .list-image:hover{
+    transform: scale(1.05)
   }
 </style>

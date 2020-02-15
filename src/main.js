@@ -256,7 +256,7 @@ router.beforeEach((to, from, next) =>{//如果未匹配到路由 如果上级也
           }
         }
         else { // 学生
-          if ( to.fullPath!='/mail' && to.fullPath!='/dashboard' && to.fullPath!='/student' && to.fullPath!='/sturep'&& to.fullPath!='/stuLiveManage' && to.fullPath!='/create' && to.fullPath!='/onlineEducation'
+          if ( to.fullPath!='/mail' && to.fullPath!='/dashboard' && to.fullPath!='/student' && to.fullPath!='/sturep'&& to.fullPath!='/stuLiveManage' && to.fullPath.indexOf("/create") == -1 && to.fullPath!='/onlineEducation'
             && to.fullPath.indexOf("/resourcesLiveList/") == -1 && to.fullPath.indexOf("/create?id") == -1 && to.fullPath.indexOf("/workContent") == -1 && to.fullPath!='/personCenter') {
             next('/dashboard')
           } else {

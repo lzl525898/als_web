@@ -1,9 +1,12 @@
 <template>
   <el-timeline-item :timestamp="time" placement="top" color="#409EFF">
     <div style="border:1px solid #EBEEF5;border-radius:5px;padding:10px 20px;display:flex;align-items:center;margin-bottom:10px">
-      <div class="image-wrapper">
-        <img src="https://www.alsrobot.vip/als_classroom/public/zh/images/default-res.jpg" class="image"/>
+      <div style="padding: 10px 0 10px 0">
+        <div class="image-wrapper">
+          <img :src="cover" class="image"/>
+        </div>
       </div>
+
       <div style="display:flex;flex-direction:column">
         <div style="height:40px;">
           <el-tooltip class="item" effect="dark" :content="educationName" placement="top">
@@ -40,6 +43,10 @@
     export default {
         name: "onlineEducationItem",
         props:{
+            cover: {
+                type:String,
+                default:'https://www.alsrobot.vip/als_classroom/public/static/live_cover.png'
+            },
             time: {
                 type:String,
                 default:''

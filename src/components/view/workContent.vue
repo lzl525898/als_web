@@ -160,6 +160,7 @@
       },
       getScratchDetailData(){
         const userId = storageUtil.readTeacherInfo() ? storageUtil.readTeacherInfo().id : 0
+        const roleId = storageUtil.readTeacherInfo().role_id
         getScratchDetail(qs.stringify({
           scratch_id: this.scratchId,
           user_id: userId,
@@ -184,7 +185,8 @@
               // }else{
               //
               // }
-              this.workUrl = 'https://www.alsrobot.vip/scratch/player.html?id='+this.sb3Value+'&edit=false&look=true'
+                // ?user_id=用户id&id=任务id&type=1&role=2&device=1
+              this.workUrl = ROUTER_SCRATCH_CREATE + '/player.html?user_id='+userId+"&id="+this.scratchId+'&type=1&role='+roleId+'&device=1'
               for(let i=0;i<100;i++){
                 setTimeout(()=>{
                   this.percentage = this.percentage + 1
@@ -218,13 +220,9 @@
       },
       onClickIntoScratch(){
         if(storageUtil.getLoginStatus()==1){ // 登录
-          let url
-          // if(global.DEBUG){
-          //   url = "http://192.168.1.177:9527/creater/index.html" + "?id=" + this.sb3Value + "&edit=false"
-          // }else{
-          //   url = ROUTER_SCRATCH_CREATE + "?id=" + this.sb3Value + "&edit=false"
-          // }
-          url = ROUTER_SCRATCH_CREATE + "?id=" + this.sb3Value + "&edit=false"
+          const userId = storageUtil.readTeacherInfo() ? storageUtil.readTeacherInfo().id : 0
+          const roleId = storageUtil.readTeacherInfo().role_id
+          let url = ROUTER_SCRATCH_CREATE + '?user_id='+userId+"&id="+this.scratchId+'&type=1&role='+roleId+'&device=3'
           window.open(url)
         }else{
           PubSub.publish("showUserLoginDialog", "show")

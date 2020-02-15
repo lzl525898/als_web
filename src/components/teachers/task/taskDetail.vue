@@ -3,9 +3,9 @@
     <div v-if="missionId==1" class="home" :style="{height:hei+'px'}">
       <el-container>
         <!-- header部分 -->
-        <el-header>
-          <login-header></login-header>
-        </el-header>
+<!--        <el-header>-->
+<!--          <login-header></login-header>-->
+<!--        </el-header>-->
         <el-container style="height: 100%;">
           <!-- src="https://www.superblockly.com/scratch3/index.html" -->
           <div class="closeTogg" v-if="showCloseTogg">
@@ -627,7 +627,7 @@
         this.isReleaseble = true;
         return;
       }
-      this.iframeUrl = storageUtil.readWorksDetail().worksUrl || "http://www.alsrobot.vip/scratch/index.html"  //http://192.168.1.187:8080/scratch/index.html?id=111&edit=true
+      this.iframeUrl = storageUtil.readWorksDetail().worksUrl || "http://www.alsrobot.vip/scratch"  //http://192.168.1.187:8080/scratch/index.html?id=111&edit=true
       if (this.$store.state.taskDetail.souceType == 1
         || this.$store.state.taskDetail.souceType == 2) {
         const loading = promptUtil.loading(this);

@@ -89,7 +89,23 @@
       >
         <el-table-column align="center" type="selection" width="55">
         </el-table-column>
-        <el-table-column align="left" prop="name" label="课程名称">
+        <el-table-column align="left" label="课程名称">
+          <template slot-scope="scope">
+            <div style="display:flex;padding:10px 0 0 10px;">
+              <div class="image-wrapper">
+                <img :src="scope.row.cover" class="image"/>
+              </div>
+              <div style="flex:1">
+                <el-tooltip class="item" effect="dark" :content="scope.row.name" placement="right">
+                  <div style="overflow: hidden;text-overflow:ellipsis;white-space: nowrap;width:250px">
+                    <span style="font-weight:600">{{scope.row.name}}</span>
+                  </div>
+                </el-tooltip>
+                <div style="margin-top:10px">创建者: <span>{{scope.row.createName}}</span></div>
+                <div >创建时间: <span>{{scope.row.createDate}}</span></div>
+              </div>
+            </div>
+          </template>
         </el-table-column>
         <el-table-column
           align="center"
@@ -176,12 +192,12 @@
       </el-table>
     </el-card>
     <!--    分页-->
-    <als-pagination @tableData="changeTableData($event)" @currentPage="changeOnlinePage($event)" ref="alsPageination"/>
+    <als-pagination :size="8" @tableData="changeTableData($event)" @currentPage="changeOnlinePage($event)" ref="alsPageination"/>
     <!--   创建课程dialog-->
     <el-dialog
       :title="addEditLiveTitle"
       :visible.sync="addClassDialogVisible"
-      width="500px"
+      width="860px"
       @open="handleOpen"
       :before-close="handleClose"
     >
@@ -194,119 +210,151 @@
         class="demo-ruleForm"
         style="margin: 0 auto"
       >
-        <el-form-item label="课程名称" prop="name">
-          <el-input
-            size="small"
-            style="width:195px;"
-            v-model="addRuleForm.name"
-            placeholder="请输入课程名称"
-          ></el-input>
-        </el-form-item>
-        <el-row>
-          <el-form-item label="教室容量" prop="number" style="float: left">
-            <el-input
-              size="small"
-              style="width:195px;"
-              v-model="addRuleForm.num"
-              placeholder="请输入教室容量"
-              :disabled="limitDisable"
-            ></el-input>
-          </el-form-item>
-          <el-checkbox
-            v-model="addRuleForm.limit"
-            style="float: left;margin-top: 12px;margin-left: -20px"
-            @change="limitChange"
-          >不设上限
-          </el-checkbox>
-        </el-row>
-        <el-form-item label="开始时间" prop="startTime">
-          <div class="block">
-            <el-date-picker
-              size="small"
-              style="width:195px;"
-              v-model="addRuleForm.startTime"
-              type="datetime"
-              placeholder="选择日期时间"
-            >
-            </el-date-picker>
-          </div>
-        </el-form-item>
-        <el-form-item label="课程时长" prop="longTime">
-          <el-time-picker
-            size="small"
-            style="width:195px;"
-            @focus="defaultTime"
-            v-model="addRuleForm.longTime"
-            :picker-options="{
-              selectableRange: '00:00:00 - 23:59:59'
-            }"
-            placeholder="请选择课程时长"
-          >
-          </el-time-picker>
-        </el-form-item>
-        <div>
-          <div v-if="role == 1">
-            <el-form-item label="主讲老师" prop="selectTeacher">
-              <el-select
-                v-model="addRuleForm.selectTeacher"
-                size="small"
-                placeholder="请选择主讲人"
-                style="width:195px;"
-                @change="selectTeacherChange"
-              >
-                <el-option
-                  v-for="item in addRuleForm.teacherArray"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
-                >
-                </el-option>
-              </el-select>
-            </el-form-item>
-          </div>
-          <div v-else>
-            <el-form-item label="主讲老师" prop="speakTeacher">
+        <div style="display:flex;height:100%;">
+          <div style="display:flex;flex:1;flex-direction:column">
+            <div>
+              <div v-if="role == 1">
+                <el-form-item label="主讲老师" prop="selectTeacher">
+                  <el-select
+                    v-model="addRuleForm.selectTeacher"
+                    size="small"
+                    placeholder="请选择主讲人"
+                    style="width:195px;"
+                    @change="selectTeacherChange"
+                  >
+                    <el-option
+                      v-for="item in addRuleForm.teacherArray"
+                      :key="item.value"
+                      :label="item.label"
+                      :value="item.value"
+                    >
+                    </el-option>
+                  </el-select>
+                </el-form-item>
+              </div>
+              <div v-else>
+                <el-form-item label="主讲老师" prop="speakTeacher">
+                  <el-input
+                    size="small"
+                    style="width:195px;"
+                    v-model="addRuleForm.speakTeacher"
+                    disabled
+                  ></el-input>
+                </el-form-item>
+              </div>
+            </div>
+            <el-form-item label="课程名称" prop="name">
               <el-input
                 size="small"
                 style="width:195px;"
-                v-model="addRuleForm.speakTeacher"
-                disabled
+                v-model="addRuleForm.name"
+                placeholder="请输入课程名称"
               ></el-input>
+            </el-form-item>
+            <el-form-item label="开始时间" prop="startTime">
+              <div class="block">
+                <el-date-picker
+                  size="small"
+                  style="width:195px;"
+                  v-model="addRuleForm.startTime"
+                  type="datetime"
+                  placeholder="选择日期时间"
+                >
+                </el-date-picker>
+              </div>
+            </el-form-item>
+            <el-form-item label="课程时长" prop="longTime">
+              <el-time-picker
+                size="small"
+                style="width:195px;"
+                @focus="defaultTime"
+                v-model="addRuleForm.longTime"
+                :picker-options="{
+              selectableRange: '00:00:00 - 23:59:59'
+            }"
+                placeholder="请选择课程时长"
+              >
+              </el-time-picker>
+            </el-form-item>
+            <el-form-item label="指派班级" prop="classes">
+              <el-cascader
+                size="small"
+                style="width:195px;"
+                v-model="addRuleForm.classes"
+                :options="classesInfo"
+                :props="props"
+                collapse-tags
+                clearable
+              ></el-cascader>
+            </el-form-item>
+          </div>
+          <div style="height:300px;width:1px;background-color:#EBEEF5"></div>
+          <div style="display:flex;flex:1;flex-direction:column">
+            <el-row>
+              <el-form-item label="学生人数" prop="number" style="float: left">
+                <el-input
+                  size="small"
+                  style="width:195px;"
+                  v-model="addRuleForm.num"
+                  placeholder="请输入上课学生人数"
+                  :disabled="limitDisable"
+                ></el-input>
+              </el-form-item>
+              <el-checkbox
+                v-model="addRuleForm.limit"
+                style="float: left;margin-top: 12px;margin-left: -20px"
+                @change="limitChange"
+              >不设上限
+              </el-checkbox>
+            </el-row>
+            <el-form-item label="手机模板属性" prop="type">
+              <div style="display:flex">
+                <div>
+                  <el-radio v-model="addRuleForm.type" label="1">以视频为主</el-radio>
+                  <el-radio v-model="addRuleForm.type" label="2">以ppt为主</el-radio>
+                </div>
+                <div style="margin-left: 10px">
+                  <el-popover
+                    placement="bottom-start"
+                    title="模板说明"
+                    width="200"
+                    trigger="hover"
+                    content="该属性只会影响家长端直播页面初始化显示风格，进入直播课程后仍然可以按照需求调整。">
+                    <i class="el-icon-warning" slot="reference"/>
+                  </el-popover>
+                </div>
+              </div>
+            </el-form-item>
+            <el-form-item label="直播课封面图">
+              <el-upload
+                class="avatar-uploader"
+                :action="postUrl"
+                :show-file-list="false"
+                :on-success="handleCoverSuccess"
+                :before-upload="beforeCoverUpload">
+                <img v-if="addRuleForm.coverUrl && addRuleForm.coverUrl!=''" :src="addRuleForm.coverUrl" class="avatar">
+                <img v-else :src="defaultCoverUrl" class="avatar">
+              </el-upload>
             </el-form-item>
           </div>
         </div>
-        <el-form-item label="指派班级" prop="classes">
-          <el-cascader
-            size="small"
-            style="width:195px;"
-            v-model="addRuleForm.classes"
-            :options="classesInfo"
-            :props="props"
-            collapse-tags
-            clearable
-          ></el-cascader>
-        </el-form-item>
-        <el-form-item label="手机网页模板属性" prop="type">
-          <el-radio v-model="addRuleForm.type" label="1">已视频为主</el-radio>
-          <el-radio v-model="addRuleForm.type" label="2">已ppt为主</el-radio>
-        </el-form-item>
       </el-form>
       <div>
         <div v-if="sign == 1">
-          <span slot="footer" class="dialog-footer" style="margin-left:270px">
-            <el-button @click="cancelDialog('addRuleForm')">取 消</el-button>
+          <div slot="footer" style="display:flex;justify-content:flex-end;padding-right:10px">
+            <el-button @click="cancelDialog('addRuleForm')" style="margin-right:10px">取 消</el-button>
             <el-button type="primary" :loading="addLiveLoading" @click="dialogAddClass('addRuleForm')"
             >确 定</el-button
             >
-          </span>
+          </div>
         </div>
         <div v-else>
-          <span slot="footer" class="dialog-footer" style="margin-left:270px">
-            <el-button @click="cancelDialog('addRuleForm')">取 消</el-button>
+          <div slot="footer" style="display:flex;justify-content:flex-end;padding-right:10px">
+            <el-button @click="cancelDialog('addRuleForm')" style="margin-right:10px">取 消</el-button>
             <el-button type="primary" :loading="editLiveLoading" @click="editDialogAddClass('addRuleForm')"
             >确 定</el-button
             >
-          </span>
+          </div>
         </div>
       </div>
     </el-dialog>
@@ -486,8 +534,9 @@
           <el-table-column
             prop="name"
             label="课程名称"
-            show-overflow-tooltip
-          ></el-table-column>
+            align="center"
+            show-overflow-tooltip>
+          </el-table-column>
           <el-table-column
             align="center"
             prop="status"
@@ -529,15 +578,14 @@
     import PubSub from "pubsub-js";
     import promptUtil from "../../../utils/promptUtil";
     import stringUtil from "../../../utils/stringUtil";
-    import staticUtil from "../../../utils/staticUtil";
     import pagination from "../../commons/pagination/pagination";
     import vuexUtils from "../../../utils/vuexUtils";
-    import {} from "../../../api/api";
     import "../../../api/restfulapi";
     import vueQr from "vue-qr";
     import childHeader from "../../component/childHeader";
     import {
         qs,
+        uploadAvatarUrl,
         getClassAndStudentByTeacher,
         getTeacherList,
         addLiveClass,
@@ -558,6 +606,7 @@
         data() {
             return {
                 isLimit: 'number',
+                postUrl: uploadAvatarUrl, // 提交封面的url
                 routerConfig: [
                     {name: vuexUtils.checkMenuExist(this, "online").target.name, to: ""}
                 ],
@@ -596,6 +645,7 @@
                 addClassDialogVisible: false,
                 shareDialogVisible: false, //分享dialog
                 activeName: "first",
+                defaultCoverUrl: 'https://www.alsrobot.vip/als_classroom/public/static/live_cover.png', // 默认封面图地址
                 addRuleForm: {
                     //创建课程表单
                     name: "",
@@ -608,6 +658,7 @@
                     classes: [],
                     type: "1",
                     limit: false,
+                    coverUrl:'', //封面图
                 },
                 rules: {
                     // number: [
@@ -701,6 +752,20 @@
             this.getClassTableList();
         },
         methods: {
+            handleCoverSuccess(res, file){
+                this.addRuleForm.coverUrl = res
+            },
+            beforeCoverUpload(file){
+                const isJPG = file.type === "image/png" || file.type === "image/jpeg";
+                const isLt2M = file.size / 1024 / 1024 < 2;
+                if (!isJPG) {
+                    this.$message.error('上传封面图片只能是 jpg/png 格式!');
+                }
+                if (!isLt2M) {
+                    this.$message.error('上传封面图片大小不能超过 2MB!');
+                }
+                return isJPG && isLt2M;
+            },
             searchName() {
                 this.searchLoading=true
                 this.getClassTableList();
@@ -800,6 +865,7 @@
                 const idsObj = this.getClassAndStudentIDS(this.addRuleForm.classes);
                 this.$refs[formName].validate(valid => {
                     if (valid) {
+                        const videoCover = this.addRuleForm.coverUrl && this.addRuleForm.coverUrl!='' ? this.addRuleForm.coverUrl : this.defaultCoverUrl
                         addLiveClass(
                             qs.stringify({
                                 school_id: storageUtil.readTeacherInfo().school_id,
@@ -816,7 +882,8 @@
                                 max_users: this.sendLimit == true ? 0 : this.addRuleForm.num,
                                 //class_id:idsObj.classes,
                                 student_ids: idsObj.students,
-                                is_video_main: this.addRuleForm.type
+                                is_video_main: this.addRuleForm.type,
+                                img: videoCover,
                             })
                         )
                             .then(res => {
@@ -889,7 +956,8 @@
                                 endtime: changeStartTime + longTime,
                                 max_users: this.sendLimit == true ? 0 : this.addRuleForm.num,
                                 student_ids: idsObj.students,
-                                is_video_main: this.addRuleForm.type
+                                is_video_main: this.addRuleForm.type,
+                                img: this.addRuleForm.coverUrl
                             })
                         )
                             .then(res => {
@@ -930,7 +998,8 @@
                     teacherArray: [],
                     classes: [],
                     type: "1",
-                    limit: false
+                    limit: false,
+                    coverUrl:'',
                 };
             },
             // 获取选择的班级id和学生id
@@ -1012,6 +1081,9 @@
                                 res.data.forEach(res => {
                                     const obj = {
                                         id: res.id,
+                                        cover: res.cover,
+                                        createDate: res.create_date,
+                                        createName: res.create_name,
                                         status: res.bofang_msg,
                                         name: res.title,
                                         backStatus: res.back_msg, //转码成功 转码中
@@ -1110,7 +1182,7 @@
             },
             // 进入教室dialog中下载客户端
             downloadUser() {
-                window.open('http://111.40.195.240/cache/img.baijiayun.com/video/bjyclient/win/www/bjyclient6.9.3.zip?ich_args2=641-05153611002820_4a77fa21a15b1d1ff223ba6409e5bf3f_10001002_9c896c2cdfcbf9d0913b518939a83798_e3244c0c04322c1f6363d3e2cf7c3172', "_blank");
+                window.open('https://alseduline.oss-cn-shenzhen.aliyuncs.com/uploads/live/clientinstaller.zip', "_blank");
             },
             //进入教室dialog网页下载
             dialogEnterClass() {
@@ -1306,5 +1378,44 @@
 
   .marginTop {
     margin-top: 10px;
+  }
+  .avatar-uploader{
+    width: 160px;
+    border: 1px dashed #d9d9d9;
+    border-radius: 6px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  }
+  .avatar-uploader .el-upload:hover {
+    border-color: #409EFF;
+  }
+  .avatar-uploader-icon {
+    font-size: 28px;
+    color: #8c939d;
+    width: 160px;
+    height: 160px;
+    line-height: 160px;
+    text-align: center;
+  }
+  .avatar {
+    width: 160px;
+    height: 160px;
+    display: block;
+  }
+  .image-wrapper{
+    position: relative;
+    cursor: pointer;
+    margin-right: 20px;
+  }
+  .image{
+    width: 105px;
+    height: 84px;
+    border-radius: 5px;
+    object-fit: cover;
+    transition: all 0.2s ease-out 0.1s;
+  }
+  .image:hover{
+    transform: scale(1.05)
   }
 </style>

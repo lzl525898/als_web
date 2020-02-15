@@ -787,12 +787,11 @@
                     promptUtil.warning(this, "请按要求填写学生姓名");
                     return;
                 }
-                let valdate = /^[\u4E00-\u9FA5\s]+$/;
-                if (!valdate.test(this.addStudentFromTextarea.trim())) {
-                    promptUtil.warning(this, "请输入汉字");
+                let valdate = /[,，]/g;
+                if (valdate.test(this.addStudentFromTextarea.trim())) {
+                    promptUtil.warning(this, "只能输入汉字、英文、数字");
                     return;
                 }
-
                 this.isLoadingWithAdd = true;
                 addStudent(
                     qs.stringify({
@@ -808,6 +807,7 @@
                             const loading = promptUtil.loading(this);
                             this.getAllStudentList(loading);
                             this.resetAddStuWithDialog();
+                            this.isLoadingWithAdd = false;
                         } else {
                             promptUtil.warning(this, res.msg);
                             this.isLoadingWithAdd = false
