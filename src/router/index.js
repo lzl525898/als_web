@@ -86,6 +86,7 @@ const scratch = resolve => require(['@/components/home/scratch'],resolve)
 const discover = resolve => require(['@/components/view/discover'],resolve)
 const workContent = resolve => require(['@/components/view/workContent'],resolve)
 const personCenter = resolve => require(['@/components/view/personCenter'],resolve)
+const liveStatistics = resolve => require(['@/components/teachers/report/liveStatistics'],resolve)
 
 Vue.use(Router)
 
@@ -168,7 +169,12 @@ export default new Router({
           name: 'flowStatistics',
           meta: { requireAuth: true },
           component: flowStatistics,
-        },{
+      },{
+          path: ROUTER_STATISTICS_LIVE, // 直播统计
+          name: 'liveStatistics',
+          meta: { requireAuth: true },
+          component: liveStatistics,
+      },{
         path: ROUTER_RECORD_LIST+':type/:info', // 报告列表统计（1.class 班级详情、2.record 上课记录）
         name: 'reportDetailList',
         meta: { requireAuth: true },

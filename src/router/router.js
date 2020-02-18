@@ -24,6 +24,8 @@ global.ROUTER_REPORT_INFO = '/report/student/' //学生学情报告
 global.ROUTER_REPORT_CREATE = '/report/student/create/' //创建学情报告
 global.ROUTER_REPORT_EDIT = '/report/student/edit/' //编辑学情报告
 
+global.ROUTER_STATISTICS_LIVE = '/liveStatistics' // 直播统计
+
 global.ROUTER_TASK = '/taskMan' // 任务管理
 
 

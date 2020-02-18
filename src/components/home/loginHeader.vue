@@ -352,7 +352,7 @@
                 },
                 // 弹出框 修改昵称表单验证
                 firstRules: {
-                    nick: [{pattern: /^[\u2E80-\u9FFF]+$/, message: "只能输入汉字"}]
+                    nick: [{pattern: /^[0-9a-zA-Z]|[\u4e00-\u9fa5]+$/, message: "含有特殊字符"}]
                 },
                 isCollapse: false,
                 activeName: "first", //table切换

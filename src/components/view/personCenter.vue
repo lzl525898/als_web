@@ -162,9 +162,9 @@
         if (!value) {
           return callback(new Error('真实姓名不能为空'));
         }else{
-          let pattern = new RegExp("[`~!@#$^&*()=|{}':;',\\[\\].<>/?~！@#￥……&*（）——|{}【】‘；：”“'。，、？1234567890]")
+          let pattern = new RegExp("/^[0-9a-zA-Z]|[\u4e00-\u9fa5]+$/")
           if(pattern.test(value)){
-            callback(new Error('存在数字或特殊字符'));
+            callback(new Error('含有特殊字符'));
           }
         }
       }
