@@ -522,10 +522,10 @@
             <!--            <el-form-item>-->
             <!--              <span style="font-size: 12px;color: #606266">结束时间与开始时间间隔需大于15分钟并小于24小时</span>-->
             <!--            </el-form-item>-->
-            <el-form-item label="最大并发量：" prop="maxAmount">
+<!--            <el-form-item label="最大并发量：" prop="maxAmount">-->
               <!--              <el-input v-model="ruleForm.maxAmount" placeholder="请输入最大并发量"></el-input>-->
-              <el-slider v-model="ruleForm.maxAmount" :max="10" :min="1"></el-slider>
-            </el-form-item>
+<!--              <el-slider v-model="ruleForm.maxAmount" :max="10" :min="1"></el-slider>-->
+<!--            </el-form-item>-->
 
             <el-form-item>
               <el-button type="primary" @click="saveAddLiveInformation" :disabled="saveAddInfoDisabled">保存</el-button>
@@ -1315,7 +1315,7 @@
                     classification: this.ruleForm.classification,
                     teacher_id: this.currentSelectTeacher,
                     school_ids: this.currentCheckBox,
-                    max_users: this.ruleForm.maxAmount,
+                    max_users: 0, // 不设限制
                     con: this.ruleForm.liveDescribed,
                     // starttime: moment(this.ruleForm.shelfUnderTimeData[0]).format("YYYY-MM-DD HH:mm:ss"),//开播时间
                     // endtime: moment(this.ruleForm.shelfUnderTimeData[1]).format("YYYY-MM-DD HH:mm:ss"),

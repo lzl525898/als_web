@@ -16,6 +16,12 @@
     <!--      输入表单-->
     <div class="search">
       <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
+        <el-form-item label="直播主讲：" prop="liveTeacher">
+          <el-input v-model="ruleForm.liveTeacher" placeholder="请输入直播主讲人"></el-input>
+        </el-form-item>
+        <el-form-item label="直播机构：" prop="liveOrgan">
+          <el-input v-model="ruleForm.liveOrgan" placeholder="请输入直播机构"></el-input>
+        </el-form-item>
         <el-form-item label="直播名称：" prop="liveName">
           <el-input v-model="ruleForm.liveName" placeholder="请输入直播名称"></el-input>
         </el-form-item>
@@ -90,6 +96,8 @@
       return {
         liveClassUrl:'',//跳转直播管理地址
         ruleForm: {
+          liveTeacher:'', // 直播主讲人
+          liveOrgan:'', //直播机构
           liveName: '',
           liveShelUnderTime: [],
           liveDetail: '',
@@ -98,6 +106,12 @@
           liveModel: '',
         },
         rules: {
+          liveTeacher: [
+              {required: true, message: '请输入直播主讲人', trigger: 'blur'},
+          ],
+          liveOrgan: [
+              {required: true, message: '请输入直播机构', trigger: 'blur'},
+          ],
           liveName: [
             {required: true, message: '请输入直播名称', trigger: 'blur'},
           ],
@@ -123,10 +137,12 @@
         if (res.code == SUCCESS_CODE) {
           loading.close();
           if (res.data && res.data != '[]') {
-            this.ruleForm.liveName = res.data.title,
-              this.ruleForm.liveDetail = res.data.con,
-              this.ruleForm.open = res.data.if_gk == '1' ? false : true,
-              this.ruleForm.liveModel = res.data.type,
+              this.ruleForm.liveTeacher = res.data.teacher
+              this.ruleForm.liveOrgan = res.data.organ
+              this.ruleForm.liveName = res.data.title
+              this.ruleForm.liveDetail = res.data.con
+              this.ruleForm.open = res.data.if_gk == '1' ? false : true
+              this.ruleForm.liveModel = res.data.type
               this.ruleForm.liveShelUnderTime.push(res.data.starttime)
              this.ruleForm.liveShelUnderTime.push(res.data.endtime)
 

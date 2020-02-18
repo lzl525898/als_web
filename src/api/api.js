@@ -1,16 +1,16 @@
 import axios from 'axios'
 import qs from 'qs'
 import storageUtil from '../utils/storageUtil'
-import promptUtil from '../utils/promptUtil'
 import router from '../router'
 import './restfulapi'
+const WEB_URL = 'http://101.200.56.18:9528'
 //const baseURL = 'http://101.200.56.18:9528/als_classroom/public/index.php/index'
 // const baseURL = 'https://company.alsrobot.vip/als_classroom/public/index.php/index'
 // const baseURL = 'https://www.alsrobot.vip/als_classroom/public/index.php/index'
 //const baseURL = 'http://vip.alsrobot.com/als_classroom/public/index.php/index'
 //const baseURL = 'http://101.200.56.18:9528/als_classroom/public/index.php/index'
 // const baseURL = 'http://192.168.1.177:9527/admin.php/index'
-const baseURL = 'http://101.200.56.18:9528/als_classroom/public/index.php/index'
+const baseURL = WEB_URL + '/als_classroom/public/index.php/index'
 // const baseURL = '/api'
 window.baseURL=baseURL
 global.DEBUG = true
@@ -527,6 +527,10 @@ const getTaskTypeInformation = params => {
 
 
 //====================================直播管理=======================================
+// 通过参加码 获取weburl地址
+const reqWebClient = params => {
+  return axios.post(`live/code_to_weburl`, params).then(res => res.data)
+}
 //获取学生所有直播课数据
 const getAllLivingWithStudent = params => {
   return axios.post(`live_school/student_select_room_all`, params).then(res => res.data)
@@ -1236,6 +1240,7 @@ const disableLive = params => {
 export {
   qs,
   baseUrl,
+  WEB_URL,
   getLogInfo,
   getHandleLogInfo,
   businessAnalysis,
@@ -1348,6 +1353,7 @@ export {
   saveAddInformation,
   getLivingWithStudent,
   getPlaybackListWithStudent,
+  reqWebClient,
   getAllLivingWithStudent,
   getLiveManagementList,
   getAllSchool,

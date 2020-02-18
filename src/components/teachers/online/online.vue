@@ -366,10 +366,40 @@
       width="300px"
       :before-close="handleClose"
     >
+      <el-dialog
+        top="28vh"
+        width="540px"
+        title="客户端下载"
+        :visible.sync="innerVisible"
+        append-to-body>
+        <div style="height:200px">
+          <div style="color:#515151;font-size:20px;padding: 0 20px 10px 20px;font-weight:bold;margin-top:-10px">高清视频稳定&流畅</div>
+          <div style="padding:0 20px 10px 20px" >客户端支持UDP私有协议，延时低、抗网络抖动强，
+            为您提供更流畅更稳定的互动直播教学体验</div>
+          <div style="color:#515151;font-size:20px;padding: 0 20px 10px 20px;font-weight:bold;">电子白板、多格式课件</div>
+          <div style="padding:0 20px 30px 20px" >支持便捷的云端在线同步与分享，板书、 画图随心所欲，Office、图片通通支持</div>
+          <div style="display:flex;justify-content:center;">
+            <el-dropdown placement="top-end">
+              <el-button icon="el-icon-mobile-phone" type="primary" style="width:160px">家长端入口</el-button>
+              <el-dropdown-menu slot="dropdown">
+                <div style="margin:0 5px 5px 5px">
+                  <div style="margin-left:5px;margin-right:5px">
+                    <img style="width: 100px; height: 100px" :src="qrCodeMobileImg"/>
+                  </div>
+                  <div style="font-size: 14px;color:#333;text-align: center;margin-top:5px;">微信扫一扫</div>
+                  <div style="font-size: 10px;color:#888;text-align: center;margin-top:5px;">进入家长端</div>
+                </div>
+              </el-dropdown-menu>
+            </el-dropdown>
+            <el-button icon="el-icon-mobile-phone" type="primary" style="width:160px;margin-left:10px" @click="downloadUser(1)">Mac版下载</el-button>
+            <el-button icon="el-icon-mobile-phone" type="primary" style="width:160px" @click="downloadUser(2)">Windows版下载</el-button>
+          </div>
+        </div>
+      </el-dialog>
       <span style="margin-top: -15px">请下载最新客户端，客户端观看直播更流畅，功能更强大。</span>
       <div style="display:flex;justify-content:center;margin-top:20px;align-items:center;">
            <span slot="footer" class="dialog-footer">
-        <el-button type="primary" size="small" @click="downloadUser"
+        <el-button type="primary" size="small" @click= "innerVisible=true"
         >下载客户端</el-button>
         <el-button type="primary" size="small" @click="dialogEnterClass">网页进入教室</el-button
         >
@@ -592,10 +622,8 @@
         getLiveList,
         editLiveClass,
         delTableListLiveInformation,
-        disableLive
     } from "../../../api/api";
     import storageUtil from "../../../utils/storageUtil";
-    import loginHeader from "../../home/loginHeader";
 
     export default {
         components: {
@@ -605,6 +633,7 @@
         },
         data() {
             return {
+                qrCodeMobileImg: require('../../../../static/images/base/moblie.png'),
                 isLimit: 'number',
                 postUrl: uploadAvatarUrl, // 提交封面的url
                 routerConfig: [
@@ -693,6 +722,7 @@
                 limitDisable: false,
                 sendLimit: null, //是否选择上限 true传0
                 enterClassDialogVisible: false, //进入教室dialog
+                innerVisible:false, //打卡下载对话框
                 webUrl: "",
                 clientUrl: "",
                 sign: "", //创建直播1，编辑直播2
@@ -1181,8 +1211,12 @@
                 }catch(e){}
             },
             // 进入教室dialog中下载客户端
-            downloadUser() {
-                window.open('https://alseduline.oss-cn-shenzhen.aliyuncs.com/uploads/live/clientinstaller.zip', "_blank");
+            downloadUser(type) {
+                if(type==1){ // mac
+                    window.open('https://alseduline.oss-cn-shenzhen.aliyuncs.com/uploads/live/clientmac.dmg', "_blank");
+                }else if(type==2){ // windows
+                    window.open('https://alseduline.oss-cn-shenzhen.aliyuncs.com/uploads/live/clientinstaller.zip', "_blank");
+                }
             },
             //进入教室dialog网页下载
             dialogEnterClass() {

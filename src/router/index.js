@@ -87,6 +87,7 @@ const discover = resolve => require(['@/components/view/discover'],resolve)
 const workContent = resolve => require(['@/components/view/workContent'],resolve)
 const personCenter = resolve => require(['@/components/view/personCenter'],resolve)
 const liveStatistics = resolve => require(['@/components/teachers/report/liveStatistics'],resolve)
+const liveIntoClassroom = resolve => require(['@/components/teachers/liveManagement/intoLive'],resolve)
 
 Vue.use(Router)
 
@@ -537,6 +538,11 @@ export default new Router({
       name: 'loginHeader',
       meta: { requireAuth: false },
       component: loginHeader
+    }, { // 进入直播间
+      path: ROUTER_INTO_LIVE,
+      name: 'liveIntoClassroom',
+      meta: {requireAuth: false},
+      component: liveIntoClassroom
     }]
 })
 

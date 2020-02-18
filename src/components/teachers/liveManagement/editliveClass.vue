@@ -115,10 +115,10 @@
         <el-form-item>
           <span style="font-size: 12px;color: #606266">结束时间与开始时间间隔需大于15分钟并小于24小时</span>
         </el-form-item>
-        <el-form-item label="最大并发量：" prop="maxAmount">
-          <!--              <el-input v-model="ruleForm.maxAmount" placeholder="请输入最大并发量"></el-input>-->
-          <el-slider v-model="ruleForm.maxAmount" :max="10" :min="1"></el-slider>
-        </el-form-item>
+<!--        <el-form-item label="最大并发量：" prop="maxAmount">-->
+<!--          &lt;!&ndash;              <el-input v-model="ruleForm.maxAmount" placeholder="请输入最大并发量"></el-input>&ndash;&gt;-->
+<!--          <el-slider v-model="ruleForm.maxAmount" :max="10" :min="1"></el-slider>-->
+<!--        </el-form-item>-->
 
         <el-form-item>
           <el-button type="primary" @click="saveAddLiveInformation" :disabled="saveAddInfoDisabled">保存</el-button>
@@ -174,7 +174,7 @@
                     title: '',
                     // classification: '',
                     create: '',
-                    maxAmount: 1,
+                    maxAmount: 0,
                     picture: [], // 上传图片信息
                     liveDescribed: '',//直播简介
                     shelfTime: '',
@@ -219,7 +219,7 @@
                                     this.currentSelectId = res.data.teacher_id
                                     // this.ruleForm.pictureList = res.data.pic
                                     this.ruleForm.liveDescribed = res.data.con
-                                    this.ruleForm.maxAmount = res.data.max_users
+                                    this.ruleForm.maxAmount = 0
                                     this.liveUsPictureList.push(res.data.pic[0].url)
                                     res.data.school_ids.split(',').map(item => {
                                         this.allSchool.forEach(ids => {

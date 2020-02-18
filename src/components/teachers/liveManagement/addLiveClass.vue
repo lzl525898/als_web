@@ -15,6 +15,12 @@
     <!--      输入表单-->
     <div class="search">
       <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
+        <el-form-item label="直播主讲：" prop="liveTeacher">
+          <el-input v-model="ruleForm.liveTeacher" placeholder="请输入直播主讲人"></el-input>
+        </el-form-item>
+        <el-form-item label="直播机构：" prop="liveOrgan">
+          <el-input v-model="ruleForm.liveOrgan" placeholder="请输入直播机构"></el-input>
+        </el-form-item>
         <el-form-item label="直播名称：" prop="liveName">
           <el-input v-model="ruleForm.liveName" placeholder="请输入直播名称"></el-input>
         </el-form-item>
@@ -69,24 +75,15 @@
     import promptUtil from "../../../utils/promptUtil";
     import {
         qs,
-        uploadFileUrl,
-        getTeacherList,
-        getLiveManagementList,
-        saveAddInformation,
-        getAllSchool,
-        searchLiveList,
-        disableAddRecycleBin,
-        removeDisable,
-        deleteTableListCourseInformation,
         saveCreateClassInformation,
-
-
     } from "@/api/api.js";
 
     export default {
         data() {
             return {
                 ruleForm: {
+                    liveTeacher:'', // 直播主讲人
+                    liveOrgan:'', //直播机构
                     liveName: '',
                     liveShelUnderTime: [],
                     liveDetail: '',
@@ -95,6 +92,12 @@
                     liveModel: 3,
                 },
                 rules: {
+                    liveTeacher: [
+                        {required: true, message: '请输入直播主讲人', trigger: 'blur'},
+                    ],
+                    liveOrgan: [
+                        {required: true, message: '请输入直播机构', trigger: 'blur'},
+                    ],
                     liveName: [
                         {required: true, message: '请输入直播名称', trigger: 'blur'},
                     ],
@@ -125,6 +128,8 @@
                 const moment = require("moment");
                 const loading = promptUtil.loading(this);
                 saveCreateClassInformation(qs.stringify({
+                    teacher: this.ruleForm.liveTeacher,
+                    organ: this.ruleForm.liveOrgan,
                     subject_id: this.$route.params.id,
                     title: this.ruleForm.liveName,
                     con: this.ruleForm.liveDetail,
@@ -144,7 +149,6 @@
                             this.ruleForm.liveShelUnderTime.length = 0
                             this.$router.push({path: `/liveManagement/liveClass/` + this.$route.params.id});
                         }
-
                     } else if (res.code == ERROR_CODE) {
                         promptUtil.error(this, res.msg);
                         loading.close();

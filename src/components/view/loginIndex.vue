@@ -5,7 +5,7 @@
         <div class="containerRef">
           <div class="left">
             <img src="../../../static/images/base/newIndex/smallLogo.png" alt class="loginWidth">
-            <p style="float: left;line-height: 60px;padding-left: 8px"><span
+            <p style="float: left;padding-left: 8px;line-height: 30px"><span
               style="font-size: 25px;color: #fff">奥松云课堂</span><b
               style="font-size: 20px;color: #fff;font-weight: normal">（AEP）</b></p>
           </div>
@@ -63,29 +63,32 @@
                       </el-form>
                     </div>
                     <div v-show="loginDivStatus==2">
-                      <p style="text-align: center;font-size: 16px">忘记密码</p>
-                      <el-form :model="phoneRuleForm" :rules="phoneRules" ref="phoneRuleForm" class="demo-ruleForm">
-                        <el-form-item prop="phone">
-                          <el-input v-model="phoneRuleForm.phone" placeholder="请输入手机号"
-                                    @keydown.native.enter="verifyCodeEnter"></el-input>
-                        </el-form-item>
-                        <el-form-item prop="code">
-                          <el-input v-model="phoneRuleForm.code" placeholder="请输入验证码" style="width: 173px"
-                                    @keydown.native.enter="verifyCodeEnter"></el-input>
-                          <el-button type="primary" @click="getCode"
-                                     style="width: 90px;padding:0;margin:0;height: 40px;"
-                                     :disabled="isVerifyBtnAble">{{verifyBtnContent}}
-                          </el-button>
-                        </el-form-item>
-                        <el-form-item>
-                          <el-button type="danger" round class="login-btn" @click="verifyCodeEnter"
-                                     :loading="isSMSLoading">确认
-                          </el-button>
-                        </el-form-item>
-                      </el-form>
-                      <el-link :underline="false" style="font-size: 12px;margin-top: 10px"
-                               @click="goBackLogin">返回登录
-                      </el-link>
+                      <div style="margin-top: -22px">
+                        <p style="text-align: center;font-size: 16px">忘记密码</p>
+                        <el-form :model="phoneRuleForm" :rules="phoneRules" ref="phoneRuleForm" class="demo-ruleForm">
+                          <el-form-item prop="phone">
+                            <el-input v-model="phoneRuleForm.phone" placeholder="请输入手机号"
+                                      @keydown.native.enter="verifyCodeEnter"></el-input>
+                          </el-form-item>
+                          <el-form-item prop="code">
+                            <el-input v-model="phoneRuleForm.code" placeholder="请输入验证码" style="width: 173px"
+                                      @keydown.native.enter="verifyCodeEnter"></el-input>
+                            <el-button type="primary" @click="getCode"
+                                       style="width: 90px;padding:0;margin:0;height: 40px;"
+                                       :disabled="isVerifyBtnAble">{{verifyBtnContent}}
+                            </el-button>
+                          </el-form-item>
+                          <el-form-item>
+                            <el-button type="danger" round class="login-btn" @click="verifyCodeEnter"
+                                       :loading="isSMSLoading">确认
+                            </el-button>
+                          </el-form-item>
+                        </el-form>
+                        <el-link :underline="false" style="font-size: 12px;margin-top: 10px"
+                                 @click="goBackLogin">返回登录
+                        </el-link>
+                      </div>
+
                     </div>
                     <div v-show="loginDivStatus==1">
                       <!--                      <p>{{$t(`message.login`)}}</p>-->
@@ -116,7 +119,7 @@
                             </el-col>
                             <el-col :span="8" :offset="2">
                               <img @click="changeVerificationCodeUrl" :src="verificationCodeUrl"
-                                   style="display: block;margin-top: 33px;margin-left: 10px"
+                                   style="display: block;margin-left: 10px"
                                    alt="">
                             </el-col>
                           </el-row>
@@ -129,13 +132,14 @@
                         </el-form-item>
                         <el-form-item>
                           <el-button type="primary" round
-                                     style="margin-top: 6px;margin-bottom: 30px;text-align: center;display: inline-block"
+                                     style="margin-top: 6px;text-align: center;display: inline-block;position: absolute;bottom: -30px;"
                                      class="login-btn" @click="loginSubmit"
                                      :disabled="!ruleForm.agree">登录
                           </el-button>
                         </el-form-item>
+                        <div style="height: 40px"></div>
                       </el-form>
-                      <el-link :underline="false" style="position: absolute;bottom: 115px;right: 0;font-size: 12px;"
+                      <el-link :underline="false" style="position: absolute;bottom: 122px;right: 0;font-size: 12px;"
                                @click="loginDivStatus=2">忘记了您的密码？
                       </el-link>
                     </div>
@@ -144,9 +148,8 @@
               </div>
             </div>
           </div>
-
           <div class="footer">奥松智能 ｜
-            <el-link :underline="false" href="http://www.beian.miit.gov.cn" target="_blank" style="color:#fff">
+            <el-link :underline="false" href="http://www.beian.miit.gov.cn" target="_blank" style="color:#666;font-size: 12px;margin-top: -4px">
               粤ICP备19107383号-1
             </el-link>
           </div>
@@ -210,7 +213,7 @@
                         callback();
                     } else {
                         checkAccountExist(qs.stringify({
-                            username: value,
+                            username: value.trim(),
                         })).then(res => {
                             if (res.code == SUCCESS_CODE) {
                             } else if (res.code == ERROR_CODE) {
@@ -543,10 +546,10 @@
 </script>
 
 <style scoped>
-  * {
-    margin: 0;
-    padding-left: 0;
-  }
+  /** {*/
+  /*  margin: 0;*/
+  /*  padding: 0;*/
+  /*}*/
 
   ul li {
     list-style: none;
@@ -586,7 +589,7 @@
   .nav {
     height: 60px;
     /* border-bottom: 2px #008ccf solid; */
-    border-bottom: 2px #fff solid;
+    /*border-bottom: 2px #fff solid;*/
     overflow: hidden;
     background-color: #047FD8;
   }
@@ -636,6 +639,8 @@
   .ulList {
     list-style: none;
     font-size: 20px;
+    height: 60px;
+    margin: 0;
     overflow: hidden;
   }
 
@@ -656,6 +661,7 @@
   }
 
   .ulList li:hover {
+    border-bottom: 30px;
     border-bottom: 2px #fff solid;
   }
 
@@ -708,7 +714,7 @@
     width: 270px;
     /*background-color: blue;*/
     margin: 0 auto;
-    margin-top: 30px;
+    margin-top: 35px;
   }
 
   .contentBoxRightBox > h3 {
@@ -719,14 +725,14 @@
 
   .footer {
     font-size: 12px;
-    color: #fff;
+    color: #666;
     text-align: center;
     /*font-family: SimHei;*/
     font-family: 'syRegular';
     position: absolute;
     left: 50%;
     bottom: 10px;
-    margin-left: -162px;
+    transform: translate(-50%);
   }
 
   /*.loginBox {*/
@@ -750,13 +756,13 @@
     /*border-bottom: 1px #eee solid;*/
   }
 
-  .el-input {
-    padding-top: 25px;
-  }
+  /*.el-input {*/
+  /*  padding-top: 25px;*/
+  /*}*/
 
   .login-btn {
     width: 100%;
-    margin-top: 25px;
+    /*margin-top: 25px;*/
     text-align: center;
     font-family: SimHei;
   }

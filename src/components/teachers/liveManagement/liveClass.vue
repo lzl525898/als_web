@@ -95,15 +95,15 @@
         >
         </el-table-column>
         <el-table-column
-          prop="className"
+          prop="speakerMan"
           align="center"
-          label="直播课程名称"
+          label="主讲人"
         >
         </el-table-column>
         <el-table-column
-          prop="cloudClassroomNickname"
+          prop="className"
           align="center"
-          label="云课堂昵称"
+          label="直播课程名称"
         >
         </el-table-column>
         <el-table-column
@@ -111,20 +111,10 @@
           label="房间号"
           align="center">
         </el-table-column>
-        <!--封面-->
-        <!--        <el-table-column label="教师头像" align="center">-->
-        <!--          <template slot-scope="scope">-->
-        <!--            <div v-if="scope.row.avtar==''">未上传</div>-->
-        <!--            <div v-else>-->
-        <!--              <img :src="scope.row.avtar" width="40" height="40" class="head_pic"/>-->
-        <!--            </div>-->
-        <!--          </template>-->
-        <!--        </el-table-column>-->
-
         <el-table-column
-          prop="adminInviteCode"
+          prop="studentInviteCode"
           align="center"
-          label="管理员邀请码"
+          label="学生邀请码"
         >
         </el-table-column>
         <el-table-column
@@ -145,35 +135,10 @@
           align="center">
         </el-table-column>
         <el-table-column
-          prop="open"
-          label="是否公开"
+          prop="organ"
+          label="机构名称"
           align="center">
         </el-table-column>
-        <!--                 <el-table-column prop="maxAmount" align="center" label="是否公开" >-->
-        <!--                  <template slot-scope="scope">-->
-        <!--                    <span-->
-        <!--                      v-if="scope.row.maxAmount=1"-->
-        <!--                      style="color: orangered"-->
-        <!--                    >公开</span>-->
-        <!--                    <span-->
-        <!--                      v-if="scope.row.maxAmount=0"-->
-        <!--                      style="color:#ff9900"-->
-        <!--                    >不公开</span>-->
-
-        <!--                  </template>-->
-        <!--                </el-table-column>-->
-
-
-        <!--        <el-table-column-->
-        <!--          prop="whetherAudit"-->
-        <!--          label="是否审核"-->
-        <!--          align="center">-->
-        <!--        </el-table-column>-->
-        <!--          <el-table-column-->
-        <!--            prop="whetherDisable"-->
-        <!--            label="是否禁用"-->
-        <!--            align="center">-->
-        <!--          </el-table-column>-->
         <el-table-column align="center" label="操作" width="400">
           <template slot-scope="scope">
             <el-button
@@ -194,18 +159,6 @@
               @click="showLiveClassEditDialog({index: scope.$index, row:scope.row})"
               v-if="scope.row.bofang_type==1" :disabled="disable=true">编辑
             </el-button>
-            <!--            <el-button-->
-            <!--              size="mini"-->
-            <!--              type="danger"-->
-            <!--              @click="LiveClassDisable({index: scope.$index, row:scope.row})"-->
-            <!--              v-if="scope.row.bofang_type==1" :disabled="disable=true">禁用-->
-            <!--            </el-button>-->
-            <!--            <el-button-->
-            <!--              size="mini"-->
-            <!--              type="danger"-->
-            <!--              @click="LiveClassDisable({index: scope.$index, row:scope.row})"-->
-            <!--              v-if="scope.row.bofang_type==0||scope.row.bofang_type==2" >禁用-->
-            <!--            </el-button>-->
             <el-button
               size="mini"
               type="danger"
@@ -215,8 +168,8 @@
             <el-button
               size="mini"
               type="primary"
-              @click.native="newLiveClassStudent({index: scope.$index, row:scope.row})"
-            >学生上课地址
+              @click.native="returnShareInfo({index: scope.$index, row:scope.row})"
+            >直播课分享
             </el-button>
             <el-button
               size="mini"
@@ -224,12 +177,6 @@
               @click.native="newLiveClass({index: scope.$index, row:scope.row})"
             >教师讲课
             </el-button>
-            <!--            <el-button-->
-            <!--              size="mini"-->
-            <!--              type="primary"-->
-            <!--              @click="playBackLiveClass({index: scope.$index, row:scope.row})"-->
-            <!--              v-if="scope.row.bofang_type==2">回放观看-->
-            <!--            </el-button>-->
           </template>
         </el-table-column>
       </el-table>
@@ -245,7 +192,22 @@
         ></el-pagination>
       </el-row>
     </div>
-
+    <el-dialog
+      title="分享信息"
+      :visible.sync="shareDialogVisible"
+      width="30%">
+      <div>
+        <el-input
+          readonly
+          type="textarea"
+          autosize
+          v-model="shareInfo"
+        />
+      </div>
+      <span slot="footer" class="dialog-footer">
+    <el-button type="primary" @click="shareDialogVisible = false">确 定</el-button>
+  </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -255,24 +217,17 @@
     import promptUtil from "../../../utils/promptUtil";
     import {
         qs,
-        uploadFileUrl,
-        getTeacherList,
-        getLiveManagementList,
-        saveAddInformation,
-        getAllSchool,
-        searchLiveList,
-        disableAddRecycleBin,
-        removeDisable,
-        deleteTableListCourseInformation,
+        WEB_URL,
         getCreateClassInformation,
         disableTableListLiveClass,
-        getLiveClassUrl
-
     } from "@/api/api.js";
 
     export default {
         data() {
             return {
+                shareInfo:'',
+                currentLiveIndex: 0,
+                shareDialogVisible:false,
                 sendCourseId: '',
                 saveDisableTableListArrayId: '',//表格中禁用row.id
                 sendDisableTableListArrayId: [],//传给后台表格中的禁用ID
@@ -328,6 +283,10 @@
                         //  console.log('this.tableData.maxAmount66', res.data)
                         for (var i = 0; i < res.data.length; i++) {
                             const obj = {
+                                organ: res.data[i].organ, // 机构名称
+                                speakerMan: res.data[i].teacher, // 主讲人
+                                sTime: res.data[i].s,
+                                eTime: res.data[i].e,
                                 student_url: res.data[i].user_url,
                                 id: res.data[i].id,
                                 create: res.data[i].create_name,
@@ -340,7 +299,7 @@
                                 whetherDisable: res.data[i].status,
                                 bofangUrl: res.data[i].bofang_url,
                                 bofang_type: res.data[i].bofang_type,
-                                adminInviteCode: res.data[i].admin_code,
+                                studentInviteCode: res.data[i].student_code, // 学生邀请码
                                 teacherInviteCode: res.data[i].teacher_code,
                                 cloudClassroomNickname: res.data[i].teacher_name
 
@@ -405,6 +364,10 @@
                         if (res.data && res.data != '[]') {
                             for (var i = 0; i < res.data.length; i++) {
                                 const obj = {
+                                    organ: res.data[i].organ, // 机构名称
+                                    speakerMan: res.data[i].teacher, // 主讲人
+                                    sTime: res.data[i].s,
+                                    eTime: res.data[i].e,
                                     student_url: res.data[i].user_url,
                                     id: res.data[i].id,
                                     create: res.data[i].create_name,
@@ -518,43 +481,59 @@
                 //   promptUtil.timeout(this)
                 // })
             },
-            // 返回学生上课地址
-            newLiveClassStudent(obj) {
-                const msg = '将地址[' + obj.row.student_url + ']分发给学生，访问后直接进入直播页面'
-                this.$alert(msg, '学生上课地址', {
-                    confirmButtonText: '确定',
-                });
+            // 生成详细分享信息
+            genShareInfo(){
+                const moment = require("moment")
+                const liveInfo = this.queryFromServer[this.currentLiveIndex]
+                console.log("liveInfo",liveInfo)
+                let sTime = moment(liveInfo.sTime*1000).format("YYYY/MM/DD HH:mm")
+                let eTime = moment(liveInfo.eTime*1000).format("YYYY/MM/DD HH:mm")
+                this.shareInfo = liveInfo.speakerMan + "｜" + liveInfo.organ + " 邀请您参加" + liveInfo.className + "\n" +
+                    "直播主题：" +  liveInfo.organ + " " + liveInfo.className +"\n" +
+                    "直播时间：" + sTime+ "—" + eTime+"\n" +
+                    "参加码：" + liveInfo.studentInviteCode + "\n" +
+                    "点击链接直接进入直播室：\n" +
+                    WEB_URL + "/live/classroom\n" +
+                    "建议下载客户端观看直播：\n" +
+                    "https://alseduline.oss-cn-shenzhen.aliyuncs.com/uploads/live/clientinstaller.zip"
+            },
+            // 返回分享信息
+            returnShareInfo(obj) {
+                this.currentLiveIndex = obj.index
+                this.genShareInfo()
+                this.shareDialogVisible = true
             },
             //教师讲课
             newLiveClass(obj) {
-                this.sendCourseId = obj.row.id
-                getLiveClassUrl(qs.stringify({
-                    course_id: this.sendCourseId,
-                    user_id: storageUtil.readTeacherInfo().id
-                })).then(res => {
-                    if (res.code == SUCCESS_CODE) {
-                        if (res.data && res.data != '{}') {
-                            //0 未开播    //1 直播  //2 已结束
-                            // console.log('res.data',res.data.type)
-                            if (res.data.type == 0) {
-                                promptUtil.warning(this, res.msg)
-                            }
-                            if (res.data.type == 1) {
-                                window.open(res.data.url, '_blank')
-                            }
-                            if (res.data.type == 2) {
-                                promptUtil.warning(this, res.msg)
-                            }
-                        }
-                    } else if (res.code == ERROR_CODE) {
-                        promptUtil.error(this, res.msg)
-                    } else {
-                        promptUtil.wait(this)
-                    }
-
-                }).catch(error => {
-                    promptUtil.LOG('getLiveClassUrl-err', error)
-                })
+                window.location.href = "baijiacloud://"
+                // this.sendCourseId = obj.row.id
+                // getLiveClassUrl(qs.stringify({
+                //     course_id: this.sendCourseId,
+                //     user_id: storageUtil.readTeacherInfo().id
+                // })).then(res => {
+                //     if (res.code == SUCCESS_CODE) {
+                //         if (res.data && res.data != '{}') {
+                //             //0 未开播    //1 直播  //2 已结束
+                //             // console.log('res.data',res.data.type)
+                //             if (res.data.type == 0) {
+                //                 promptUtil.warning(this, res.msg)
+                //             }
+                //             if (res.data.type == 1) {
+                //                 window.open(res.data.url, '_blank')
+                //             }
+                //             if (res.data.type == 2) {
+                //                 promptUtil.warning(this, res.msg)
+                //             }
+                //         }
+                //     } else if (res.code == ERROR_CODE) {
+                //         promptUtil.error(this, res.msg)
+                //     } else {
+                //         promptUtil.wait(this)
+                //     }
+                //
+                // }).catch(error => {
+                //     promptUtil.LOG('getLiveClassUrl-err', error)
+                // })
             },
         },
         computed: {
