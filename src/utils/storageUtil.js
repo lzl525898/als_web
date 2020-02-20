@@ -31,7 +31,16 @@ export default {
     window.localStorage.setItem(LANG,lang)
   },
   getLang(){
-    return window.localStorage.getItem(LANG) || 'zh'
+    let localLanguage
+    let currentLanguage = navigator.language
+    if(currentLanguage.indexOf("zh")!=-1){
+      localLanguage = 'zh'
+    }else if(currentLanguage.indexOf("en")!=-1){
+      localLanguage = 'en'
+    }else if(currentLanguage.indexOf("TW")!=-1){
+      localLanguage = 'cht'
+    }
+    return window.localStorage.getItem(LANG) || localLanguage
   },
   // 设置是否提醒重新登录提示
   saveOverdue(status){ // 1 需要 0 不需要
@@ -160,11 +169,19 @@ export default {
 
   // 登出
   logout() {
+    localStorage.removeItem(LANG)
     localStorage.removeItem(TEACHER_INFO)
     localStorage.removeItem(LOGIN_STATUS)
     localStorage.removeItem(USER_ROLE)
     localStorage.removeItem(STUDENT_PARAMS)
+    localStorage.removeItem(WORKS_DETAIL)
     localStorage.removeItem(TOKEN)
+    localStorage.removeItem(TASK_ID)
+    localStorage.removeItem(STU_Id)
+    localStorage.removeItem(LAT)
+    localStorage.removeItem(LNG)
+    localStorage.removeItem(ADRDRESS)
+    localStorage.removeItem(AREA)
     localStorage.removeItem(OVERDUE)
   }
 }

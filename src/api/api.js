@@ -3,15 +3,16 @@ import qs from 'qs'
 import storageUtil from '../utils/storageUtil'
 import router from '../router'
 import './restfulapi'
-const WEB_URL = 'http://101.200.56.18:9528'
+// const WEB_URL = 'http://101.200.56.18:9528'
+const WEB_URL = 'http://localhost'
 //const baseURL = 'http://101.200.56.18:9528/als_classroom/public/index.php/index'
 // const baseURL = 'https://company.alsrobot.vip/als_classroom/public/index.php/index'
 // const baseURL = 'https://www.alsrobot.vip/als_classroom/public/index.php/index'
 //const baseURL = 'http://vip.alsrobot.com/als_classroom/public/index.php/index'
 //const baseURL = 'http://101.200.56.18:9528/als_classroom/public/index.php/index'
 // const baseURL = 'http://192.168.1.177:9527/admin.php/index'
-const baseURL = WEB_URL + '/als_classroom/public/index.php/index'
-// const baseURL = '/api'
+// const baseURL = WEB_URL + '/als_classroom/public/index.php/index'
+const baseURL = '/api'
 window.baseURL=baseURL
 global.DEBUG = true
 
@@ -24,6 +25,7 @@ axios.interceptors.request.use(function (config) {
   let token = storageUtil.readToken()
   if (token) { // 字符串中包含 token_userid   当userid为0时表示登陆失败，跳转至login
     config.headers['Authorization'] = token + "_" + (storageUtil.readTeacherInfo() ? storageUtil.readTeacherInfo().id : "0")
+    config.headers['alsrobot'] = storageUtil.getLang()
   } else {
     // if(config.url.indexOf('return_webconfig')<0){ // 屏蔽招商加盟接口
     //   router.replace({path:'/login'})
@@ -524,8 +526,23 @@ const getTaskType = params => {
 const getTaskTypeInformation = params => {
   return axios.post(`task/find_task2`, params).then(res => res.data)
 }
-
-
+//====================================直播统计=======================================
+//获取直播课概况信息
+const getLiveStatisticsInformation = params => {
+  return axios.post(`live_school/callback_report`, params).then(res => res.data)
+}
+//获取直播表格学生信息
+const getLiveStudentTableInformation = params => {
+  return axios.post(`live_school/callback_table_student`, params).then(res => res.data)
+}
+//获取Echarts
+const getLiveEchartsInformation = params => {
+  return axios.post(`live_school/callback_charts`, params).then(res => res.data)
+}
+//获取直播表格教师信息
+const getLiveTeacherTableInformation = params => {
+  return axios.post(`live_school/callback_table_teacher`, params).then(res => res.data)
+}
 //====================================直播管理=======================================
 // 通过参加码 获取weburl地址
 const reqWebClient = params => {
@@ -1508,6 +1525,10 @@ export {
   getLiveList,
   disableLive,
   delTableListLiveInformation,
+  getLiveStatisticsInformation,
+  getLiveStudentTableInformation,
+  getLiveTeacherTableInformation,
+  getLiveEchartsInformation,
 }
 
 

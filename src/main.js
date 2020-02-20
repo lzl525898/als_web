@@ -6,6 +6,7 @@ import store from './vuex/store'
 import router from './router'
 import i18n from './i18n/i18n'
 // import ElementUI from 'element-ui'
+import ElementLocale from 'element-ui/lib/locale'
 import storageUtil from './utils/storageUtil'
 import stringUtil from './utils/stringUtil'
 import './assets/myfonts/iconfont.css'
@@ -107,6 +108,7 @@ import {
   Step,
   Steps,
 } from 'element-ui';
+
 Vue.use(Print);
 Vue.use(PageHeader);
 Vue.use(Pagination);
@@ -190,6 +192,8 @@ Vue.prototype.$notify = Notification;
 Vue.prototype.$message = Message;
 
 Vue.config.productionTip = false
+
+ElementLocale.i18n((key, value) => i18n.t(key, value))
 
 //自定义弹出框组件
 import reportDialog from '@/components/teachers/report/reportDialog.vue'

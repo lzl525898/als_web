@@ -82,7 +82,7 @@
         <el-table-column align="center" prop="phone" :label="$t(`message.student_management_tableData_parent_phone`)"></el-table-column>
         <el-table-column align="center" prop="classes.className" :label="$t(`message.student_management_tableData_user_class`)"></el-table-column>
         <el-table-column align="center" prop="school" :label="$t(`message.student_management_tableData_user_school`)"></el-table-column>
-        <el-table-column align="center" label="操作" width="400">
+        <el-table-column align="center" :label="$t(`message.student_management_tableData_user_operation`)" width="400">
           <template slot-scope="scope">
             <!--            <el-button-->
             <!--              v-if="isShowLearnReport"-->
@@ -429,7 +429,7 @@
         components: {"als-child-header": childHeader},
         data() {
             return {
-                routerConfig: [{name: '学生管理', to: ''}],
+                routerConfig: [{name: this.$t(`message.student_header_title`), to: ''}],
                 addStudentData: [
                     {
                         id: "all",

@@ -8,9 +8,9 @@
     </el-row>
     <!-- 班级概况 -->
     <el-row>
-      <el-col :span="16"><span style="font-weight: bold;font-size:18px;line-height: 44px">班级概览</span></el-col>
+      <el-col :span="16"><span style="font-weight: bold;font-size:18px;line-height: 44px">{{$t(`message.classroom_detail_overview`)}}</span></el-col>
       <el-col :span="8">
-        <div style="float:right">切换班级&nbsp;&nbsp;
+        <div style="float:right">{{$t(`message.classroom_detail_change_class`)}}&nbsp;&nbsp;
           <el-select v-model="classList.currentClass" @change="handleChangeClass">
             <el-option
               v-for="item in classList.classes"
@@ -24,74 +24,74 @@
     </el-row>
     <el-card class="box-card" shadow="always">
       <el-row>
-        <el-col>班级:{{$store.state.currentClassRoomName}}</el-col>
+        <el-col>{{$t(`message.classroom_name`)}}:{{$store.state.currentClassRoomName}}</el-col>
       </el-row>
       <el-row>
-        <el-col>教师:{{classInfo.teacher}}</el-col>
+        <el-col>{{$t(`message.string_label_teacher`)}}:{{classInfo.teacher}}</el-col>
       </el-row>
       <div id="statisticInfo" style="height:300px;width: 100%;margin-top:10px;"></div>
     </el-card>
     <!-- 操作统计 -->
     <el-row style="margin-top: 30px;">
-      <el-col :span="24"><span style="font-weight: bold;font-size:18px;">操作统计</span></el-col>
+      <el-col :span="24"><span style="font-weight: bold;font-size:18px;">{{$t(`message.classroom_detail_statistics`)}}</span></el-col>
     </el-row>
     <el-card class="box-card" shadow="always">
       <div style="display: flex;">
         <div style="height: 20px;width: 3px;background-color: #00a2ff;"></div>
-        <div style="width:6%;line-height:20px;margin-left:5px;"><span v-show="handleInfo.currentSwitch">近一周</span><span
-          v-show="!handleInfo.currentSwitch">近一月</span></div>
+        <div style="width:6%;line-height:20px;margin-left:5px;"><span v-show="handleInfo.currentSwitch">{{$t(`message.classroom_detail_statistics_week`)}}</span><span
+          v-show="!handleInfo.currentSwitch">{{$t(`message.classroom_detail_statistics_month`)}}</span></div>
         <div style="width:60%;margin-left: 30px;"></div>
         <div style="width:30%;display: flex;justify-content: flex-end;">
           <el-switch
             v-model="handleInfo.currentSwitch"
-            active-text="近一周"
-            inactive-text="近一月">
+            :active-text="$t(`message.classroom_detail_statistics_week`)"
+            :inactive-text="$t(`message.classroom_detail_statistics_month`)">
           </el-switch>
         </div>
       </div>
       <el-row style="line-height: 36px;margin-top: 10px;">
         <div v-show="handleInfo.currentSwitch">
           <div style="display: flex;justify-content: flex-start;align-items: center">
-            <div style="width: 150px;">最近学生登录人数</div>
+            <div style="width: 150px;">{{$t(`message.classroom_detail_statistics_student_count`)}}</div>
             <div class="handle-div" :style="{width:handleInfo.week[0]+'px'}"></div>
-            <span style="margin-left: 30px;">{{handleInfo.weekNum[0]}}人</span>
+            <span style="margin-left: 30px;">{{handleInfo.weekNum[0]}}{{$t(`message.classroom_table_column_count`)}}</span>
           </div>
           <div style="display: flex;justify-content: flex-start;align-items: center">
-            <div style="width: 150px;">累计发布任务数量</div>
+            <div style="width: 150px;">{{$t(`message.classroom_detail_statistics_task_count`)}}</div>
             <div class="handle-div" :style="{width:handleInfo.week[1]+'px'}"></div>
-            <span style="margin-left: 30px;">{{handleInfo.weekNum[1]}}人</span>
+            <span style="margin-left: 30px;">{{handleInfo.weekNum[1]}}{{$t(`message.classroom_table_column_count`)}}</span>
           </div>
           <div style="display: flex;justify-content: flex-start;align-items: center">
-            <div style="width: 150px;">累计发布报告数量</div>
+            <div style="width: 150px;">{{$t(`message.classroom_detail_statistics_publish_count`)}}</div>
             <div class="handle-div" :style="{width:handleInfo.week[2]+'px'}"></div>
-            <span style="margin-left: 30px;">{{handleInfo.weekNum[2]}}人</span>
+            <span style="margin-left: 30px;">{{handleInfo.weekNum[2]}}{{$t(`message.classroom_table_column_count`)}}</span>
           </div>
           <div style="display: flex;justify-content: flex-start;align-items: center">
-            <div style="width: 150px;">累计完成作品数量</div>
+            <div style="width: 150px;">{{$t(`message.classroom_detail_statistics_complete_count`)}}</div>
             <div class="handle-div" :style="{width:handleInfo.week[3]+'px'}"></div>
-            <span style="margin-left: 30px;">{{handleInfo.weekNum[3]}}人</span>
+            <span style="margin-left: 30px;">{{handleInfo.weekNum[3]}}{{$t(`message.classroom_table_column_count`)}}</span>
           </div>
         </div>
         <div v-show="!handleInfo.currentSwitch">
           <div style="display: flex;justify-content: flex-start;align-items: center">
-            <div style="width: 150px;">最近学生登录人数</div>
+            <div style="width: 150px;">{{$t(`message.classroom_detail_statistics_student_count`)}}</div>
             <div class="handle-div" :style="{width:handleInfo.month[0]+'px'}"></div>
-            <span style="margin-left: 30px;">{{handleInfo.monthNum[0]}}人</span>
+            <span style="margin-left: 30px;">{{handleInfo.monthNum[0]}}{{$t(`message.classroom_table_column_count`)}}</span>
           </div>
           <div style="display: flex;justify-content: flex-start;align-items: center">
-            <div style="width: 150px;">累计发布任务数量</div>
+            <div style="width: 150px;">{{$t(`message.classroom_detail_statistics_task_count`)}}</div>
             <div class="handle-div" :style="{width:handleInfo.month[1]+'px'}"></div>
-            <span style="margin-left: 30px;">{{handleInfo.monthNum[1]}}人</span>
+            <span style="margin-left: 30px;">{{handleInfo.monthNum[1]}}{{$t(`message.classroom_table_column_count`)}}</span>
           </div>
           <div style="display: flex;justify-content: flex-start;align-items: center">
-            <div style="width: 150px;">累计发布报告数量</div>
+            <div style="width: 150px;">{{$t(`message.classroom_detail_statistics_publish_count`)}}</div>
             <div class="handle-div" :style="{width:handleInfo.month[2]+'px'}"></div>
-            <span style="margin-left: 30px;">{{handleInfo.monthNum[2]}}人</span>
+            <span style="margin-left: 30px;">{{handleInfo.monthNum[2]}}{{$t(`message.classroom_table_column_count`)}}</span>
           </div>
           <div style="display: flex;justify-content: flex-start;align-items: center">
-            <div style="width: 150px;">累计完成作品数量</div>
+            <div style="width: 150px;">{{$t(`message.classroom_detail_statistics_complete_count`)}}</div>
             <div class="handle-div" :style="{width:handleInfo.month[3]+'px'}"></div>
-            <span style="margin-left: 30px;">{{handleInfo.monthNum[3]}}人</span>
+            <span style="margin-left: 30px;">{{handleInfo.monthNum[3]}}{{$t(`message.classroom_table_column_count`)}}</span>
           </div>
         </div>
       </el-row>
@@ -99,10 +99,10 @@
     <!-- 许可状态 -->
     <div v-if="isShowStudentTable">
       <el-row style="margin-top: 30px;">
-        <el-col :span="20"><span style="font-weight: bold;font-size:18px;">许可状态</span></el-col>
+        <el-col :span="20"><span style="font-weight: bold;font-size:18px;">{{$t(`message.classroom_detail_permissive_state`)}}</span></el-col>
         <el-col :span="4">
           <!--        <el-button type="primary" @click.native="handlePermit($event,true)">使用许可</el-button>-->
-          <el-button type="primary" @click.native="handlePermit">禁用许可</el-button>
+          <el-button type="primary" @click.native="handlePermit">{{$t(`message.classroom_detail_permissive_disable`)}}</el-button>
           <!--        <el-button type="primary" @click.native="handlePermit($event,true)">禁用许可</el-button>-->
         </el-col>
       </el-row>
@@ -112,23 +112,23 @@
                   :header-row-style="{'color':'#409EFF'}">
           <el-table-column type="selection" width="55">
           </el-table-column>
-          <el-table-column align="center" label="账号" prop="account"></el-table-column>
-          <el-table-column align="center" label="姓名">
+          <el-table-column align="center" :label="$t(`message.student_management_tableData_user_account`)" prop="account"></el-table-column>
+          <el-table-column align="center" :label="$t(`message.student_management_tableData_user_name`)">
             <template slot-scope="scope"><span style="font-weight: bold">{{scope.row.name}}</span></template>
           </el-table-column>
-          <el-table-column sortable align="center" label="状态" prop="label">
+          <el-table-column sortable align="center" :label="$t(`message.string_label_status`)" prop="label">
             <template slot-scope="scope"><span style="font-weight: bold">{{scope.row.label}}</span></template>
           </el-table-column>
-          <el-table-column align="center" label="操作">
+          <el-table-column align="center" :label="$t(`message.string_label_handle`)">
             <template slot-scope="scope">
               <div v-show="scope.row.status==0">
                 <el-button size="mini" type="success"
-                           @click.native="handleUserPermit({index: scope.$index, row:scope.row})">使用许可
+                           @click.native="handleUserPermit({index: scope.$index, row:scope.row})">{{$t(`message.classroom_detail_permissive_use`)}}
                 </el-button>
               </div>
               <div v-show="scope.row.status==1">
                 <el-button size="mini" type="danger"
-                           @click.native="handleForbiddenPermit({index: scope.$index, row:scope.row})">禁用许可
+                           @click.native="handleForbiddenPermit({index: scope.$index, row:scope.row})">{{$t(`message.classroom_detail_permissive_disable`)}}
                 </el-button>
               </div>
             </template>
@@ -147,22 +147,22 @@
       </el-card>
     </div>
     <!--许可弹框-->
-    <el-dialog center title="应用许可" :visible.sync="dialogTableVisible" style="font-size: 40px; max-height:1000px"
+    <el-dialog center :title="$t(`message.classroom_detail_permissive_disable`)" :visible.sync="dialogTableVisible" style="font-size: 40px; max-height:1000px"
                width="500px" @close="dialogTableVisible = false">
       <div style="font-size: 18px;">
-        <div class="center">取得所有课程权限</div>
+        <div class="center">{{$t(`message.classroom_detail_permissive_all`)}}</div>
         <div class="center" style="margin-top:20px;"
              :style="{'flex-direction':selectedStudents.length>1?'column':'row'}">
-          <div>将许可应用于学生：</div>
+          <div>{{$t(`message.classroom_detail_permissive_student`)}}：</div>
           <ul style="list-style: none;padding:0;font-size: 20px;overflow-y: auto;width: 145px;"
               :style="{'height':selectedStudents.length>1?'165px':'auto'}">
             <li v-for="item in selectedStudents" style="padding: 5px 0;text-align: center">{{item.name}}&nbsp;</li>
           </ul>
         </div>
-        <p class="center">可用许可:{{permitNumber}}</p>
+        <p class="center">{{$t(`message.classroom_detail_permissive_use_ok`)}}:{{permitNumber}}</p>
         <template>
-          <div class="center" style="margin-bottom: 30px" v-show="showDialogTableList"> 选择状态码：
-            <el-select v-model="codeId" placeholder="请选择" style="min-width: 284px">
+          <div class="center" style="margin-bottom: 30px" v-show="showDialogTableList"> {{$t(`message.classroom_detail_permissive_code`)}}：
+            <el-select v-model="codeId" :placeholder="$t(`message.string_label_please_select`)" style="min-width: 284px">
               <el-option-group
                 v-for="group in options"
                 :key="group.label"
@@ -184,12 +184,12 @@
         <div class="center" style="flex-direction: column;font-size: 15px;">
           <button v-show="showPermit" type="button" class="el-button el-button--primary"
                   @click="closeDialog($event,true)" style="margin-bottom: 20px;width: 300px;"
-                  :loading="isLoadingPermit">应用许可
+                  :loading="isLoadingPermit">{{$t(`message.classroom_detail_permissive_use`)}}
           </button>
           <button v-show="!showPermit" type="button" class="el-button el-button--danger" @click="closeDialog"
-                  style="margin-bottom: 20px;width: 300px;" :loading="isLoadingDisablePermit">禁用许可
+                  style="margin-bottom: 20px;width: 300px;" :loading="isLoadingDisablePermit">{{$t(`message.classroom_detail_permissive_disable`)}}
           </button>
-          <p class="center" style="cursor: pointer;">获取更多许可</p>
+          <p class="center" style="cursor: pointer;">{{$t(`message.classroom_detail_permissive_use_more`)}}</p>
         </div>
       </div>
     </el-dialog>
@@ -218,7 +218,7 @@
     components:{"als-child-header": childHeader},
     data() {
       return {
-        routerConfig: [{name:'班级管理',to:'/classMan'},{name:this.$store.state.currentClassRoomName,to:''}],
+        routerConfig: [{name:'',to:'/classMan'},{name:this.$store.state.currentClassRoomName,to:''}],
         isLoadingPermit: false,
         isLoadingDisablePermit: false,
         selectedStudentsArray: [],
@@ -268,6 +268,7 @@
       }
     },
     mounted() {
+      this.routerConfig[0].name = this.$t(`message.classroom_header_title`)
       promptUtil.checkOverdue(this, storageUtil.readTeacherInfo().id) // true 表示已过期 false表示未过期
       if (this.$store.state.currentClassRoomName && this.$store.state.currentClassRoomName != "") {
         this.getAllClassMethods()
@@ -402,7 +403,7 @@
                     id: res.data[i].id,
                     account: res.data[i].username,
                     name: res.data[i].real_name,
-                    label: res.data[i].code == 0 ? "未分配名额" : "已分配名额",
+                    label: res.data[i].code == 0 ? this.$t(`message.classroom_detail_permissive_not_allocated_quota`) : this.$t(`message.classroom_detail_permissive_allocated_quota`),
                     status: res.data[i].code == 0 ? 0 : 1
                   }
                   this.studentDataFromServer.push(obj)
@@ -447,7 +448,7 @@
       },
       handlePermit(event, param) {
         if (this.multipleSelection.length == 0) {
-          promptUtil.warning(this, '请选择要许可的学生');
+          promptUtil.warning(this, this.$t(`message.classroom_detail_permissive_valid_warning`));
           return;
         }
         this.selectedStudents = [];
@@ -460,7 +461,7 @@
       closeDialog(event, param) {
         if (param) {
           if (this.codeId == "") {
-            promptUtil.warning(this, "请选择状态码")
+            promptUtil.warning(this, this.$t(`message.classroom_detail_permissive_code`))
             return
           }
           this.isLoadingPermit = true
@@ -486,7 +487,7 @@
           })
           this.selectedStudents.forEach(item => {
             item.status = 1;
-            item.label = '已分配名额';
+            item.label = this.$t(`message.classroom_detail_permissive_allocated_quota`);
           })
         } else {
           this.selectedStudentsArray = []
@@ -514,7 +515,7 @@
           })
           this.selectedStudents.forEach(item => {
             item.status = 0;
-            item.label = '未分配名额';
+            item.label = this.$t(`message.classroom_detail_permissive_not_allocated_quota`);
           })
         }
       },
@@ -534,9 +535,9 @@
         });
         if(this.allClassNames.length>0){
           let classObj = this.allClassNames.find(item=>item.value==val)
-          this.routerConfig = [{name:'班级管理',to:'/classMan'},{name:classObj.label,to:''}]
+          this.routerConfig = [{name:this.$t(`message.classroom_header_title`),to:'/classMan'},{name:classObj.label,to:''}]
         }else{
-          this.routerConfig = [{name:'班级管理',to:'/classMan'}]
+          this.routerConfig = [{name:this.$t(`message.classroom_header_title`),to:'/classMan'}]
         }
       },
       // 根据id获取班级名称
@@ -611,33 +612,6 @@
                 // saveAsImage: {show: true}
               }
             },
-
-
-              // toolbox: {
-              //     show : true,
-              //     // orient: 'horizontal',      // 布局方式，默认为水平布局，可选为：
-              //     //                            // 'horizontal' ¦ 'vertical'
-              //     x: 'right',                // 水平安放位置，默认为全图右对齐，可选为：
-              //                                // 'center' ¦ 'left' ¦ 'right'
-              //                                // ¦ {number}（x坐标，单位px）
-              //     y: '120',                  // 垂直安放位置，默认为全图顶端，可选为：
-              //                                // 'top' ¦ 'bottom' ¦ 'center'
-              //                                // ¦ {number}（y坐标，单位px）
-              //     feature : {
-              //         saveAsImage : {
-              //             show: true
-              //         }
-              //     }
-              // },
-
-
-
-
-
-
-
-
-
             calculable: true,
             xAxis: [
               {
@@ -695,13 +669,14 @@
     watch: {
       $route() {
         this.routeParam = this.$route.params.id
-      }
-      ,
+      },
       routeParam() {
         // this.dataClear()
         this.initDataMethod(this.routeParam)
+      },
+      '$i18n.locale': function () {
+        this.routerConfig[0].name = this.$t(`message.classroom_header_title`)
       }
-      ,
     }
     ,
     computed: {

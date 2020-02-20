@@ -1,6 +1,6 @@
 <template>
     <div>
-      <el-page-header @back="goBack" title="首页">
+      <el-page-header @back="goBack" :title="$t(`message.string_label_home_page`)">
         <div slot="content" style="margin-top:5px;">
           <el-breadcrumb separator-class="el-icon-arrow-right">
             <el-breadcrumb-item :to="router.to" v-for="(router, index) in item" :key="index">{{router.name}}</el-breadcrumb-item>

@@ -32,7 +32,7 @@
               </div>
               <div class="works-wrapper" v-show="worksShowStatus && works.server.length>0" style="flex:1">
                 <als-work-item class="works-item-wrapper" v-for="(work,workIndex) in works.data" :key="workIndex"
-                               :avatar="work.avatar" :content="work.content" :imgUrl="work.imgUrl" :userName="work.userName" :worksId="work.worksId"
+                               :avatar="work.avatar" :content="work.content" :imgUrl="work.imgUrl" :userName="work.userName" :worksId="work.worksId*1"
                                :seeCount="work.seeCount*1" :praiseCount="work.praiseCount*1" :praise="work.praise*1" :worksUrl="work.worksUrl"/>
               </div>
               <als-page :size="15" @tableData="changeWorksData($event)" ref="alsPageinationWorks"/>

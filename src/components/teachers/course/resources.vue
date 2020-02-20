@@ -111,78 +111,6 @@
         </div>
       </el-col>
     </el-row>
-<!--    <el-tabs type="card">-->
-<!--      <el-tab-pane :label="pack.label" v-for="pack in courseInfo" :key="pack.id">-->
-<!--        <el-row :gutter="20">-->
-<!--          <el-col>-->
-<!--            <div class="grid-content bg-purple-light">-->
-<!--              <div v-if="!pack.courses || pack.courses.length==0">-->
-<!--                <div style="font-size: 30px;color:#e6e6e6;font-weight: bold;display: flex;justify-content: center;align-items: center;height: 400px;">暂未开通课程</div>-->
-<!--              </div>-->
-<!--              <div v-else class="el-box" v-for="(item,index) in pack.courses" :key="index">-->
-<!--                <div @click="databaseList" style="cursor: pointer;">-->
-<!--                  <div style="border-radius: 10%;box-shadow: 5px 5px 5px #eee;border: none;">-->
-<!--                    <img-->
-<!--                      :src="item.img"-->
-<!--                      alt-->
-<!--                      class="cover"-->
-<!--                      :current-id="item.id"-->
-<!--                      style="border-top-left-radius: 10%;border-top-right-radius: 10%"-->
-<!--                    >-->
-<!--                    <div style="display: flex;justify-content: space-between">-->
-<!--                      <div class="el-txt-box">-->
-<!--                        <span class="el-txt">{{item.title}}</span>-->
-<!--                        <p>-->
-<!--                          <i class="el-icon-document"></i>-->
-<!--                          {{item.lesson}}-->
-<!--                        </p>-->
-<!--                      </div>-->
-<!--                      <div style="padding-top: 50px;margin-right: 16px;"><el-tag effect="plain" style="font-weight:bold">Scratch</el-tag></div>-->
-<!--                    </div>-->
-<!--                  </div>-->
-<!--                </div>-->
-<!--              </div>-->
-<!--            </div>-->
-<!--          </el-col>-->
-<!--        </el-row>-->
-<!--      </el-tab-pane>-->
-<!--      <el-tab-pane label="直播"  name="live" v-if="isShowLiveInfo">-->
-<!--        <el-row :gutter="20">-->
-<!--          <div v-if="liveInfo .length==0">-->
-<!--            <div style="font-size: 30px;color:#e6e6e6;font-weight: bold;display: flex;justify-content: center;align-items: center;height: 400px;">暂无直播课程</div>-->
-<!--          </div>-->
-<!--          <el-col>-->
-<!--            <div class="grid-content bg-purple-light">-->
-<!--              <div class="el-box" v-for="(item,index) in liveInfo" :key="index">-->
-<!--                <div class="el-card">-->
-<!--                  <img-->
-<!--                    :src="item.img"-->
-<!--                    alt-->
-<!--                    class="cover"-->
-<!--                    @click="databaseLiveList"-->
-<!--                    :currentLive-id="item.id"-->
-<!--                  >-->
-<!--                  <div class="el-txt-box">-->
-<!--                    <div class="el-txtBox">-->
-<!--                      <span class="el-txt">标题：{{item.title}}</span><br>-->
-<!--                    </div>-->
-<!--                    <el-tooltip class="item" effect="dark"  :content="item.con" placement="bottom">-->
-<!--                      <div class="detailBox">-->
-<!--                        <span class="detail">简介：{{item.con}}</span><br>-->
-<!--                      </div>-->
-<!--                    </el-tooltip>-->
-<!--&lt;!&ndash;                    <div class="detailBox">&ndash;&gt;-->
-<!--&lt;!&ndash;                      <span class="detail">简介：{{item.con}}</span><br>&ndash;&gt;-->
-<!--&lt;!&ndash;                    </div>&ndash;&gt;-->
-<!--                    <span class="el-txt">最大并发量：{{item.max_users}}</span><br>-->
-<!--                  </div>-->
-<!--                </div>-->
-<!--              </div>-->
-<!--            </div>-->
-<!--          </el-col>-->
-<!--        </el-row>-->
-<!--      </el-tab-pane>-->
-<!--    </el-tabs>-->
   </div>
 </template>
 
@@ -221,25 +149,8 @@
       PubSub.publish("currentMenuIndex", "/resources");
       // this.isShowLiveInfo = storageUtil.readUserRole()==1 ||storageUtil.readUserRole()==2 ? true : false
       this.initPackageCategory()
-      // if(this.isShowLiveInfo){
-      //   getCoursesLivePackage({
-      //     user_id:storageUtil.readTeacherInfo().id
-      //   })
-      //     .then(res => {
-      //       PubSub.publish("currentMenuIndex", "/resources");
-      //       if (res.code == SUCCESS_CODE) {
-      //         this.liveInfo = [];
-      //         if(res.data && res.data!='[]'){
-      //           this.liveInfo = res.data;
-      //         }
-      //       } else {
-      //         promptUtil.wait(this);
-      //       }
-      //     })
-      //     .catch(err => {
-      //       promptUtil.LOG('getCoursesLivePackage-err',err);
-      //     });
-      // }
+        //2.获取列表内容
+      this.getCoursePackage();
     },
     methods: {
       initPackageCategory(){
@@ -251,11 +162,9 @@
             if (res.code == SUCCESS_CODE) {
               this.filterInfo = [];
               if (res.data != '[]') {
-                this.filterInfo = res.data;
-                // console.log("res.data",res.data)
+                this.filterInfo = res.data
+                loading.close()
               }
-              //2.获取列表内容
-              this.getCoursePackage(loading);
             } else {
               loading.close();
               promptUtil.wait(this);
@@ -288,7 +197,7 @@
         })
       },
       // 获取课程包
-      getCoursePackage(loading){
+      getCoursePackage(loading=null){
         filterPackageBatch(
           qs.stringify({
             user_id: storageUtil.readTeacherInfo().id,
@@ -297,7 +206,9 @@
         )
           .then(res => {
             PubSub.publish("currentMenuIndex", "/resources");
-            loading.close();
+            if(loading){
+                loading.close();
+            }
             if (res.code == SUCCESS_CODE) {
               this.courseInfo = [];
               if(res.data && res.data!='[]'){
@@ -309,7 +220,9 @@
             }
           })
           .catch(err => {
-            loading.close();
+              if(loading){
+                  loading.close();
+              }
             promptUtil.LOG('getCoursesPackage-err',err);
           });
       },

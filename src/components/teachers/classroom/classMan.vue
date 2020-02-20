@@ -10,20 +10,20 @@
     <el-row :gutter="16">
       <el-col :span="3">
         <el-input
-          placeholder="请输入班级名称"
+          :placeholder="$t(`message.classroom_search_input_placeholder`)"
           v-model="inputQueryInfo"
           clearable
           @keydown.native.enter="queryClassInfo"
         ></el-input>
       </el-col>
       <el-col :span="1">
-        <el-button type="primary" icon="el-icon-search" @click="queryClassInfo">搜索</el-button>
+        <el-button type="primary" icon="el-icon-search" @click="queryClassInfo">{{$t(`message.student_management_search`)}}</el-button>
       </el-col>
       <el-col :span="20"></el-col>
     </el-row>
     <!-- 添加班级 -->
     <el-row>
-      <el-button type="primary" icon="el-icon-plus" @click="addClassRoom">添加班级</el-button>
+      <el-button type="primary" icon="el-icon-plus" @click="addClassRoom">{{$t(`message.classroom_add_button_title`)}}</el-button>
     </el-row>
     <el-row>
       <!-- 列表 -->
@@ -38,32 +38,32 @@
           props="id"
           type="index"
           :index="indexMethod"
-          label="序号"
+          :label="$t(`message.student_management_tableData_number`)"
           width="60"
         ></el-table-column>
-        <el-table-column align="center" prop="class_name" label="班级名称"></el-table-column>
-        <el-table-column align="center" prop="stucount" label="人数"></el-table-column>
-        <el-table-column align="center" prop="remark" label="备注"></el-table-column>
-        <el-table-column align="center" label="操作" width="280px">
+        <el-table-column align="center" prop="class_name" :label="$t(`message.classroom_table_column_classname`)"></el-table-column>
+        <el-table-column align="center" prop="stucount" :label="$t(`message.classroom_table_column_count`)"></el-table-column>
+        <el-table-column align="center" prop="remark" :label="$t(`message.user_system_school_table_label_desc`)"></el-table-column>
+        <el-table-column align="center" :label="$t(`message.student_management_tableData_user_operation`)" width="280px">
           <template slot-scope="scope">
             <el-button
               size="mini"
               type="primary"
               plain
               @click="handleIntoRoomDialog({index: scope.$index, row:scope.row})"
-            >查看</el-button>
+            >{{$t(`message.string_label_see`)}}</el-button>
             <el-button
               size="mini"
               plain
               type="primary"
               @click="handleClassRoomDialog('edit',{index: scope.$index, row:scope.row})"
-            >编辑</el-button>
+            >{{$t(`message.string_label_edit`)}}</el-button>
             <el-button
               size="mini"
               plain
               type="danger"
               @click="delClassRoomDialog({index: scope.$index, row:scope.row})"
-            >删除</el-button>
+            >{{$t(`message.string_label_delete`)}}</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -81,7 +81,7 @@
     </el-row>
     <!-- 弹出框 -->
     <el-dialog
-      title="编辑信息"
+      :title="$t(`message.student_management_tableData_operation_editInformation`)"
       :visible.sync="dialogFormVisible"
       width="35%"
       :before-close="resetFormWithDialog"
@@ -95,32 +95,32 @@
             label-width="100px"
             class="demo-ruleForm"
           >
-            <el-form-item label="班级名称" prop="name">
-              <el-input v-model="ruleFormWithClassRoom.name" placeholder="请输入班级名称"></el-input>
+            <el-form-item :label="$t(`message.classroom_table_column_classname`)" prop="name">
+              <el-input v-model="ruleFormWithClassRoom.name" :placeholder="$t(`message.classroom_search_input_placeholder`)"></el-input>
             </el-form-item>
-            <el-form-item label="备注">
-              <el-input v-model="ruleFormWithClassRoom.remarks" placeholder="请输入备注"></el-input>
+            <el-form-item :label="$t(`message.user_system_school_table_label_desc`)">
+              <el-input v-model="ruleFormWithClassRoom.remarks" :placeholder="$t(`message.consult_dialog_please_input_remark`)"></el-input>
             </el-form-item>
           </el-form>
         </el-col>
       </el-row>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogFormVisibleFunc('add',false)">取 消</el-button>
+        <el-button @click="dialogFormVisibleFunc('add',false)">{{$t(`message.button_cancel`)}}</el-button>
         <el-button
           v-show="isEditHandle"
           type="primary"
           @click="editClassRoomBtn"
           :loading="isLoadingWithAdd"
-        >确 定</el-button>
+        >{{$t(`message.button_confirm`)}}</el-button>
         <el-button
           v-show="!isEditHandle"
           type="primary"
           @click="dialogFormVisibleFunc('add',true)"
           :loading="isLoadingWithAdd"
-        >确 定</el-button>
+        >{{$t(`message.button_confirm`)}}</el-button>
       </div>
     </el-dialog>
-    <el-dialog title="提示" :visible.sync="delDialogVisible" width="20%">
+    <el-dialog :title="$t(`message.dialog_header_title_prompt`)" :visible.sync="delDialogVisible" width="20%">
       <el-row>
         <el-col :span="4">
           <i class="el-icon-question"></i>
@@ -130,8 +130,8 @@
         </el-col>
       </el-row>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="delDialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="handleDelClassRoom" :loading="isLoadingWithDel">确 定</el-button>
+        <el-button @click="delDialogVisible = false">{{$t(`message.button_cancel`)}}</el-button>
+        <el-button type="primary" @click="handleDelClassRoom" :loading="isLoadingWithDel">{{$t(`message.button_confirm`)}}</el-button>
       </span>
     </el-dialog>
   </div>
@@ -154,7 +154,7 @@
     components:{"als-child-header": childHeader},
     data() {
       return {
-        routerConfig: [{name:'班级管理',to:''}],
+        routerConfig: [{name:'',to:''}],
         inputQueryInfo: "", // 搜索内容
         tableData: [], // 班级数据
         queryFromServer: [], // 服务器请求数据
@@ -173,11 +173,19 @@
         currentTeacherOwnClass: [], // 当前教师所拥有的班级id数组
         ruleFormWithClassRoom: { name: "", remarks: "", isNew: true, current: 0 }, //编辑数据
         rulesWithClassRoom: {
-          name: [{ required: true, message: "请输入班级名称", trigger: "blur" }]
+          name: [{ required: true, message: "", trigger: "blur" }]
         }
       };
     },
+    watch: {
+      '$i18n.locale': function () {
+          this.routerConfig[0].name = this.$t(`message.classroom_header_title`)
+          this.rulesWithClassRoom.name[0].message = this.$t(`message.classroom_search_input_placeholder`)
+      }
+    },
     mounted() {
+      this.routerConfig[0].name = this.$t(`message.classroom_header_title`)
+      this.rulesWithClassRoom.name[0].message = this.$t(`message.classroom_search_input_placeholder`)
       promptUtil.checkOverdue(this, storageUtil.readTeacherInfo().id) // true 表示已过期 false表示未过期
       PubSub.publish("currentMenuIndex", "/classMan");
       const loading = promptUtil.loading(this);
@@ -299,13 +307,13 @@
       // 删除班级按钮触发函数
       delClassRoomDialog(object) {
         if(object.row.stucount>0){
-          promptUtil.warning(this, "班级学生必须为空，请将学生移至其他班级。")
+          promptUtil.warning(this, this.$t(`message.classroom_valid_delete_warning`))
           return
         }
         this.currentSelectClassId = object.row.id;
         this.delDialogVisible = true;
         this.delDialogContent =
-          "您确定要删除 【 " + object.row.class_name + " 】 吗？";
+          this.$t(`message.consult_dialog_content_del`) + " 【 " + object.row.class_name + " 】 ？";
         this.currentDelClassRoomIndex =
           object.index + (this.currentPage - 1) * this.pageSize; // 为班级索引，不是班级id
       },
@@ -362,7 +370,7 @@
           this.ruleFormWithClassRoom.name == null ||
           this.ruleFormWithClassRoom.name.trim() == ""
         ) {
-          promptUtil.warning(this, "请填写班级名称");
+          promptUtil.warning(this, this.$t(`message.classroom_search_input_placeholder`));
           return;
         }
         if (
@@ -423,7 +431,7 @@
       },
       // 操作查看按钮
       handleIntoRoomDialog(object) {
-        this.$store.dispatch("setCurrentClassName", object.row.class_name?object.row.class_name:'班级')
+        this.$store.dispatch("setCurrentClassName", object.row.class_name?object.row.class_name: this.$t(`message.classroom_name`))
         this.$router.push({path: ROUTER_CLASS_ROOM+object.row.id})
       },
       // 操作编辑按钮

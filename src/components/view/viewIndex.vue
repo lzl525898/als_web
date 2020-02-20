@@ -260,6 +260,9 @@
             };
         },
         mounted() {
+            let lang = storageUtil.getLang()
+            this.$i18n.locale = lang;
+            storageUtil.setLang(lang)
             getViewIndexInformation(qs.stringify({})).then(res => {
                 if (res.code == SUCCESS_CODE) {
                     if (res.data && res.data != '[]') {

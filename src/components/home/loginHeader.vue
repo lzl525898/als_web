@@ -76,21 +76,6 @@
           </div>
         </div>
         <div class="dropmenu-avatar" style="display:flex">
-<!--          <div style="position: absolute;left:-200px;">-->
-<!--            <el-dropdown placement="bottom-start">-->
-<!--              <div class="help">-->
-<!--                <a href="javascript:void(0)">-->
-<!--                  <i class="el-icon-s-tools"></i>-->
-<!--                  <span>{{localLang}}</span>-->
-<!--                </a>-->
-<!--              </div>-->
-<!--              <el-dropdown-menu slot="dropdown">-->
-<!--                <el-dropdown-item @click.native="switchLang('zh')">简体中文</el-dropdown-item>-->
-<!--                <el-dropdown-item @click.native="switchLang('cht')">繁体中文</el-dropdown-item>-->
-<!--                <el-dropdown-item @click.native="switchLang('en')">English</el-dropdown-item>-->
-<!--              </el-dropdown-menu>-->
-<!--            </el-dropdown>-->
-<!--          </div>-->
           <el-dropdown @command="handleRoleCommand" v-show="demoStatus">
             <div style="height:100%;display:flex;align-items: center;color:#fff;margin-right:30px;cursor:pointer;">
               <i class="el-icon-s-custom"/><span>角色切换</span>
@@ -99,6 +84,19 @@
               <el-dropdown-item command="master">校长账号</el-dropdown-item>
               <el-dropdown-item command="teacher">教师账号</el-dropdown-item>
               <el-dropdown-item command="student">学生账号</el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
+          <el-dropdown placement="bottom-start">
+            <div class="help">
+              <a href="javascript:void(0)">
+                <i class="el-icon-s-tools"></i>
+                <span>{{localLang}}</span>
+              </a>
+            </div>
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item @click.native="switchLang('zh')">简体中文</el-dropdown-item>
+              <el-dropdown-item @click.native="switchLang('cht')">繁体中文</el-dropdown-item>
+              <el-dropdown-item @click.native="switchLang('en')">English</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
           <el-dropdown>
@@ -408,9 +406,10 @@
         },
         methods: {
             switchLang(lang){
-              this.$i18n.locale = lang;
+              this.$i18n.locale = lang
               storageUtil.setLang(lang)
               this.localLang = this.getLangContent()
+              // location.reload()
             },
             getLangContent(){
               let langLocal = ''

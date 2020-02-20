@@ -8,20 +8,20 @@
     <el-row :gutter="16">
       <el-col :span="3">
         <el-input
-          placeholder="请输入教师昵称"
+          :placeholder="$t(`message.teacher_input_placeholder`)"
           v-model="inputQueryInfo"
           clearable
           @keydown.native.enter="queryClassInfo"
         ></el-input>
       </el-col>
       <el-col :span="1">
-        <el-button type="primary" icon="el-icon-search" @click="queryClassInfo">搜索</el-button>
+        <el-button type="primary" icon="el-icon-search" @click="queryClassInfo">{{$t(`message.student_management_search`)}}</el-button>
       </el-col>
       <el-col :span="20"></el-col>
     </el-row>
     <el-row>
-      <el-button type="primary" icon="el-icon-plus" @click="addTeacher">添加教师</el-button>
-      <label v-show="teacherMaxCount!=''" style="color: #999;font-weight: bold;margin-left: 20px">可添加 <span style="color:#333">{{teacherMaxCount}}</span> 个教师账号</label>
+      <el-button type="primary" icon="el-icon-plus" @click="addTeacher">{{$t(`message.teacher_button_add_teacher`)}}</el-button>
+      <label v-show="teacherMaxCount!=''" style="color: #999;font-weight: bold;margin-left: 20px">{{$t(`message.teacher_label_add_left_msg`)}} <span style="color:#333">{{teacherMaxCount}}</span> {{$t(`message.teacher_label_add_right_msg`)}}</label>
     </el-row>
     <el-row>
       <el-table
@@ -35,28 +35,28 @@
           props="id"
           type="index"
           :index="indexMethod"
-          label="序号"
+          :label="$t(`message.student_management_tableData_number`)"
           width="60"
         ></el-table-column>
-        <el-table-column align="center" label="账号">
+        <el-table-column align="center" :label="$t(`message.student_management_tableData_user_account`)">
           <template slot-scope="scope">
             <div>{{scope.row.account}}<label style="margin-left:10px"><el-tag type="danger" size="mini" v-if="scope.row.id==currentTeacherCountId">校长</el-tag><el-tag size="mini" v-else>教师</el-tag></label></div>
           </template>
         </el-table-column>
-        <el-table-column align="center" prop="nick" label="昵称"></el-table-column>
-        <el-table-column align="center" label="性别">
+        <el-table-column align="center" prop="nick" :label="$t(`message.teacher_table_column_nick`)"></el-table-column>
+        <el-table-column align="center" :label="$t(`message.string_label_sex`)">
           <template slot-scope="scope">
-            <span v-if="scope.row.sex==1">男</span>
-            <span v-if="scope.row.sex==2">女</span>
-            <span v-if="scope.row.sex==0">保密</span>
+            <span v-if="scope.row.sex==1">{{$t(`message.string_label_male`)}}</span>
+            <span v-if="scope.row.sex==2">{{$t(`message.string_label_female`)}}</span>
+            <span v-if="scope.row.sex==0">{{$t(`message.student_management_tableData_user_sex_secrecy`)}}</span>
           </template>
         </el-table-column>
-        <el-table-column align="center" prop="phone" label="手机"></el-table-column>
-        <el-table-column align="center" label="班级" style="width: 300px">
+        <el-table-column align="center" prop="phone" :label="$t(`message.student_management_create_student_phone`)"></el-table-column>
+        <el-table-column align="center" :label="$t(`message.student_management_tableData_user_class`)" style="width: 300px">
           <template slot-scope="scope">
             <el-popover
               placement="top-start"
-              title="班级"
+              :title="$t(`message.student_management_tableData_user_class`)"
               width="240"
               trigger="click">
               <div>
@@ -66,8 +66,8 @@
             </el-popover>
           </template>
         </el-table-column>
-        <el-table-column align="center" prop="remarks" label="备注"></el-table-column>
-        <el-table-column align="center" label="操作" width="380">
+        <el-table-column align="center" prop="remarks" :label="$t(`message.user_system_school_table_label_desc`)"></el-table-column>
+        <el-table-column align="center" :label="$t(`message.student_management_tableData_user_operation`)" width="380">
           <template slot-scope="scope">
             <el-button
               v-if="scope.row.bcb==1"
@@ -75,27 +75,27 @@
               type="success"
               plain
               @click.native="intSuperBlockly"
-            >进入编程吧</el-button>
+            >{{$t(`message.student_management_tableData_operation_enter_programming`)}}</el-button>
             <el-button
               v-else
               size="mini"
               type="primary"
               plain
               @click.native="bindSuperblockly({index: scope.$index, row:scope.row})"
-            >绑定编程吧</el-button>
+            >{{$t(`message.student_management_tableData_operation_binding_programming`)}}</el-button>
             <el-button
               class="mt"
               size="mini"
               plain
               @click="showEditTeacherDialog({index: scope.$index, row:scope.row})"
-            >编辑
+            >{{$t(`message.string_label_edit`)}}
             </el-button>
             <el-button
               class="mt"
               size="mini"
               plain
               @click="showPwdTeacherDialog({index: scope.$index, row:scope.row})"
-            >密码重置
+            >{{$t(`message.student_management_tableData_operation_password`)}}
             </el-button>
             <el-button
               class="mt"
@@ -104,7 +104,7 @@
               plain
               @click="showDelTeacherDialog({index: scope.$index, row:scope.row})"
               :disabled="scope.row.id==currentTeacherCountId"
-            >删除
+            >{{$t(`message.string_label_delete`)}}
             </el-button>
           </template>
         </el-table-column>
@@ -121,7 +121,7 @@
       ></el-pagination>
     </el-row>
     <el-dialog
-      title="编辑信息"
+      :title="$t(`message.student_management_tableData_operation_editInformation`)"
       :visible.sync="teacherDialogFormVisible"
       width="35%"
       :before-close="resetFormWithDialog"
@@ -135,20 +135,20 @@
             label-width="100px"
             class="demo-ruleForm"
           >
-            <el-form-item label="昵称" prop="nick">
-              <el-input v-model="ruleFormWithTeacher.nick" placeholder="请输入昵称"></el-input>
+            <el-form-item :label="$t(`message.teacher_table_column_nick`)" prop="nick">
+              <el-input v-model="ruleFormWithTeacher.nick" :placeholder="$t(`message.teacher_form_teacher_nick`)"></el-input>
             </el-form-item>
-            <el-form-item label="手机" prop="phone">
-              <el-input v-model.number="ruleFormWithTeacher.phone" placeholder="请输入手机号"></el-input>
+            <el-form-item :label="$t(`message.student_management_create_student_phone`)" prop="phone">
+              <el-input v-model.number="ruleFormWithTeacher.phone" :placeholder="$t(`message.student_management_studentEditDialogVisible_input_phone`)"></el-input>
             </el-form-item>
-            <el-form-item label="性别" prop="sex">
+            <el-form-item :label="$t(`message.string_label_sex`)" prop="sex">
               <el-radio-group v-model="ruleFormWithTeacher.sex">
-                <el-radio :label="1">男</el-radio>
-                <el-radio :label="2">女</el-radio>
-                <el-radio :label="0">保密</el-radio>
+                <el-radio :label="1">{{$t(`message.string_label_male`)}}</el-radio>
+                <el-radio :label="2">{{$t(`message.string_label_female`)}}</el-radio>
+                <el-radio :label="0">{{$t(`message.student_management_tableData_user_sex_secrecy`)}}</el-radio>
               </el-radio-group>
             </el-form-item>
-            <el-form-item label="班级">
+            <el-form-item :label="$t(`message.student_management_tableData_user_class`)">
               <el-checkbox-group v-model="ruleFormWithTeacher.classes" :disabled="isSchoolAdmin">
                 <el-checkbox
                   v-for="item in allClassNames"
@@ -158,18 +158,18 @@
                 ></el-checkbox>
               </el-checkbox-group>
             </el-form-item>
-            <el-form-item label="专属颜色">
+            <el-form-item :label="$t(`message.teacher_form_teacher_color`)">
               <el-color-picker v-model="ruleFormWithTeacher.color"></el-color-picker>
             </el-form-item>
-            <el-form-item label="备注">
-              <el-input v-model="ruleFormWithTeacher.remarks" placeholder="请输入备注"></el-input>
+            <el-form-item :label="$t(`message.string_label_remark`)">
+              <el-input v-model="ruleFormWithTeacher.remarks" :placeholder="$t(`message.consult_dialog_please_input_remark`)"></el-input>
             </el-form-item>
-            <el-form-item v-show="isShowAddTeacher" label="默认密码" prop="password">
-              <el-input placeholder="请输入默认密码" v-model="ruleFormWithTeacher.password"></el-input>
+            <el-form-item v-show="isShowAddTeacher" :label="$t(`message.teacher_form_teacher_default_pwd`)" prop="password">
+              <el-input placeholder="$t(`message.teacher_form_teacher_input_default_pwd`)" v-model="ruleFormWithTeacher.password"></el-input>
             </el-form-item>
-            <el-form-item v-show="isShowAddTeacher" label="短信提醒">
-              <el-switch v-model="ruleFormWithTeacher.post" active-text="发送短信" inactive-text="不发送" style="margin-top:-3px"></el-switch>
-              <el-tooltip class="item" effect="dark" content="新建教师账户信息将已短信的形式发送给已填写手机号的用户，请确保手机号正确" placement="right-start" style="margin-top:-3px;">
+            <el-form-item v-show="isShowAddTeacher" :label="$t(`message.teacher_form_teacher_sms`)">
+              <el-switch v-model="ruleFormWithTeacher.post" :active-text="$t(`message.teacher_form_teacher_sms_send`)" :inactive-text="$t(`message.teacher_form_teacher_sms_no_send`)" style="margin-top:-3px"></el-switch>
+              <el-tooltip class="item" effect="dark" :content="$t(`message.teacher_form_teacher_sms_content`)" placement="right-start" style="margin-top:-3px;">
                 <el-link :underline="false"><i class="el-icon-info"></i></el-link>
               </el-tooltip>
             </el-form-item>
@@ -177,24 +177,24 @@
         </el-col>
       </el-row>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="resetFormWithDialog">取 消</el-button>
+        <el-button @click="resetFormWithDialog">{{$t(`message.button_cancel`)}}</el-button>
         <el-button
           v-show="isShowAddTeacher"
           type="primary"
           @click="handleAddTeacher"
           :loading="isLoadingWithAdd"
-        >确 定
+        >{{$t(`message.button_confirm`)}}
         </el-button>
         <el-button
           v-show="!isShowAddTeacher"
           type="primary"
           @click="handleEditTeacher"
           :loading="isLoadingWithAdd"
-        >确 定
+        >{{$t(`message.button_confirm`)}}
         </el-button>
       </div>
     </el-dialog>
-    <el-dialog title="提示" :visible.sync="delDialogVisible" width="20%">
+    <el-dialog :title="$t(`message.dialog_header_title_prompt`)" :visible.sync="delDialogVisible" width="20%">
       <el-row>
         <el-col :span="4">
           <i class="el-icon-question"></i>
@@ -204,11 +204,11 @@
         </el-col>
       </el-row>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="delDialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="handleDelTeacher" :loading="isLoadingWithDel">确 定</el-button>
+        <el-button @click="delDialogVisible = false">{{$t(`message.button_cancel`)}}</el-button>
+        <el-button type="primary" @click="handleDelTeacher" :loading="isLoadingWithDel">{{$t(`message.button_confirm`)}}</el-button>
       </span>
     </el-dialog>
-    <el-dialog title="重置密码" :visible.sync="pwdDialogVisible" width="20%">
+    <el-dialog :title="$t(`message.student_management_tableData_operation_password`)" :visible.sync="pwdDialogVisible" width="20%">
       <el-row>
         <el-col :span="4">
           <i class="el-icon-warning"></i>
@@ -222,8 +222,8 @@
         </el-col>
       </el-row>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="pwdDialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="handleResetTeacherPwd" :loading="isLoadingWithPwd">确 定</el-button>
+        <el-button @click="pwdDialogVisible = false">{{$t(`message.button_cancel`)}}</el-button>
+        <el-button type="primary" @click="handleResetTeacherPwd" :loading="isLoadingWithPwd">{{$t(`message.button_confirm`)}}</el-button>
       </span>
     </el-dialog>
   </div>
@@ -250,7 +250,7 @@
     components:{"als-child-header": childHeader},
     data() {
       return {
-        routerConfig: [{name:'教师管理',to:''}],
+        routerConfig: [{name:this.$t(`message.teacher_header_title`),to:''}],
         inputQueryInfo: "", // 搜索内容
         tableData: [], // 班级数据
         queryFromServer: [], // 服务器请求数据
@@ -285,18 +285,18 @@
         }, // 教师表单基本信息
         rulesWithTeacher: {
           password: [
-            {required: true, message: "请输入默认密码", trigger: "blur"},
-            {pattern: /^(\w){6,20}$/, message: "只能输入6-20个字母、数字、下划线"}
+            {required: true, message: this.$t(`message.teacher_form_teacher_input_default_pwd`), trigger: "blur"},
+            {pattern: /^(\w){6,20}$/, message: this.$t(`message.teacher_form_valid_password`)}
           ],
           // 教师表单验证
           nick: [
-            {required: true, message: "请输入教师昵称", trigger: "blur"},
-            {pattern: /^[0-9a-zA-Z]|[\u4e00-\u9fa5]+$/, message: "含有特殊字符"}
+            {required: true, message: this.$t(`message.teacher_input_placeholder`), trigger: "blur"},
+            {pattern: /^[0-9a-zA-Z]|[\u4e00-\u9fa5]+$/, message: this.$t(`message.teacher_form_valid_nick`)}
           ],
 
           phone: [
-            {required: true, message: "请输入手机号", trigger: "blur"},
-            {type: "number", message: "手机必须为数字值", trigger: "blur"}
+            {required: true, message: this.$t(`message.student_management_studentEditDialogVisible_input_phone`), trigger: "blur"},
+            {type: "number", message: this.$t(`message.teacher_form_valid_phone`), trigger: "blur"}
             // { pattern:/^[1][3,4,5,7,8][0-9]{9}$/ , message: '手机号格式不正确' }
           ]
         },
@@ -430,7 +430,7 @@
       // 添加教师按钮触发函数
       addTeacher() {
         if(this.teacherMaxCount<this.queryFromServer.length){ // 应该是 <= 但是有校长，所以 <
-          promptUtil.error(this,'教师账号已超出限制数量')
+          promptUtil.error(this,this.$t(`message.teacher_valid_max_count`))
           return
         }
         this.isSchoolAdmin = false;
@@ -443,7 +443,7 @@
       showDelTeacherDialog(obj) {
         this.currentResetTeaId = obj.row.id;
         this.delDialogVisible = true;
-        this.delDialogContent = "您确定要删除 【 " + obj.row.nick + " 】 吗？";
+        this.delDialogContent = this.$t(`message.consult_dialog_content_del`) + " 【 " + obj.row.nick + " 】 ？";
         this.currentDelTeacherIndex = obj.index + (this.currentPage - 1) * this.pageSize; // 为教师索引，不是教师id
       },
       // 显示编辑教师对话框
@@ -474,9 +474,9 @@
       showPwdTeacherDialog(obj) {
         this.pwdDialogVisible = true;
         this.currentResetTeaId = obj.row.id;
-        this.pwdDialogContent.title = "确定要重置密码吗？重置密码 : 111000";
-        this.pwdDialogContent.account = "教师账号 : " + obj.row.account;
-        this.pwdDialogContent.nick = "教师昵称 : " + obj.row.nick;
+        this.pwdDialogContent.title = this.$t(`message.teacher_reset_password`);
+        this.pwdDialogContent.account = this.$t(`message.teacher_dialog_account`) + " : " + obj.row.account;
+        this.pwdDialogContent.nick = this.$t(`message.teacher_dialog_nick`) +" : " + obj.row.nick;
       },
       // 重置教师密码触发函数
       handleResetTeacherPwd() {
@@ -551,16 +551,16 @@
           return;
         }
         if (this.ruleFormWithTeacher.phone === "") {
-          promptUtil.warning(this, "请填写必要信息");
+          promptUtil.warning(this, this.$t(`message.string_label_necessary`));
           return;
-        } else {
-          let phoneValdate = /^[1][3,4,5,7,8][0-9]{9}$/;
-          if (!phoneValdate.test(this.ruleFormWithTeacher.phone)) {
-            promptUtil.warning(this, "手机号格式不正确");
-            return;
-          }
         }
-
+        // else {
+        //   let phoneValdate = /^[1][3,4,5,7,8][0-9]{9}$/;
+        //   if (!phoneValdate.test(this.ruleFormWithTeacher.phone)) {
+        //     promptUtil.warning(this, "手机号格式不正确");
+        //     return;
+        //   }
+        // }
         // listA 当前编辑状态下选中的班级  listB 编辑之前教师所拥有的班级
         const teacheClasses = this.queryFromServer[
         this.ruleFormWithTeacher.current +
@@ -713,29 +713,30 @@
       // 确认添加教师按钮触发函数
       handleAddTeacher() {
         if (this.ruleFormWithTeacher.password.trim() == "") {
-          promptUtil.warning(this, "请填写必要信息");
+          promptUtil.warning(this, this.$t(`message.string_label_necessary`));
           return;
         }else{
           let patrn=/^(\w){6,20}$/;
           if (!patrn.exec(this.ruleFormWithTeacher.password)){
-            promptUtil.warning(this, "只能输入6-20个字母、数字、下划线");
+            promptUtil.warning(this, this.$t(`message.teacher_form_valid_password`));
             return;
           }
         }
         if (this.ruleFormWithTeacher.nick.trim() == "") {
-          promptUtil.warning(this, "请填写必要信息");
+          promptUtil.warning(this, this.$t(`message.string_label_necessary`));
           return;
         }
         if (this.ruleFormWithTeacher.phone == "") {
-          promptUtil.warning(this, "请填写必要信息");
+          promptUtil.warning(this, this.$t(`message.string_label_necessary`));
           return;
-        } else {
-          let phoneValdate = /^[1][3,4,5,7,8][0-9]{9}$/;
-          if (!phoneValdate.test(this.ruleFormWithTeacher.phone)) {
-            promptUtil.warning(this, "手机号格式不正确");
-            return;
-          }
         }
+        // else {
+        //   let phoneValdate = /^[1][3,4,5,7,8][0-9]{9}$/;
+        //   if (!phoneValdate.test(this.ruleFormWithTeacher.phone)) {
+        //     promptUtil.warning(this, "手机号格式不正确");
+        //     return;
+        //   }
+        // }
         this.isLoadingWithAdd = true; // 改变按钮加载状态
         addTeacher(
           qs.stringify({

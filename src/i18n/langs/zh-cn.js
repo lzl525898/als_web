@@ -107,7 +107,30 @@ const cn = {
     consult_dialog_content_enter_del_student: '您确定要删除学员吗？',
     consult_upload_image_type: '只能上传jpg/png文件，请重新选择文件',
     consult_upload_image_size: '上传头像图片大小不能超过 1MB!',
+    //内部管理 教师管理
+    teacher_header_title: '教师管理',
+    teacher_dialog_account: '教师账号',
+    teacher_dialog_nick: '教师昵称',
+    teacher_input_placeholder: '请输入教师昵称',
+    teacher_button_add_teacher: '添加教师',
+    teacher_label_add_left_msg : '可添加',
+    teacher_label_add_right_msg : '个教师账号',
+    teacher_table_column_nick: '昵称',
+    teacher_form_teacher_nick: '请输入昵称',
+    teacher_form_teacher_color: '专属颜色',
+    teacher_form_teacher_default_pwd: '默认密码',
+    teacher_form_teacher_input_default_pwd: '请输入默认密码',
+    teacher_form_teacher_sms: '短信提醒',
+    teacher_form_teacher_sms_send: '发送短信',
+    teacher_form_teacher_sms_no_send: '不发送',
+    teacher_form_teacher_sms_content: '新建教师账户信息将已短信的形式发送给已填写手机号的用户，请确保手机号正确',
+    teacher_form_valid_password: '只能输入6-20个字母、数字、下划线',
+    teacher_form_valid_nick: '含有特殊字符',
+    teacher_form_valid_phone: '手机号格式不正确',
+    teacher_valid_max_count: '教师账号已超出限制数量',
+    teacher_reset_password: '确定要重置密码吗？重置密码 : 111000',
 
+    string_label_home_page: '首页',
     string_label_export_success: '数据准备完毕,等待下载中',
     string_label_course_student_formal: '正式',
     string_label_course_student_temporary: '临时',
@@ -149,6 +172,7 @@ const cn = {
     string_label_remark: '备注',
     string_label_status: '状态',
     string_label_handle: '操作',
+    string_label_see: '查看',
     string_label_edit: '编辑',
     string_label_submit: '提交',
     string_label_finish: '完成',
@@ -159,6 +183,7 @@ const cn = {
     string_label_female: '女',
     string_label_birth: '生日',
     string_label_source: '来源',
+    string_label_necessary: '请填写必要信息',
 
     live_manage_training_title: '直播培训',
     live_manage_training_click: '点我',
@@ -176,10 +201,11 @@ const cn = {
 
     dialog_header_title_prompt: '提示',
 
-    button_confirm: '确定',
-    button_cancel: '取消',
+    button_confirm: '确 定',
+    button_cancel: '取 消',
 
     //教务中心 学生管理
+    student_header_title: '学生管理',
     student_management_choose_class: '请选择班级',
     student_management_enter_student_name: '请输入学生姓名',
     student_management_search: '搜索',
@@ -225,18 +251,34 @@ const cn = {
     student_management_create_school_student_current_class:'当前班级',
     student_management_create_school_student_select_student:'请点击左侧分组快速查找学生',
     student_management_create_school_student_no_student:'该分组下没有学生哦~',
-
-
-
-
-
-
-
-
-
-
-
-
+    //教务中心 班级管理
+    classroom_name: '班级',
+    classroom_header_title: '班级管理',
+    classroom_search_input_placeholder: '请输入班级名称',
+    classroom_add_button_title: '添加班级',
+    classroom_table_column_classname: '班级名称',
+    classroom_table_column_count: '人数',
+    classroom_valid_delete_warning: '班级学生必须为空，请将学生移至其他班级',
+    classroom_detail_overview: '班级概览',
+    classroom_detail_change_class: '切换班级',
+    classroom_detail_statistics: '操作统计',
+    classroom_detail_statistics_week: '近一周',
+    classroom_detail_statistics_month: '近一月',
+    classroom_detail_statistics_student_count: '最近学生登录人数',
+    classroom_detail_statistics_task_count: '累计发布任务数量',
+    classroom_detail_statistics_publish_count: '累计发布报告数量',
+    classroom_detail_statistics_complete_count: '累计完成作品数量',
+    classroom_detail_permissive_state: "许可状态",
+    classroom_detail_permissive_use_more: '获取更多许可',
+    classroom_detail_permissive_use_ok: '可用许可',
+    classroom_detail_permissive_disable: "禁用许可",
+    classroom_detail_permissive_use: '使用许可',
+    classroom_detail_permissive_all: '取得所有课程权限',
+    classroom_detail_permissive_student: '将许可应用于学生',
+    classroom_detail_permissive_code: '选择状态码',
+    classroom_detail_permissive_allocated_quota: '已分配名额',
+    classroom_detail_permissive_not_allocated_quota: '未分配名额',
+    classroom_detail_permissive_valid_warning: '请选择要许可的学生',
   },
 }
 export default cn;

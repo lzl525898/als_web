@@ -290,6 +290,9 @@
             };
         },
         mounted() {
+            let lang = storageUtil.getLang()
+            this.$i18n.locale = lang;
+            storageUtil.setLang(lang)
             this.contentBoxHeight = document.getElementById("contentBoxRight").clientHeight
             this.getBannerImg()
             window.onresize = () => {
