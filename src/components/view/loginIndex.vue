@@ -6,22 +6,29 @@
           <div class="left">
             <img src="../../../static/images/base/newIndex/smallLogo.png" alt class="loginWidth">
             <p style="float: left;padding-left: 8px;line-height: 30px"><span
-              style="font-size: 25px;color: #fff">奥松云课堂</span><b
+              style="font-size: 25px;color: #fff">{{$t(`message.index_base_title`)}}</span><b
               style="font-size: 20px;color: #fff;font-weight: normal">（AEP）</b></p>
+            <div style="height:60px;display:flex;align-items:center;margin-left:5px">
+              <img src="../../../static/images/base/newestIndex/international.png" alt="">
+              <el-select v-model="currentSystemLang" size="mini" style="width:100px;margin-left:5px" @change="handleChangeLang">
+                <el-option label="简体中文" value="zh"></el-option>
+                <el-option label="English" value="en"></el-option>
+              </el-select>
+            </div>
           </div>
           <div class="right">
             <ul class="ulList">
               <li>
-                <router-link to="/home" replace>首页</router-link>
+                <router-link to="/home" replace>{{$t(`message.index_base_banner_home`)}}</router-link>
               </li>
               <li>
-                <router-link to="/discover" replace>作品中心</router-link>
+                <router-link to="/discover" replace>{{$t(`message.index_base_banner_works`)}}</router-link>
               </li>
               <li>
-                <router-link to="/login" replace>教师社区</router-link>
+                <router-link to="/login" replace>{{$t(`message.index_base_banner_teaching`)}}</router-link>
               </li>
               <li>
-                <a href="http://www.alsedu.cn/support.html" target="_blank" style="display: block">合作支持</a>
+                <a href="http://www.alsedu.cn/support.html" target="_blank" style="display: block">{{$t(`message.index_base_banner_support`)}}</a>
               </li>
             </ul>
           </div>
@@ -39,39 +46,40 @@
             </div>
             <div id="contentBoxRight">
               <div class="contentBoxRightBox">
-                <h3>登录学习系统</h3>
+                <h3>{{$t(`message.index_base_login_header_title`)}}</h3>
                 <div class="boxTotal">
                   <div class="loginBox ">
                     <div v-show="loginDivStatus==3">
-                      <p>修改密码</p>
+                      <p>{{$t(`message.index_base_login_update_password`)}}</p>
                       <el-form :model="pwdRuleForm" :rules="pwdRules" ref="pwdRuleForm" class="demo-ruleForm">
                         <el-form-item prop="password">
-                          <el-input v-model="pwdRuleForm.password" placeholder="请输入新密码"
+                          <el-input v-model="pwdRuleForm.password" :placeholder="$t(`message.index_base_login_form_input_password`)"
                                     @keydown.native.enter="updatePassword"
                                     type="password"></el-input>
                         </el-form-item>
                         <el-form-item prop="confirm">
-                          <el-input v-model="pwdRuleForm.confirm" placeholder="请确认新密码"
+                          <el-input v-model="pwdRuleForm.confirm" :placeholder="$t(`message.index_base_login_form_confirm_password`)"
                                     @keydown.native.enter="updatePassword"
                                     type="password"></el-input>
                         </el-form-item>
                         <el-form-item>
                           <el-button type="primary" round class="login-btn" @click="updatePassword"
-                                     :loading="isUpdateLoading">确认
+                                     :loading="isUpdateLoading">{{$t(`message.index_base_login_confirm`)}}
                           </el-button>
                         </el-form-item>
                       </el-form>
                     </div>
                     <div v-show="loginDivStatus==2">
                       <div style="margin-top: -22px">
-                        <p style="text-align: center;font-size: 16px">忘记密码</p>
+                        <p style="text-align: center;font-size: 16px">{{$t(`message.index_base_login_forget_password`)}}</p>
                         <el-form :model="phoneRuleForm" :rules="phoneRules" ref="phoneRuleForm" class="demo-ruleForm">
                           <el-form-item prop="phone">
-                            <el-input v-model="phoneRuleForm.phone" placeholder="请输入手机号"
+                            <el-input v-model="phoneRuleForm.phone" :placeholder="$t(`message.index_base_login_form_input_phone`)"
+                                      suffix-icon="el-icon-mobile-phone"
                                       @keydown.native.enter="verifyCodeEnter"></el-input>
                           </el-form-item>
                           <el-form-item prop="code">
-                            <el-input v-model="phoneRuleForm.code" placeholder="请输入验证码" style="width: 173px"
+                            <el-input v-model="phoneRuleForm.code" :placeholder="$t(`message.index_base_login_form_input_code`)" style="width: 173px"
                                       @keydown.native.enter="verifyCodeEnter"></el-input>
                             <el-button type="primary" @click="getCode"
                                        style="width: 90px;padding:0;margin:0;height: 40px;"
@@ -80,29 +88,30 @@
                           </el-form-item>
                           <el-form-item>
                             <el-button type="danger" round class="login-btn" @click="verifyCodeEnter"
-                                       :loading="isSMSLoading">确认
+                                       :loading="isSMSLoading">{{$t(`message.index_base_login_confirm`)}}
                             </el-button>
                           </el-form-item>
                         </el-form>
                         <el-link :underline="false" style="font-size: 12px;margin-top: 10px"
-                                 @click="goBackLogin">返回登录
+                                 @click="goBackLogin">{{$t(`message.index_base_login_from_return_login`)}}
                         </el-link>
                       </div>
 
                     </div>
                     <div v-show="loginDivStatus==1">
-                      <!--                      <p>{{$t(`message.login`)}}</p>-->
                       <el-form :model="ruleForm" :rules="rules" ref="ruleForm" class="demo-ruleForm">
                         <el-form-item prop="username">
                           <el-input
-                            v-model="ruleForm.username" placeholder="请输入账户或手机号"
+                            suffix-icon="el-icon-user"
+                            v-model="ruleForm.username" :placeholder="$t(`message.index_base_login_input_account`)"
                             @keydown.native.enter="loginSubmit"
                           ></el-input>
                         </el-form-item>
                         <el-form-item prop="password">
                           <el-input
+                            suffix-icon="el-icon-lock"
                             v-model="ruleForm.password"
-                            placeholder="请输入密码"
+                            :placeholder="$t(`message.index_base_login_form_old_password`)"
                             type="password"
                             @keydown.native.enter="loginSubmit"
                           ></el-input>
@@ -112,7 +121,7 @@
                             <el-col :span="14">
                               <el-input
                                 v-model="ruleForm.verificationCode"
-                                placeholder="请输入验证码"
+                                :placeholder="$t(`message.index_base_login_form_input_code`)"
                                 type="text"
                                 @keydown.native.enter="loginSubmit"
                               ></el-input>
@@ -125,8 +134,8 @@
                           </el-row>
                         </el-form-item>
                         <el-form-item style="margin-top:28px;">
-                          <el-checkbox v-model="ruleForm.agree">同意
-                            <el-link @click="onClickUserAgreement" style="margin-top:-1px"><span style="color:#409EFF">《奥松云课堂(AEP)用户服务协议》</span>
+                          <el-checkbox v-model="ruleForm.agree">{{$t(`message.index_base_login_agree`)}}
+                            <el-link @click="onClickUserAgreement" style="margin-top:-1px"><span style="color:#409EFF">{{$t(`message.index_base_aep_protocol`)}}</span>
                             </el-link>
                           </el-checkbox>
                         </el-form-item>
@@ -134,13 +143,13 @@
                           <el-button type="primary" round
                                      style="margin-top: 6px;text-align: center;display: inline-block;position: absolute;bottom: -30px;"
                                      class="login-btn" @click="loginSubmit"
-                                     :disabled="!ruleForm.agree">登录
+                                     :disabled="!ruleForm.agree">{{$t(`message.index_base_login_btn`)}}
                           </el-button>
                         </el-form-item>
                         <div style="height: 40px"></div>
                       </el-form>
                       <el-link :underline="false" style="position: absolute;bottom: 122px;right: 0;font-size: 12px;"
-                               @click="loginDivStatus=2">忘记了您的密码？
+                               @click="loginDivStatus=2">{{$t(`message.index_base_login_forget_pwd`)}}
                       </el-link>
                     </div>
                   </div>
@@ -148,10 +157,13 @@
               </div>
             </div>
           </div>
-          <div class="footer">奥松智能 ｜
-            <el-link :underline="false" href="http://www.beian.miit.gov.cn" target="_blank" style="color:#666;font-size: 12px;margin-top: -4px">
+          <div class="footer">
+            <div style="margin-bottom:10px">{{$t(`message.index_base_login_explore`)}}</div>
+            <div>
+            {{$t(`message.index_base_company_name`)}} ｜<el-link :underline="false" href="http://www.beian.miit.gov.cn" target="_blank" style="color:#666;font-size: 12px;margin-top: -4px">
               粤ICP备19107383号-1
             </el-link>
+            </div>
           </div>
         </div>
       </div>
@@ -187,7 +199,7 @@
         data() {
             const validatePass = (rule, value, callback) => {
                 if (value === '') {
-                    callback(new Error('请输入新密码'));
+                    callback(new Error(this.$t(`message.index_base_login_form_input_password`)));
                 } else {
                     if (this.pwdRuleForm.password !== '') {
                         this.$refs.ruleForm.validateField('pwdRuleForm');
@@ -197,16 +209,16 @@
             }
             const validatePass2 = (rule, value, callback) => {
                 if (value === '') {
-                    callback(new Error('请再次输入密码'));
+                    callback(new Error(this.$t(`message.index_base_login_form_confirm_new_pwd`)));
                 } else if (value !== this.pwdRuleForm.password) {
-                    callback(new Error('两次输入密码不一致!'));
+                    callback(new Error(this.$t(`message.index_base_login_password_same`)));
                 } else {
                     callback();
                 }
             }
             const validateUsername = (rule, value, callback) => {
                 if (value === '') {
-                    callback(new Error('请输入账号或手机号'));
+                    callback(new Error(this.$t(`message.index_base_login_input_account`)));
                 } else {
                     //验证账号是否存在
                     if (value.length <= 5) {
@@ -217,7 +229,7 @@
                         })).then(res => {
                             if (res.code == SUCCESS_CODE) {
                             } else if (res.code == ERROR_CODE) {
-                                callback(new Error('账号不存在'));
+                                callback(new Error(this.$t(`message.index_base_login_no_exist`)));
                             } else if (res.code == 3011) {//3011弹出验证码
                                 this.showVerifyCode = true
                                 this.contentBoxHeight = 391
@@ -232,9 +244,9 @@
             }
             const validatePhone = (rule, value, callback) => {
                 if (value === '') {
-                    callback(new Error('请输入手机号'));
+                    callback(new Error(this.$t(`message.index_base_login_form_input_phone`)));
                 } else if (!verifyUtil.isPhone(value)) {
-                    callback(new Error('手机号格式错误'));
+                    callback(new Error(this.$t(`message.index_base_login_form_input_phone_error`)));
                 } else {
                     if (this.phoneRuleForm.phone !== '') {
                         this.$refs.ruleForm.validateField('phoneRuleForm');
@@ -244,9 +256,9 @@
             }
             const validateCode = (rule, value, callback) => {
                 if (value === '') {
-                    callback(new Error('请输入验证码'));
+                    callback(new Error(this.$t(`message.index_base_login_form_input_code`)));
                 } else if (value != '' && value.length != 6) {
-                    callback(new Error('验证码格式错误'));
+                    callback(new Error(this.$t(`message.index_base_login_form_input_code_error`)));
                 } else {
                     if (this.phoneRuleForm.code !== '') {
                         this.$refs.ruleForm.validateField('phoneRuleForm');
@@ -255,6 +267,7 @@
                 }
             }
             return {
+                currentSystemLang: '',
                 isShowDrag: true, // 是否显示drag
                 token: '',
                 hei: "",
@@ -264,7 +277,7 @@
                     username: [
                         {validator: validateUsername, trigger: 'blur'}
                     ],
-                    password: [{required: true, message: "请输入密码", trigger: "blur"},],
+                    password: [{required: true, message: "", trigger: "blur"},],
                 },
                 loginDivStatus: 1, // 1 登录 2 忘记密码
                 phoneRuleForm: {phone: "", code: ""},
@@ -277,7 +290,7 @@
                     password: [{validator: validatePass, trigger: 'blur'}],
                     confirm: [{validator: validatePass2, trigger: 'blur'}]
                 },
-                verifyBtnContent: '获取验证码',
+                verifyBtnContent: '',
                 timeWithVerify: 0, // 默认验证码时间
                 isVerifyBtnAble: false, // 是否可用
                 isSMSLoading: false, // 验证code 是否可用
@@ -289,26 +302,34 @@
                 contentBoxHeight: '',
             };
         },
+        watch: {
+            '$i18n.locale': function () {
+                this.verifyBtnContent = this.$t(`message.index_base_login_code`)
+                this.rules.password[0].message = this.$t(`message.index_base_login_form_old_password`)
+            }
+        },
         mounted() {
             let lang = storageUtil.getLang()
+            this.currentSystemLang = lang
             this.$i18n.locale = lang;
-            storageUtil.setLang(lang)
             this.contentBoxHeight = document.getElementById("contentBoxRight").clientHeight
             this.getBannerImg()
             window.onresize = () => {
                 this.setWindowStyle()
             }
+            this.verifyBtnContent = this.$t(`message.index_base_login_code`)
+            this.rules.password[0].message = this.$t(`message.index_base_login_form_old_password`)
             if (storageUtil.readOverdue() == 1) { // 证明已经过期，需要重新登录提示
                 this.$notify({
                     duration: 4000,
-                    title: '账户警告',
+                    title: this.$t(`message.index_base_login_account_warning`),
                     dangerouslyUseHTMLString: true,
-                    message: '<div style="color:#F56C6C">您的账号存在异地登陆的情况，建议您尽快更换账户密码！</div>'
+                    message: '<div style="color:#F56C6C">'+this.$t(`message.index_base_login_warning_account`)+'</div>'
                 });
             }
             if (localStorage.getItem('timeDown')) {
                 this.timeWithVerify = localStorage.getItem('timeDown')
-                this.verifyBtnContent = this.timeWithVerify + '秒'
+                this.verifyBtnContent = this.timeWithVerify + this.$t(`message.index_base_login_second`)
                 this.timeDown()
             }
             setTimeout(() => {
@@ -322,6 +343,11 @@
             this.verificationCode()
         },
         methods: {
+            handleChangeLang(val) {
+                this.currentSystemLang = val
+                this.$i18n.locale = val;
+                storageUtil.setLang(val)
+            },
             onClickUserAgreement() {
                 this.innerVisible = true
             },
@@ -379,7 +405,7 @@
                         mobile: this.phoneRuleForm.phone
                     })).then(res => {
                         if (res.code == SUCCESS_CODE) {
-                            promptUtil.success(this, '验证码已发送')
+                            promptUtil.success(this, this.$t(`message.index_base_login_send_code`))
                             this.timeDown()
                         } else if (res.code == USER_NOT_EXIST) {
                             promptUtil.error(this, res.msg)
@@ -389,7 +415,7 @@
                     }).catch(err => promptUtil.LOG("smsCode-err", err))
 
                 } else {
-                    promptUtil.warning(this, '请输入正确的手机号')
+                    promptUtil.warning(this, this.$t(`message.index_base_login_rules_phone`))
                 }
             },
             // 修改密码按钮触发
@@ -409,7 +435,12 @@
                                 this.$refs['phoneRuleForm'].resetFields()
                                 this.loginDivStatus = 1
                             } else {
-                                promptUtil.error(this, res.msg + '请' + res.last_time + '后重试')
+                                let lang = storageUtil.getLang()
+                                if(lang!='zh'){
+                                    promptUtil.error(this, 'Try again in' + res.last_time + 'seconds')
+                                }else{
+                                    promptUtil.error(this, res.msg + '请' + res.last_time + '后重试')
+                                }
                             }
                             this.isUpdateLoading = false
                         }).catch(err => {
@@ -459,7 +490,7 @@
                     localStorage.setItem('timeDown', this.timeWithVerify)
                     if (this.timeWithVerify < 0) {
                         this.timeWithVerify = 10
-                        this.verifyBtnContent = '获取验证码'
+                        this.verifyBtnContent = this.$t(`message.index_base_login_code`)
                         localStorage.removeItem('timeDown')
                         clearInterval(result);
                         this.isVerifyBtnAble = false
@@ -498,11 +529,11 @@
                     this.ruleForm.username = this.ruleForm.username.trim();
                 }
                 if (this.ruleForm.username.trim() == "") {
-                    promptUtil.warning(this, "请输入账户或手机号");
+                    promptUtil.warning(this, this.$t(`message.index_base_login_input_account`));
                     return;
                 }
                 if (this.ruleForm.password.trim() == "") {
-                    promptUtil.warning(this, "请输入密码");
+                    promptUtil.warning(this, this.$t(`message.index_base_login_form_old_password`));
                     return;
                 }
                 // if (this.ruleForm.verificationCode.trim() == "") {

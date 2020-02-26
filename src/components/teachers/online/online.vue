@@ -77,7 +77,10 @@
       </div>
     </el-card>
     <!--   列表-->
-    <el-card style="margin-top: 20px;margin-bottom:20px">
+    <el-card style="margin-top: 20px;margin-bottom:20px;min-height: 600px;display:flex;align-items:center;justify-content:center;" v-show="tableData.length==0">
+      <i class="el-icon-loading"/><span style="color:#909399;margin-left:3px">加载中...</span>
+    </el-card>
+    <el-card style="margin-top: 20px;margin-bottom:20px" v-show="tableData.length>0">
       <el-table
         :data="tableData"
         border
@@ -95,14 +98,15 @@
               <div class="image-wrapper">
                 <img :src="scope.row.cover" class="image"/>
               </div>
-              <div style="flex:1">
+              <div style="flex:1;margin-top:-4px">
                 <el-tooltip class="item" effect="dark" :content="scope.row.name" placement="right">
                   <div style="overflow: hidden;text-overflow:ellipsis;white-space: nowrap;width:250px">
                     <span style="font-weight:600">{{scope.row.name}}</span>
                   </div>
                 </el-tooltip>
-                <div style="margin-top:10px">创建者: <span>{{scope.row.createName}}</span></div>
-                <div >创建时间: <span>{{scope.row.createDate}}</span></div>
+                <div style="font-size:12px">类型：<span style="color:#409EFF;font-weight:bold">大班课</span></div>
+                <div style="font-size:12px">创建者: <span>{{scope.row.createName}}</span></div>
+                <div style="font-size:12px">创建时间: <span>{{scope.row.createDate}}</span></div>
               </div>
             </div>
           </template>
@@ -212,12 +216,32 @@
       >
         <div style="display:flex;height:100%;">
           <div style="display:flex;flex:1;flex-direction:column">
+            <el-form-item label="课程类型" prop="classType">
+              <div style="display:flex">
+                <div>
+                  <el-radio-group v-model="addRuleForm.classType" @change="handleChangeClassType">
+                    <el-radio label="1">小班课</el-radio>
+                    <el-radio label="2">大班课</el-radio>
+                  </el-radio-group>
+                </div>
+                <div style="margin-left: 10px">
+                  <el-popover
+                    placement="bottom-start"
+                    title="课程类型说明"
+                    width="200"
+                    trigger="hover"
+                    content="小班课适用于互动教学、一对一私教，最高支持9人同步面对面互动教学；大班课没有人数限制，适用于公开课、精品课、招生课。">
+                    <i class="el-icon-warning" slot="reference"/>
+                  </el-popover>
+                </div>
+              </div>
+            </el-form-item>
             <div>
               <div v-if="role == 1">
                 <el-form-item label="主讲老师" prop="selectTeacher">
                   <el-select
                     v-model="addRuleForm.selectTeacher"
-                    size="small"
+                    size="mini"
                     placeholder="请选择主讲人"
                     style="width:195px;"
                     @change="selectTeacherChange"
@@ -235,7 +259,7 @@
               <div v-else>
                 <el-form-item label="主讲老师" prop="speakTeacher">
                   <el-input
-                    size="small"
+                    size="mini"
                     style="width:195px;"
                     v-model="addRuleForm.speakTeacher"
                     disabled
@@ -245,7 +269,7 @@
             </div>
             <el-form-item label="课程名称" prop="name">
               <el-input
-                size="small"
+                size="mini"
                 style="width:195px;"
                 v-model="addRuleForm.name"
                 placeholder="请输入课程名称"
@@ -254,7 +278,7 @@
             <el-form-item label="开始时间" prop="startTime">
               <div class="block">
                 <el-date-picker
-                  size="small"
+                  size="mini"
                   style="width:195px;"
                   v-model="addRuleForm.startTime"
                   type="datetime"
@@ -265,7 +289,7 @@
             </el-form-item>
             <el-form-item label="课程时长" prop="longTime">
               <el-time-picker
-                size="small"
+                size="mini"
                 style="width:195px;"
                 @focus="defaultTime"
                 v-model="addRuleForm.longTime"
@@ -276,24 +300,13 @@
               >
               </el-time-picker>
             </el-form-item>
-            <el-form-item label="指派班级" prop="classes">
-              <el-cascader
-                size="small"
-                style="width:195px;"
-                v-model="addRuleForm.classes"
-                :options="classesInfo"
-                :props="props"
-                collapse-tags
-                clearable
-              ></el-cascader>
-            </el-form-item>
           </div>
           <div style="height:300px;width:1px;background-color:#EBEEF5"></div>
           <div style="display:flex;flex:1;flex-direction:column">
             <el-row>
               <el-form-item label="学生人数" prop="number" style="float: left">
                 <el-input
-                  size="small"
+                  size="mini"
                   style="width:195px;"
                   v-model="addRuleForm.num"
                   placeholder="请输入上课学生人数"
@@ -303,10 +316,23 @@
               <el-checkbox
                 v-model="addRuleForm.limit"
                 style="float: left;margin-top: 12px;margin-left: -20px"
+                :disabled="limitCheckBoxDisable"
                 @change="limitChange"
               >不设上限
               </el-checkbox>
             </el-row>
+            <el-form-item label="指派班级" prop="classes">
+              <el-cascader
+                size="mini"
+                style="width:195px;"
+                v-model="addRuleForm.classes"
+                :options="classesInfo"
+                :props="props"
+                collapse-tags
+                clearable
+                @change="handleChangeCascader"
+              ></el-cascader>
+            </el-form-item>
             <el-form-item label="手机模板属性" prop="type">
               <div style="display:flex">
                 <div>
@@ -677,6 +703,7 @@
                 defaultCoverUrl: 'https://www.alsrobot.vip/als_classroom/public/static/live_cover.png', // 默认封面图地址
                 addRuleForm: {
                     //创建课程表单
+                    classType:'1', //小班课1  大班课2
                     name: "",
                     num: "",
                     startTime: "",
@@ -690,22 +717,19 @@
                     coverUrl:'', //封面图
                 },
                 rules: {
-                    // number: [
-                    //   { required: true, message: "教室人数不能为空", trigger: "blur" },
-                    //   { type: "number", message: "输入内容必须数字值" }
-                    // ],
+                    classType: [{required: true}],
                     name: [{required: true, message: "请输入课程名称", trigger: "blur"}],
                     startTime: [
-                        {required: true, message: "请输入课程名称", trigger: "blur"}
+                        {required: true, message: "请选择开始时间", trigger: "blur"}
                     ],
                     longTime: [
-                        {required: true, message: "请输入课程名称", trigger: "blur"}
+                        {required: true, message: "请选择课程时长", trigger: "blur"}
                     ],
                     speakTeacher: [
-                        {required: true, message: "请输入课程名称", trigger: "blur"}
+                        {required: true, message: "请选择主讲人", trigger: "blur"}
                     ],
                     selectTeacher: [
-                        {required: true, message: "请输入教师名称", trigger: "blur"}
+                        {required: true, message: "请选择主讲人", trigger: "blur"}
                     ],
                     classes: [
                         {
@@ -720,6 +744,7 @@
                 props: {multiple: true},
                 role: "",
                 limitDisable: false,
+                limitCheckBoxDisable:true,
                 sendLimit: null, //是否选择上限 true传0
                 enterClassDialogVisible: false, //进入教室dialog
                 innerVisible:false, //打卡下载对话框
@@ -782,6 +807,32 @@
             this.getClassTableList();
         },
         methods: {
+            handleChangeCascader(values){
+                let maxNum = this.addRuleForm.num && this.addRuleForm.num!='' ? this.addRuleForm.num*1 : 0
+                if(this.addRuleForm.classType==1){ // 小班课
+                    if(maxNum<values.length){
+                        promptUtil.warning(this, '请调整上课学生人数')
+                        this.addRuleForm.classes = []
+                        return
+                    }
+                }else{ // 大班课
+                    if(!this.limitDisable){ // 未选择不设上限
+                        if(maxNum<values.length){
+                            promptUtil.warning(this, '请调整上课学生人数')
+                            this.addRuleForm.classes = []
+                            return
+                        }
+                    }
+                }
+            },
+            handleChangeClassType(type){
+                if(type==2){
+                    this.addRuleForm.num = ""
+                }
+                this.limitCheckBoxDisable = type!=2
+                this.limitDisable = type==2
+                this.addRuleForm.limit = type==2
+            },
             handleCoverSuccess(res, file){
                 this.addRuleForm.coverUrl = res
             },
@@ -806,6 +857,7 @@
             // 不设上限
             limitChange(val) {
                 this.sendLimit = val;
+                this.addRuleForm.classes = []
                 if (val == true) {
                     this.addRuleForm.num = "";
                     this.limitDisable = true;
@@ -878,9 +930,16 @@
                     return;
                 }
                 if (this.addRuleForm.limit == false) {
-                    if (!/(^[1-9]\d*$)/.test(this.addRuleForm.num)) {
-                        promptUtil.warning(this, "请输入正整数");
-                        return;
+                    if(this.addRuleForm.classType==2){ // 大班课
+                        if (!/(^[1-9]*$)/.test(this.addRuleForm.num)) {
+                            promptUtil.warning(this, "请输入正整数");
+                            return;
+                        }
+                    }else{ // 小班课
+                        if (!/(^[1-9]*$)/.test(this.addRuleForm.num) || this.addRuleForm.num>9 || this.addRuleForm.num<1) {
+                            promptUtil.warning(this, "请输入1-9正整数");
+                            return;
+                        }
                     }
                 }
                 this.addLiveLoading=true
@@ -938,6 +997,7 @@
                             });
                     } else {
                         _this.sign = 2
+                        this.addLiveLoading=false
                         console.log("error submit!!");
                         return false;
                     }
@@ -950,9 +1010,16 @@
                     return;
                 }
                 if (this.addRuleForm.limit == false) {
-                    if (!/(^[1-9]\d*$)/.test(this.addRuleForm.num)) {
-                        promptUtil.warning(this, "请输入正整数");
-                        return;
+                    if(this.addRuleForm.classType==2){ // 大班课
+                        if (!/(^[1-9]\d*$)/.test(this.addRuleForm.num)) {
+                            promptUtil.warning(this, "请输入正整数");
+                            return;
+                        }
+                    }else{ // 小班课
+                        if (!/(^[1-9]\d*$)/.test(this.addRuleForm.num) || this.addRuleForm.num>9 || this.addRuleForm.num<1) {
+                            promptUtil.warning(this, "请输入1-9正整数");
+                            return;
+                        }
                     }
                 }
 
@@ -1012,6 +1079,7 @@
                             });
                     } else {
                         console.log("error submit!!");
+                        this.editLiveLoading=false
                         return false;
                     }
                 });
@@ -1020,6 +1088,7 @@
             resetAddRuleForm() {
                 this.addRuleForm = {
                     //创建课程表单
+                    classType:'1',
                     name: "",
                     num: "",
                     startTime: "",
@@ -1031,6 +1100,8 @@
                     limit: false,
                     coverUrl:'',
                 };
+                this.addLiveLoading = false
+                this.editLiveLoading=false
             },
             // 获取选择的班级id和学生id
             getClassAndStudentIDS(data) {
@@ -1081,7 +1152,6 @@
             //获取直播列表
             getClassTableList() {
                 const moment = require("moment");
-                const loading = promptUtil.loading(this);
                 getLiveList(
                     qs.stringify({
                         school_id: storageUtil.readTeacherInfo().school_id,
@@ -1142,11 +1212,9 @@
                             this.searchLoading=false
                             promptUtil.warning(this,res.msg)
                         }
-                        loading.close();
                     })
                     .catch(err => {
                         promptUtil.LOG("queryExam-err", err);
-                        loading.close();
                     });
             },
             defaultTime(val){
@@ -1414,7 +1482,8 @@
     margin-top: 10px;
   }
   .avatar-uploader{
-    width: 160px;
+    width: 110px;
+    height: 110px;
     border: 1px dashed #d9d9d9;
     border-radius: 6px;
     cursor: pointer;
@@ -1427,14 +1496,14 @@
   .avatar-uploader-icon {
     font-size: 28px;
     color: #8c939d;
-    width: 160px;
-    height: 160px;
-    line-height: 160px;
+    width: 110px;
+    height: 110px;
+    line-height: 110px;
     text-align: center;
   }
   .avatar {
-    width: 160px;
-    height: 160px;
+    width: 110px;
+    height: 110px;
     display: block;
   }
   .image-wrapper{

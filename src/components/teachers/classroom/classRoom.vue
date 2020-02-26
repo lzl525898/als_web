@@ -38,7 +38,7 @@
     <el-card class="box-card" shadow="always">
       <div style="display: flex;">
         <div style="height: 20px;width: 3px;background-color: #00a2ff;"></div>
-        <div style="width:6%;line-height:20px;margin-left:5px;"><span v-show="handleInfo.currentSwitch">{{$t(`message.classroom_detail_statistics_week`)}}</span><span
+        <div style="width:20%;line-height:20px;margin-left:5px;"><span v-show="handleInfo.currentSwitch">{{$t(`message.classroom_detail_statistics_week`)}}</span><span
           v-show="!handleInfo.currentSwitch">{{$t(`message.classroom_detail_statistics_month`)}}</span></div>
         <div style="width:60%;margin-left: 30px;"></div>
         <div style="width:30%;display: flex;justify-content: flex-end;">
@@ -52,46 +52,50 @@
       <el-row style="line-height: 36px;margin-top: 10px;">
         <div v-show="handleInfo.currentSwitch">
           <div style="display: flex;justify-content: flex-start;align-items: center">
-            <div style="width: 150px;">{{$t(`message.classroom_detail_statistics_student_count`)}}</div>
+            <div class="classTitleCircle"></div>
+            <div :style={width:operationWidth}>{{$t(`message.classroom_detail_statistics_student_count`)}}</div>
             <div class="handle-div" :style="{width:handleInfo.week[0]+'px'}"></div>
-            <span style="margin-left: 30px;">{{handleInfo.weekNum[0]}}{{$t(`message.classroom_table_column_count`)}}</span>
+            <span style="margin-left: 30px;">{{handleInfo.weekNum[0]}}&nbsp;{{$t(`message.classroom_table_column_count`)}}</span>
           </div>
           <div style="display: flex;justify-content: flex-start;align-items: center">
-            <div style="width: 150px;">{{$t(`message.classroom_detail_statistics_task_count`)}}</div>
+            <div class="classTitleCircle"></div>
+            <div :style={width:operationWidth}>{{$t(`message.classroom_detail_statistics_task_count`)}}</div>
             <div class="handle-div" :style="{width:handleInfo.week[1]+'px'}"></div>
-            <span style="margin-left: 30px;">{{handleInfo.weekNum[1]}}{{$t(`message.classroom_table_column_count`)}}</span>
+            <span style="margin-left: 30px;">{{handleInfo.weekNum[1]}}&nbsp;{{$t(`message.classroom_table_column_count`)}}</span>
           </div>
           <div style="display: flex;justify-content: flex-start;align-items: center">
-            <div style="width: 150px;">{{$t(`message.classroom_detail_statistics_publish_count`)}}</div>
+            <div class="classTitleCircle"></div>
+            <div :style={width:operationWidth}>{{$t(`message.classroom_detail_statistics_publish_count`)}}</div>
             <div class="handle-div" :style="{width:handleInfo.week[2]+'px'}"></div>
-            <span style="margin-left: 30px;">{{handleInfo.weekNum[2]}}{{$t(`message.classroom_table_column_count`)}}</span>
+            <span style="margin-left: 30px;">{{handleInfo.weekNum[2]}}&nbsp;{{$t(`message.classroom_table_column_count`)}}</span>
           </div>
           <div style="display: flex;justify-content: flex-start;align-items: center">
-            <div style="width: 150px;">{{$t(`message.classroom_detail_statistics_complete_count`)}}</div>
+            <div class="classTitleCircle"></div>
+            <div :style={width:operationWidth}>{{$t(`message.classroom_detail_statistics_complete_count`)}}</div>
             <div class="handle-div" :style="{width:handleInfo.week[3]+'px'}"></div>
-            <span style="margin-left: 30px;">{{handleInfo.weekNum[3]}}{{$t(`message.classroom_table_column_count`)}}</span>
+            <span style="margin-left: 30px;">{{handleInfo.weekNum[3]}}&nbsp;{{$t(`message.classroom_table_column_count`)}}</span>
           </div>
         </div>
         <div v-show="!handleInfo.currentSwitch">
           <div style="display: flex;justify-content: flex-start;align-items: center">
-            <div style="width: 150px;">{{$t(`message.classroom_detail_statistics_student_count`)}}</div>
+            <div :style={width:operationWidth}>{{$t(`message.classroom_detail_statistics_student_count`)}}</div>
             <div class="handle-div" :style="{width:handleInfo.month[0]+'px'}"></div>
-            <span style="margin-left: 30px;">{{handleInfo.monthNum[0]}}{{$t(`message.classroom_table_column_count`)}}</span>
+            <span style="margin-left: 30px;">{{handleInfo.monthNum[0]}}&nbsp;{{$t(`message.classroom_table_column_count`)}}</span>
           </div>
           <div style="display: flex;justify-content: flex-start;align-items: center">
-            <div style="width: 150px;">{{$t(`message.classroom_detail_statistics_task_count`)}}</div>
+            <div :style={width:operationWidth}>{{$t(`message.classroom_detail_statistics_task_count`)}}</div>
             <div class="handle-div" :style="{width:handleInfo.month[1]+'px'}"></div>
-            <span style="margin-left: 30px;">{{handleInfo.monthNum[1]}}{{$t(`message.classroom_table_column_count`)}}</span>
+            <span style="margin-left: 30px;">{{handleInfo.monthNum[1]}}&nbsp;{{$t(`message.classroom_table_column_count`)}}</span>
           </div>
           <div style="display: flex;justify-content: flex-start;align-items: center">
-            <div style="width: 150px;">{{$t(`message.classroom_detail_statistics_publish_count`)}}</div>
+            <div :style={width:operationWidth}>{{$t(`message.classroom_detail_statistics_publish_count`)}}</div>
             <div class="handle-div" :style="{width:handleInfo.month[2]+'px'}"></div>
-            <span style="margin-left: 30px;">{{handleInfo.monthNum[2]}}{{$t(`message.classroom_table_column_count`)}}</span>
+            <span style="margin-left: 30px;">{{handleInfo.monthNum[2]}}&nbsp;{{$t(`message.classroom_table_column_count`)}}</span>
           </div>
           <div style="display: flex;justify-content: flex-start;align-items: center">
-            <div style="width: 150px;">{{$t(`message.classroom_detail_statistics_complete_count`)}}</div>
+            <div :style={width:operationWidth}>{{$t(`message.classroom_detail_statistics_complete_count`)}}</div>
             <div class="handle-div" :style="{width:handleInfo.month[3]+'px'}"></div>
-            <span style="margin-left: 30px;">{{handleInfo.monthNum[3]}}{{$t(`message.classroom_table_column_count`)}}</span>
+            <span style="margin-left: 30px;">{{handleInfo.monthNum[3]}}&nbsp;{{$t(`message.classroom_table_column_count`)}}</span>
           </div>
         </div>
       </el-row>
@@ -265,6 +269,7 @@
         codeId: '',
         monthEchartsArray: [],
         isShowStudentTable: false,
+        operationWidth:'',
       }
     },
     mounted() {
@@ -277,6 +282,8 @@
       } else {
         this.$router.replace({path: "/classMan"})
       }
+      this.judgeCnEn = storageUtil.getLang();
+      this.judgeCnEn == "zh" || this.judgeCnEn == "cht"?this.operationWidth="150px":this.operationWidth="300px"
     },
     methods: {
       getAllClassMethods() {
@@ -571,21 +578,11 @@
               }
             }
           };
-          const seriesDetailData = [{name: '任务'}, {name: '报告'}, {name: '作品'}]
-          seriesDetailData.map(item => {
+          const seriesDetailData = [{name: this.$t(`message.string_label_task`)}, {name:this.$t(`message.string_label_report`)}, {name:this.$t(`message.string_label_works`)}]
+          seriesDetailData.map((item,index) => {
             item.type = 'bar'
             item.label = labelOption
-            switch (item.name) {
-              case "任务":
-                item.data = this.classInfo.chartData.seriesData[0]
-                break;
-              case "报告":
-                item.data = this.classInfo.chartData.seriesData[1]
-                break;
-              case "作品":
-                item.data = this.classInfo.chartData.seriesData[2]
-                break;
-            }
+            item.data = this.classInfo.chartData.seriesData[index]
             return item
           })
           const option = {
@@ -597,7 +594,7 @@
               }
             },
             legend: {
-              data: ['任务', '报告', '作品']
+              data: [this.$t(`message.string_label_task`), this.$t(`message.string_label_report`), this.$t(`message.string_label_works`)]
             },
             toolbox: {
               show: true,
@@ -623,7 +620,7 @@
             ],
             yAxis: [
               {
-                name: '数量',
+                name: this.$t(`message.string_label_count`),
                 type: 'value'
               }
             ],
@@ -676,6 +673,9 @@
       },
       '$i18n.locale': function () {
         this.routerConfig[0].name = this.$t(`message.classroom_header_title`)
+        this.genStatisticsChart()
+        this.judgeCnEn = storageUtil.getLang();
+        this.judgeCnEn == "zh" || this.judgeCnEn == "cht"?this.operationWidth="150px":this.operationWidth="300px"
       }
     }
     ,
@@ -773,5 +773,12 @@
 
   .el-select-dropdown__wrap {
     max-height: 170px !important;
+  }
+  .classTitleCircle {
+    height: 8px;
+    width: 8px;
+    border-radius: 8px;
+    background-color: #00a2ff;
+    margin-right: 10px;
   }
 </style>

@@ -3,10 +3,9 @@
     <el-page-header @back="goBack">
       <div slot="content" style="margin-top:5px;">
         <el-breadcrumb separator-class="el-icon-arrow-right">
-          <!--          <el-breadcrumb-item :to="goRouter">记上课</el-breadcrumb-item>-->
-          <el-breadcrumb-item :to="{name:'classRecord', params: { tabs: currentTabs,item: currentItem}}">记上课
+          <el-breadcrumb-item :to="{name:'classRecord', params: { tabs: currentTabs,item: currentItem}}">{{$t(`message.record_header_title`)}}
           </el-breadcrumb-item>
-          <el-breadcrumb-item>记上课详情</el-breadcrumb-item>
+          <el-breadcrumb-item>{{$t(`message.record_detail_header_title`)}}</el-breadcrumb-item>
         </el-breadcrumb>
       </div>
     </el-page-header>
@@ -15,22 +14,23 @@
       <div class="showInformation">
         <div class="showInformationText">
           <p>
-            <span>班级：{{basicCourse}}</span>
-            <span class="padding_left20">校区：{{currentSchool}}</span>
-            <span class="padding_left20">课程：{{currentCourse}}</span>
+            <span>{{$t(`message.string_label_classroom`)}}：{{basicCourse}}</span>
+            <span class="padding_left20">{{$t(`message.string_label_school`)}}：{{currentSchool}}</span>
+            <span class="padding_left20">{{$t(`message.string_label_course`)}}：{{currentCourse}}</span>
           </p>
         </div>
         <div class="showInformationSearch">
-          <span>上课日期：{{classTime}}</span>
+          <span>{{$t(`message.record_course_start_date`)}}：{{classTime}}</span>
           <span class="padding_left20">
             <template>
-              教师课时：<el-input-number v-model="teacherClass" @change="handleChange" size="small" :min="1" :max="10"
-                                    label="描述文字" :disabled="disabled"></el-input-number>
+              {{$t(`message.string_label_teacher_course`)}}：
+              <el-input-number v-model="teacherClass" @change="handleChange" size="small" :min="1" :max="10"
+              :label="$t(`message.string_label_desc_info`)" :disabled="disabled"></el-input-number>
             </template>
           </span>
           <span class="padding_left20">
             <template>
-             教师：<el-select v-model="currentTeacher" clearable placeholder="请选择" size="small"
+             {{$t(`message.string_label_teacher`)}}：<el-select v-model="currentTeacher" clearable :placeholder="$t(`message.string_label_please_select`)" size="small"
                            @change="selectTeacherChange" :disabled="reverseDisabled">
                 <el-option
                   v-for="item in options"
@@ -48,29 +48,29 @@
     <!--    secondCard-->
     <el-card class="box-card margin_top">
       <el-row class="person">
-        <span class="float_left">班级应到人数：<b class="b_text">{{comePeople}}</b>人</span>
-        <span class="padding_left20 float_left">实到人数：<b class="b_text">{{comeNum}}</b>人</span>
+        <span class="float_left">{{$t(`message.record_detail_classroom_count`)}}：<b class="b_text">{{comePeople}}</b>人</span>
+        <span class="padding_left20 float_left">{{$t(`message.record_detail_active_count`)}}：<b class="b_text">{{comeNum}}</b>人</span>
         <span class="float_right"> <el-button type="primary" size="small"
-                                              @click="addClassStudent" :disabled="disabled">添加上课学员</el-button></span>
+                                              @click="addClassStudent" :disabled="disabled">{{$t(`message.record_detail_add_student`)}}</el-button></span>
       </el-row>
       <el-row>
         <div class="bgColor">
           <el-row style="height: 60px;line-height: 60px">
             <el-col :span="8">
-              <span style="display: block;float: left">&nbsp&nbsp批量操作&nbsp&nbsp</span>
+              <span style="display: block;float: left">&nbsp&nbsp{{$t(`message.string_label_batch_handle`)}}&nbsp&nbsp</span>
               <el-checkbox-group v-model="checkedBox" @change="handleCheckedStatusChange">
-                <el-checkbox v-for="item in checkItem" :label="item.label" :key="item.key" :disabled="batchOperation">
+                <el-checkbox v-for="item in checkItem" :label="item.key" :key="item.key" :disabled="batchOperation">
                   {{item.label}}
                 </el-checkbox>
               </el-checkbox-group>
             </el-col>
             <el-col :span="12">
-                <span style="padding-left: 80px;float: left;text-align: left">扣除课时
+                <span style="padding-left: 80px;float: left;text-align: left">{{$t(`message.record_detail_use_course_items`)}}
                  <el-input-number v-model="totalNum" @change="totalHandleChange" size="small" :min="1" :max="10"
-                                  label="描述文字" :disabled="disabled"></el-input-number>
+                                  :label="$t(`message.string_label_desc_info`)" :disabled="disabled"></el-input-number>
                  <span
                    style="width: 5px;height: 5px;background-color: #00a2ff;border-radius: 50%;display: inline-block"></span>
-                 <b style="font-weight: normal;font-size: 14px;color:rgb(121, 134, 141)">可填小数，如0.5</b>
+                 <b style="font-weight: normal;font-size: 14px;color:rgb(121, 134, 141)">{{$t(`message.record_detail_input_float`)}}</b>
                </span>
             </el-col>
 
@@ -124,15 +124,15 @@
                             </el-checkbox>
                           </el-checkbox-group>
                         </div>
-                        <span style="padding-left: 80px;float: left;display: block">扣除课时
+                        <span style="padding-left: 80px;float: left;display: block">{{$t(`message.record_detail_use_course_items`)}}
                         <el-input-number v-model="scope.row.num" @change="handleChange" size="small" :min="0"
                                          :max="10"
-                                         label="描述文字" :disabled="disabled"></el-input-number>
+                                         :label="$t(`message.string_label_desc_info`)" :disabled="disabled"></el-input-number>
                     </span>
                       </div>
                     </el-row>
                     <el-row style="margin-top: 21px">
-                      <span style="line-height: 50px">教师留言：</span>
+                      <span style="line-height: 50px">{{$t(`message.record_detail_teacher_say`)}}：</span>
                       <el-input type="textarea" v-model="scope.row.teacherMessage" style="width: 60%"
                                 :disabled="disabled"></el-input>
                     </el-row>
@@ -164,7 +164,7 @@
     <addClassStudentDialog ref="addStudentDialog" @studentUpdate="studentInformationClick"></addClassStudentDialog>
     <!--    thired-->
     <!--   删除dialog开始-->
-    <el-dialog title="提示" :visible.sync="delDialogVisible" width="20%">
+    <el-dialog :title="$t(`message.dialog_header_title_prompt`)" :visible.sync="delDialogVisible" width="20%">
       <el-row>
         <el-col :span="4">
           <i class="el-icon-question"></i>
@@ -174,8 +174,8 @@
         </el-col>
       </el-row>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="delDialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="handleDelStudent" :loading="isLoadingWithDel">确 定</el-button>
+        <el-button @click="delDialogVisible = false">{{$t(`message.button_cancel`)}}</el-button>
+        <el-button type="primary" @click="handleDelStudent" :loading="isLoadingWithDel">{{$t(`message.button_confirm`)}}</el-button>
       </span>
     </el-dialog>
     <!--   删除dialog结束-->
@@ -184,19 +184,19 @@
       <el-form :model="ruleForm" ref="ruleForm" label-width="100px" class="demo-ruleForm">
         <el-row>
           <el-col>
-            <el-form-item label="活动形式:" prop="desc">
+            <el-form-item :label="$t(`message.record_detail_active_style`)" prop="desc">
               <el-input type="textarea" v-model="ruleForm.desc" style="width: 50%" :disabled="disabled"></el-input>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row :gutter="20">
           <el-col :span="6">
-            <el-form-item label="创建人:" prop="person">
+            <el-form-item :label="$t(`message.record_study_creator`)+':'" prop="person">
               <el-input v-model="ruleForm.person" :disabled="reverseDisabled" style="width: 100%"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="6">
-            <el-form-item label="创建时间:" prop="time">
+            <el-form-item :label="$t(`message.record_study_create_time`)+':'" prop="time">
               <el-input v-model="ruleForm.time" :disabled="reverseDisabled" style="width: 100%"></el-input>
             </el-form-item>
           </el-col>
@@ -208,8 +208,8 @@
     <el-card class="box-card margin_top ">
       <el-row>
         <div class="float_right">
-          <el-button size="small" @click="cancelClick">取消</el-button>
-          <el-button type="primary" size="small" @click="saveClick" :disabled="disabled">保存</el-button>
+          <el-button size="small" @click="cancelClick">{{$t(`message.button_cancel`)}}</el-button>
+          <el-button type="primary" size="small" @click="saveClick" :disabled="disabled">{{$t(`message.button_save`)}}</el-button>
         </div>
       </el-row>
     </el-card>
@@ -270,7 +270,7 @@
                 itemNum: '',//点击单个的计数器数据
                 come: false,
                 checked: false,
-                checkItem: [{key: 1, label: '上课'}, {key: 2, label: '请假'}, {key: 3, label: '旷课'}],
+                checkItem: [{key: 1, label: ''}, {key: 2, label: ''}, {key: 3, label: ''}],
                 rowInformation: {},
                 pageSize: 5, // 分页页码大小
                 currentPage: 1, // 分页当前页码
@@ -295,6 +295,11 @@
                 comeArrayMouted: [],
                 copyQueryFromServer: [],
             }
+        }, //
+        watch: {
+            '$i18n.locale': function () {
+                this.initLangData()
+            }
         },
         mounted() {
             promptUtil.checkOverdue(this, storageUtil.readTeacherInfo().id) // true 表示已过期 false表示未过期
@@ -302,6 +307,7 @@
                 this.$router.push({path: `/classRecord`})
                 return
             }
+            this.initLangData()
             this.currentTabs = this.$route.params.tabs
             this.currentItem = this.$route.params.item
             PubSub.publish("currentMenuIndex", ROUTER_RECORD_CLASS);
@@ -357,11 +363,11 @@
                                     studentName: item.label,
                                     num: item.student_hour,
                                     cs_id: item.cs_id,
-                                    itemCheckedBox: [item.status == 1 ? '上课' : (item.status == 3 ? '请假' : (item.status == 0 ? '' : '旷课'))],
+                                    itemCheckedBox: [item.status == 1 ? this.$t(`message.string_label_start_class`) : (item.status == 3 ? this.$t(`message.string_label_class_takeleave`) : (item.status == 0 ? '' : this.$t(`message.string_label_class_truancy`)))],
                                     teacherMessage: item.con,
-                                    checkItemStatus: [{key: 1, label: '上课'}, {key: 3, label: '请假'}, {
+                                    checkItemStatus: [{key: 1, label: this.$t(`message.string_label_start_class`)}, {key: 3, label: this.$t(`message.string_label_class_takeleave`)}, {
                                         key: 2,
-                                        label: '旷课'
+                                        label: this.$t(`message.string_label_class_truancy`)
                                     }],
                                 }
                                 this.queryFromServer.push(obj)
@@ -381,6 +387,11 @@
             })
         },
         methods: {
+            initLangData(){
+                this.checkItem[0].label = this.$t(`message.string_label_start_class`)
+                this.checkItem[1].label = this.$t(`message.string_label_class_takeleave`)
+                this.checkItem[2].label = this.$t(`message.string_label_class_truancy`)
+            },
             goBack() {
                 this.$router.push({path: '/'})
             },
@@ -416,7 +427,7 @@
                 })).then(res => {
                     if (res.code == SUCCESS_CODE) {
                         if (res.data && res.data != '[]') {
-                            this.$refs.addStudentDialog.start(res.data.classRoomArray, this.targetCurrentClass);
+                            this.$refs.addStudentDialog.start(res.data.classRoomArray, this.targetCurrentClass, this.currentCourse);
                         }
                     } else if (res.code == ERROR_CODE) {
                         promptUtil.error(this, res.msg)
@@ -461,7 +472,7 @@
                         calendar_id: this.$route.params.id,
                         cs_ids: sendcsIdArray,
                         //  status: this.studentAddClasssStatus == '上课' ? 1 : (this.studentAddClasssStatus == '请假' ? 3 : 2)
-                        status: this.studentAddClasssStatus == '上课' ? 1 : (this.studentAddClasssStatus == '请假' ? 3 : (this.studentAddClasssStatus == '旷课' ? 2 : 0))
+                        status: this.studentAddClasssStatus == '1' ? 1 : (this.studentAddClasssStatus == '2' ? 3 : (this.studentAddClasssStatus == '3' ? 2 : 0))
                     })).then(res => {
                         if (res.code == SUCCESS_CODE) {
                             if (res.data && res.data != '[]') {
@@ -603,7 +614,7 @@
             //保存按钮
             saveClick() {
                 if (this.studentListArray.length === 0 && this.queryFromServer.length === 0) {
-                    promptUtil.warning(this, '请添加上课学员')
+                    promptUtil.warning(this, this.$t(`message.record_detail_add_study_student`))
                     return
                 }
                 if (this.queryFromServer.length > 0) {
@@ -627,7 +638,7 @@
                 })).then(res => {
                     if (res.code == SUCCESS_CODE) {
                         if (res.data) {
-                            promptUtil.success(this, '保存成功')
+                            promptUtil.success(this, this.$t(`message.string_label_save_success`))
                             this.$router.push({path: `/classRecord`})
                         }
                     } else if (res.code == ERROR_CODE) {
@@ -645,7 +656,7 @@
                 this.currentStudentId = row.id
                 this.csId = row.cs_id
                 this.currentIndex = index
-                this.delDialogContent = "您确定要删除 【 " + row.studentName + " 】 吗？"
+                this.delDialogContent = this.$t(`message.consult_dialog_content_del`) + " 【 " + row.studentName + " 】 ？"
             },
             //删除dialog中的确定按钮
             handleDelStudent() {

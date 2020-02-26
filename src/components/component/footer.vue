@@ -87,7 +87,8 @@
             <img src="../../../static/images/base/newestIndex/international.png" alt="">
             <div style="margin-top:-3px;display: inline;float: left;font-size: 14px;color: #cde0fe">
               <select name="" id="internationChange" style="border: none;background: none;outline: none;color: #fff">
-                <option value="">简体中文</option>
+                <option value="zh">简体中文</option>
+                <option value="en">English</option>
               </select>
             </div>
           </div>

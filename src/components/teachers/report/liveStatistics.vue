@@ -242,7 +242,7 @@
         </el-table>
         <!--    分页-->
           <als-pagination :size="8" @tableData="changeStudentTableData($event)" @currentPage="changeStudentPage($event)"
-                            ref="alsPageination"/>
+                            ref="alsPageination" style="margin-top:20px"/>
       </div>
       <div v-show="filter.tableType==2">
         <el-table :data="tableData.teacherTableData" border style="width: 100%" @expand-change="expandChangeClick">
@@ -285,8 +285,8 @@
                       </div>
                     </template>
                   </el-table-column>
-                  <el-table-column prop="classNum" align="center" label="学员人次" width="80"></el-table-column>
-                  <el-table-column prop="realNum" align="center" label="实上课次" width="80"></el-table-column>
+                  <el-table-column prop="classNum" align="center" label="学员人次" width="120"></el-table-column>
+                  <el-table-column prop="realNum" align="center" label="实上课次" width="120"></el-table-column>
                 </el-table>
               </el-form>
             </template>
@@ -297,14 +297,14 @@
         </el-table>
         <!--    分页-->
         <als-pagination :size="8" @tableData="changeTeacherTableData($event)" @currentPage="changeTeacherPage($event)"
-                        ref="alsTeacherPageination"/>
+                        ref="alsTeacherPageination"  style="margin-top:20px"/>
       </div>
     </el-card>
   </div>
 </template>
 
 <script>
-import stringUtil from "../../../utils/stringUtil";
+import PubSub from "pubsub-js";
 const echarts = require("echarts");
 import $ from "jquery";
 const moment = require("moment");
@@ -390,6 +390,7 @@ export default {
         document.body.clientWidth) - 300;
   },
   mounted() {
+    PubSub.publish("currentMenuIndex", "/liveStatistics");
     const name =
       vuexUtils.checkMenuExist(this, "liveStatistics").target &&
       vuexUtils.checkMenuExist(this, "liveStatistics").target.name
@@ -599,7 +600,7 @@ export default {
         });
 
         params.body = targetParams;
-        console.log("studentparams", params);
+        // console.log("studentparams", params);
         exportExcel(qs.stringify({ data: JSON.stringify(params) }))
           .then(res => {
             if (res.code == SUCCESS_CODE) {
@@ -660,8 +661,7 @@ export default {
           }
         });
         params.body = targetParams;
-        console.log("teacherparams", params);
-        return;
+        // console.log("teacherparams", params);
         exportExcel(qs.stringify({ data: JSON.stringify(params) }))
           .then(res => {
             if (res.code == SUCCESS_CODE) {

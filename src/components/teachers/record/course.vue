@@ -2,14 +2,14 @@
   <div>
     <als-child-header :config="routerConfig"/>
     <el-tabs type="border-card" v-model="tabActive" style="margin-top: 20px" @tab-click="onClickTabs">
-      <el-tab-pane label="记上课" :name="TAB_NAME_ARRAY[0]">
+      <el-tab-pane :label="$t(`message.record_header_title`)" :name="TAB_NAME_ARRAY[0]">
         <el-card shadow="always">
           <el-row>
             <el-col :span="24">
               <div style="display:flex;flex:1;justify-content:center">
                 <el-radio-group v-model="filter.showRecordType" @change="changeRecordClassType">
-                  <el-radio-button label="1">今日上课</el-radio-button>
-                  <el-radio-button label="2">记上课列表</el-radio-button>
+                  <el-radio-button label="1">{{this.$t(`message.record_tab_title_today`)}}</el-radio-button>
+                  <el-radio-button label="2">{{this.$t(`message.record_tab_title_list`)}}</el-radio-button>
                 </el-radio-group>
               </div>
             </el-col>
@@ -38,9 +38,9 @@
                   v-model="filter.timeFrame"
                   type="daterange"
                   @change="onChangeRecordClassPicker"
-                  range-separator="至"
-                  start-placeholder="开始日期"
-                  end-placeholder="结束日期">
+                  :range-separator="$t(`message.picker_date_to_placeholder`)"
+                  :start-placeholder="$t(`message.picker_date_start_placeholder`)"
+                  :end-placeholder="$t(`message.picker_date_end_placeholder`)">
                 </el-date-picker>
                 <el-dropdown @command="filterCategoryCommand" trigger="click">
                   <el-button type="primary" size="small">
@@ -59,7 +59,7 @@
                     </el-dropdown-item>
                   </el-dropdown-menu>
                 </el-dropdown>
-                <el-input size="small" :placeholder="'请输入'+filter.search.targetCategory.label"
+                <el-input size="small" :placeholder="$t(`message.string_label_input`)+filter.search.targetCategory.label"
                           suffix-icon="el-icon-search" v-model="filter.search.keyWorks"
                           @keydown.native.enter="queryRecordClassKeyWords"
                           style="width:200px;margin-left:5px;margin-right:15px"></el-input>
@@ -69,7 +69,7 @@
                   width="260"
                   trigger="click">
                   <div style="margin-left:10px;margin-top:10px;margin-right:10px;">
-                    <el-select v-model="filter.filter.classroomArray" collapse-tags multiple clearable placeholder="班级"
+                    <el-select v-model="filter.filter.classroomArray" collapse-tags multiple clearable :placeholder="$t(`message.string_label_classroom`)"
                                size="small" style="width: 240px;">
                       <el-option
                         v-for="(item,index) in filter.filter.classroomPackage"
@@ -80,7 +80,7 @@
                     </el-select>
                     <div
                       style="background-color:#e6e6e6;border:none;height:1px;margin-top: 20px;margin-bottom: 20px"></div>
-                    <el-select v-model="filter.filter.courseArray" collapse-tags multiple clearable placeholder="课程"
+                    <el-select v-model="filter.filter.courseArray" collapse-tags multiple clearable :placeholder="$t(`message.string_label_course`)"
                                size="small" style="width: 240px;">
                       <el-option-group
                         v-for="group in filter.filter.coursePackage"
@@ -98,7 +98,7 @@
                     <div
                       style="background-color:#e6e6e6;border:none;height:1px;margin-top: 20px;margin-bottom: 20px"></div>
                     <el-select v-model="filter.filter.courseTypeArray" collapse-tags multiple clearable
-                               placeholder="课程类型" size="small" style="width: 240px;">
+                               :placeholder="$t(`message.index_course_class_type`)" size="small" style="width: 240px;">
                       <el-option
                         v-for="(item,index) in filter.filter.courseTypePackage"
                         :key="index"
@@ -109,7 +109,7 @@
                     <div
                       style="background-color:#e6e6e6;border:none;height:1px;margin-top: 20px;margin-bottom: 20px"></div>
                     <div style="margin-top:10px;display:flex;margin-bottom:10px;">
-                      <el-select v-model="filter.filter.recordStatus" clearable placeholder="是否记上课" size="small"
+                      <el-select v-model="filter.filter.recordStatus" clearable :placeholder="$t(`message.record_if_course`)" size="small"
                                  style="width: 150px;">
                         <el-option
                           v-for="(item,index) in filter.filter.recordCategory"
@@ -119,16 +119,16 @@
                         </el-option>
                       </el-select>
                       <div style="display:flex;justify-content:flex-end;flex:1">
-                        <el-button type="primary" plain size="small" @click="onClickFilterQuery">查询</el-button>
+                        <el-button type="primary" plain size="small" @click="onClickFilterQuery">{{$t(`message.string_label_search`)}}</el-button>
                       </div>
                     </div>
                   </div>
                   <div slot="reference">
                     <el-badge :value="getRecordClassBadge()" v-show="getRecordClassBadge()!=0">
-                      <el-button type="primary" size="small">筛选<i class="el-icon-arrow-down el-icon--right"></i>
+                      <el-button type="primary" size="small">{{$t(`message.string_label_filter`)}}<i class="el-icon-arrow-down el-icon--right"></i>
                       </el-button>
                     </el-badge>
-                    <el-button v-show="getRecordClassBadge()==0" type="primary" size="small">筛选<i
+                    <el-button v-show="getRecordClassBadge()==0" type="primary" size="small">{{$t(`message.string_label_filter`)}}<i
                       class="el-icon-arrow-down el-icon--right"></i></el-button>
                   </div>
                 </el-popover>
@@ -138,14 +138,14 @@
           <el-divider></el-divider>
           <el-table :data="classRecordTableData" style="width: 100%" :default-sort="{prop: 'date', order: 'descending'}"
                     border>
-            <el-table-column v-if="filter.showRecordType!=1" align="center" prop="openHours" label="开课日期" width="140"
+            <el-table-column v-if="filter.showRecordType!=1" align="center" prop="openHours" :label="$t(`message.record_start_course_time`)" width="140"
                              sortable :sort-method="sortRecordStatus"></el-table-column>
-            <el-table-column align="center" prop="date" label="时间段" sortable width="140"></el-table-column>
-            <el-table-column align="center" label="班级" width="400">
+            <el-table-column align="center" prop="date" :label="$t(`message.record_time_frame`)" sortable width="140"></el-table-column>
+            <el-table-column align="center" :label="$t(`message.string_label_classroom`)" width="400">
               <template slot-scope="scope">
                 <el-tooltip class="item" effect="dark" :content="scope.row.classInfo" placement="top">
                   <div style="display:flex;justify-content: center;flex-direction:row;">
-                    <el-tag size="mini" style="margin-right:5px;">班</el-tag>
+                    <el-tag size="mini" style="margin-right:5px;">{{$t(`message.string_label_class`)}}</el-tag>
                     <div style="width:380px;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;">
                       {{scope.row.classInfo}}
                     </div>
@@ -153,25 +153,25 @@
                 </el-tooltip>
               </template>
             </el-table-column>
-            <el-table-column align="center" prop="teacher" label="教师" width="200"></el-table-column>
-            <el-table-column align="center" prop="course" label="课程"></el-table-column>
-            <el-table-column align="center" label="记上课状态" width="130">
+            <el-table-column align="center" prop="teacher" :label="$t(`message.string_label_teacher`)" width="200"></el-table-column>
+            <el-table-column align="center" prop="course" :label="$t(`message.string_label_course`)"></el-table-column>
+            <el-table-column align="center" :label="$t(`message.record_course_status`)" width="130">
               <template slot-scope="scope">
-                <span v-show="scope.row.status==0" style="color:#E6A23C">未记录</span>
-                <span v-show="scope.row.status==1" style="color:#67C23A">已记录</span>
+                <span v-show="scope.row.status==0" style="color:#E6A23C">{{$t(`message.string_label_record_no`)}}</span>
+                <span v-show="scope.row.status==1" style="color:#67C23A">{{$t(`message.string_label_record_ok`)}}</span>
               </template>
             </el-table-column>
-            <el-table-column align="center" label="实到/应到" width="130">
+            <el-table-column align="center" :label="$t(`message.string_label_should_turn`)+'/'+$t(`message.string_label_should_arrive`)" width="130">
               <template slot-scope="scope">
                 <el-link :underline="false" @click="seeStudentInfo(scope.row)">{{scope.row.student.label}}<i
                   style="margin-left: 5px" class="el-icon-view"></i></el-link>
               </template>
             </el-table-column>
-            <el-table-column align="center" label="操作" width="300" fixed="right">
+            <el-table-column align="center" :label="$t(`message.student_management_tableData_user_operation`)" width="300" fixed="right">
               <template slot-scope="scope">
-                <el-button type="primary" plain size="mini" @click="onClickIntoDetail(scope.row)">记上课</el-button>
-                <el-button type="primary" plain size="mini" @click="onClickEditSchedule(scope.row)">编辑日程</el-button>
-                <el-button type="danger" plain size="mini" @click="onClickDelSchedule(scope.row)">删除日程</el-button>
+                <el-button type="primary" plain size="mini" @click="onClickIntoDetail(scope.row)">{{$t(`message.calendar_dialog_manage_course_save`)}}</el-button>
+                <el-button type="primary" plain size="mini" @click="onClickEditSchedule(scope.row)">{{$t(`message.record_edit_day`)}}</el-button>
+                <el-button type="danger" plain size="mini" @click="onClickDelSchedule(scope.row)">{{$t(`message.record_delete_day`)}}</el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -187,14 +187,14 @@
           </div>
         </el-card>
       </el-tab-pane>
-      <el-tab-pane label="上课记录" :name="TAB_NAME_ARRAY[1]">
+      <el-tab-pane :label="$t(`message.record_course_already`)" :name="TAB_NAME_ARRAY[1]">
         <el-card shadow="always">
           <el-row>
             <el-col :span="24">
               <div style="display:flex;flex:1;justify-content:center">
                 <el-radio-group v-model="classRecordFilter.showRecordType" @change="changeRecordAlreadyClassType">
-                  <el-radio-button label="1">按班级</el-radio-button>
-                  <el-radio-button label="2">按学员</el-radio-button>
+                  <el-radio-button label="1">{{$t(`message.record_type_class`)}}</el-radio-button>
+                  <el-radio-button label="2">{{$t(`message.record_type_student`)}}</el-radio-button>
                 </el-radio-group>
               </div>
             </el-col>
@@ -225,7 +225,7 @@
                     </el-dropdown-item>
                   </el-dropdown-menu>
                 </el-dropdown>
-                <el-input size="small" :placeholder="'请输入'+classRecordFilter.search.targetCategory.label"
+                <el-input size="small" :placeholder="$t(`message.string_label_input`)+classRecordFilter.search.targetCategory.label"
                           suffix-icon="el-icon-search" v-model="classRecordFilter.search.keyWorks"
                           @keydown.native.enter="queryRecordAlreadyClassKeyWords"
                           style="width:200px;margin-left:5px;margin-right:15px"></el-input>
@@ -244,15 +244,15 @@
                       type="daterange"
                       align="right"
                       unlink-panels
-                      range-separator="至"
-                      start-placeholder="上课日期"
-                      end-placeholder="下课日期"
+                      :range-separator="$t(`message.picker_date_to_placeholder`)"
+                      :start-placeholder="$t(`message.record_course_start_date`)"
+                      :end-placeholder="$t(`message.record_course_end_date`)"
                       :picker-options="classRecordFilter.filter.pickerOptions">
                     </el-date-picker>
                     <div
                       style="background-color:#e6e6e6;border:none;height:1px;margin-top: 20px;margin-bottom: 20px"></div>
                     <el-select v-model="classRecordFilter.filter.classroomArray" collapse-tags multiple clearable
-                               placeholder="班级" size="small" style="width: 320px;">
+                               :placeholder="$t(`message.string_label_classroom`)" size="small" style="width: 320px;">
                       <el-option
                         v-for="(item,index) in classRecordFilter.filter.classroomPackage"
                         :key="index"
@@ -263,7 +263,7 @@
                     <div
                       style="background-color:#e6e6e6;border:none;height:1px;margin-top: 20px;margin-bottom: 20px"></div>
                     <el-select v-model="classRecordFilter.filter.courseArray" collapse-tags multiple clearable
-                               placeholder="课程" size="small" style="width: 320px;">
+                               :placeholder="$t(`message.string_label_course`)" size="small" style="width: 320px;">
                       <el-option-group
                         v-for="group in classRecordFilter.filter.coursePackage"
                         :key="group.label"
@@ -281,13 +281,13 @@
                       style="background-color:#e6e6e6;border:none;height:1px;margin-top: 20px;margin-bottom: 20px"></div>
                     <div style="margin-top:10px;display:flex;margin-bottom:10px;">
                       <div style="display:flex;justify-content:flex-end;flex:1">
-                        <el-button type="primary" plain size="small" @click="onClickRecordFilterQuery">查询</el-button>
+                        <el-button type="primary" plain size="small" @click="onClickRecordFilterQuery">{{$t(`message.string_label_search`)}}</el-button>
                       </div>
                     </div>
                   </div>
                   <div slot="reference">
                     <el-badge :value="getRecordAlreadyClassBadge()">
-                      <el-button type="primary" size="small">筛选<i class="el-icon-arrow-down el-icon--right"></i>
+                      <el-button type="primary" size="small">{{$t(`message.string_label_filter`)}}<i class="el-icon-arrow-down el-icon--right"></i>
                       </el-button>
                     </el-badge>
                   </div>
@@ -298,30 +298,30 @@
           <el-divider></el-divider>
           <div style="display:flex;margin-top:-10px;margin-bottom:-10px;">
             <div style="flex:1">
-              <el-button plain size="small" @click="exportRecordResult">导出当前结果</el-button>
+              <el-button plain size="small" @click="exportRecordResult">{{$t(`message.string_export_current_result`)}}</el-button>
             </div>
             <!--            <div style="flex:1;display:flex;justify-content:flex-end;margin-top:8px"><el-checkbox v-model="classRecordFilter.tuition">学费计算</el-checkbox></div>-->
           </div>
           <el-divider></el-divider>
           <div v-show="classRecordFilter.showRecordType==1"
                style="background-color:#D4DFE5;margin-top:-25px;height: 40px;display:flex;align-items:center;margin-left:-20px;padding-left:20px;margin-right:-20px;">
-            当前结果：共计: <span class="record-span-color">{{recordListServerData.length}}</span>条记录 | 学员课时总计: <span
-            class="record-span-color">{{classRecordText.studentTotalHour}}</span>课时 | 教师课时总计: <span
-            class="record-span-color">{{classRecordText.teacherTotalHour}}</span>课时
+            {{$t(`message.string_current_result`)}}：{{$t(`message.string_label_total`)}}： <span class="record-span-color">{{recordListServerData.length}}</span>{{$t(`message.string_label_result_count`)}} | {{$t(`message.string_label_student_course_total`)}}: <span
+            class="record-span-color">{{classRecordText.studentTotalHour}}</span>{{$t(`message.string_label_course_item`)}} | {{$t(`message.string_label_teacher_course_total`)}}: <span
+            class="record-span-color">{{classRecordText.teacherTotalHour}}</span>{{$t(`message.string_label_course_item`)}}
           </div>
           <div v-show="classRecordFilter.showRecordType!=1"
                style="background-color:#D4DFE5;margin-top:-25px;height: 40px;display:flex;align-items:center;margin-left:-20px;padding-left:20px;margin-right:-20px;">
-            当前结果：共计: <span class="record-span-color">{{recordStuListTableData.length}}</span>条学员上课记录
+            {{$t(`message.string_current_result`)}}：{{$t(`message.string_label_total`)}}: <span class="record-span-color">{{recordStuListTableData.length}}</span>{{$t(`message.string_label_result_student_count`)}}
           </div>
           <div v-show="classRecordFilter.showRecordType==1">
             <el-table :data="recordListTableData" border style="width: 100%">
-              <el-table-column prop="date" align="center" label="上课日期" width="150" sortable
+              <el-table-column prop="date" align="center" :label="$t(`message.record_course_start_date`)" width="150" sortable
                                :sort-method="sortRecordDate"></el-table-column>
-              <el-table-column align="center" label="班级" min-width="300" sortable :sort-method="sortRecordClassroom">
+              <el-table-column align="center" :label="$t(`message.string_label_classroom`)" min-width="300" sortable :sort-method="sortRecordClassroom">
                 <template slot-scope="scope">
                   <el-tooltip class="item" effect="dark" :content="scope.row.classroom" placement="top">
                     <div style="display:flex;justify-content: center;flex-direction:row;">
-                      <el-tag size="mini" style="margin-right:5px;">班</el-tag>
+                      <el-tag size="mini" style="margin-right:5px;">{{$t(`message.string_label_class`)}}</el-tag>
                       <div style="width:380px;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;">
                         {{scope.row.classroom}}
                       </div>
@@ -329,41 +329,41 @@
                   </el-tooltip>
                 </template>
               </el-table-column>
-              <el-table-column prop="course" align="center" label="课程" min-width="250"></el-table-column>
-              <el-table-column prop="teacher" align="center" label="教师" width="150" sortable
+              <el-table-column prop="course" align="center" :label="$t(`message.string_label_course`)" min-width="250"></el-table-column>
+              <el-table-column prop="teacher" align="center" :label="$t(`message.string_label_teacher`)" width="150" sortable
                                :sort-method="sortRecordTeacher"></el-table-column>
-              <el-table-column prop="begins" align="center" label="上课" width="100"></el-table-column>
-              <el-table-column prop="leave" align="center" label="请假" width="100"></el-table-column>
-              <el-table-column prop="truancy" align="center" label="旷课" width="100"></el-table-column>
-              <el-table-column prop="pending" align="center" label="待处理" width="100"></el-table-column>
-              <el-table-column prop="studentHour" align="center" label="学员课时" width="100"></el-table-column>
-              <el-table-column prop="teacherHour" align="center" label="教师课时" width="100"></el-table-column>
-              <el-table-column prop="time" align="center" label="上课时间" width="150" v-if="analyticalData('上课时间')"
+              <el-table-column prop="begins" align="center" :label="$t(`message.record_course_begin`)" width="100"></el-table-column>
+              <el-table-column prop="leave" align="center" :label="$t(`message.string_label_class_takeleave`)" width="100"></el-table-column>
+              <el-table-column prop="truancy" align="center" :label="$t(`message.string_label_class_truancy`)" width="100"></el-table-column>
+              <el-table-column prop="pending" align="center" :label="$t(`message.string_label_class_pending`)" width="100"></el-table-column>
+              <el-table-column prop="studentHour" align="center" :label="$t(`message.string_label_student_course`)" width="100"></el-table-column>
+              <el-table-column prop="teacherHour" align="center" :label="$t(`message.string_label_teacher_course`)" width="100"></el-table-column>
+              <el-table-column prop="time" align="center" :label="$t(`message.calendar_dialog_course_time`)" width="150" v-if="analyticalData('1')"
                                sortable :sort-method="sortRecordTime"></el-table-column>
-              <el-table-column align="center" label="实到/应到" width="100" v-if="analyticalData('实到/应到')">
+              <el-table-column align="center" :label="$t(`message.string_label_should_turn`)+'/'+$t(`message.string_label_should_arrive`)" width="100" v-if="analyticalData('2')">
                 <template slot-scope="scope">
                   <el-link :underline="false" @click="seeStudentInfo(scope.row)">{{scope.row.student.label}}<i
                     style="margin-left: 5px" class="el-icon-view"></i></el-link>
                 </template>
               </el-table-column>
-              <el-table-column prop="school" align="center" label="上课校区" v-if="analyticalData('上课校区')"
+              <el-table-column prop="school" align="center" :label="$t(`message.record_study_school`)" v-if="analyticalData('3')"
                                min-width="150"></el-table-column>
-              <el-table-column prop="category" align="center" label="等级" v-if="analyticalData('等级')"
+              <el-table-column prop="category" align="center" :label="$t(`message.record_study_level`)" v-if="analyticalData('4')"
                                min-width="150"></el-table-column>
-              <el-table-column prop="desc" align="center" label="备注" v-if="analyticalData('备注')"
+              <el-table-column prop="desc" align="center" :label="$t(`message.string_label_remark`)" v-if="analyticalData('5')"
                                min-width="150"></el-table-column>
-              <el-table-column prop="creator" align="center" label="创建人" width="150"
-                               v-if="analyticalData('创建人')"></el-table-column>
-              <el-table-column prop="createDate" align="center" label="创建时间" width="180" sortable
+              <el-table-column prop="creator" align="center" :label="$t(`message.record_study_creator`)" width="150"
+                               v-if="analyticalData('6')"></el-table-column>
+              <el-table-column prop="createDate" align="center" :label="$t(`message.record_study_create_time`)" width="180" sortable
                                :sort-method="sortRecordCreateDate"></el-table-column>
               <el-table-column fixed="right" width="80" align="center">
                 <template slot="header" slot-scope="scope">
                   <el-link :underline="false" style="color:#409EFF;font-weight:bold"
-                           @click="classRecordFilter.customColumnVisible=true">操作
+                           @click="classRecordFilter.customColumnVisible=true">{{$t(`message.string_label_handle`)}}
                   </el-link>
                 </template>
                 <template slot-scope="scope">
-                  <el-button @click="handSeeByClass(scope.row)" type="primary" plain size="mini">查看</el-button>
+                  <el-button @click="handSeeByClass(scope.row)" type="primary" plain size="mini">{{$t(`message.string_label_see`)}}</el-button>
                 </template>
               </el-table-column>
             </el-table>
@@ -380,15 +380,15 @@
           </div>
           <div v-show="classRecordFilter.showRecordType!=1">
             <el-table :data="recordStuListTableData" border style="width: 100%">
-              <el-table-column prop="date" align="center" label="上课日期" width="150" sortable
+              <el-table-column prop="date" align="center" :label="$t(`message.record_course_start_date`)" width="150" sortable
                                :sort-method="sortRecordDate"></el-table-column>
-              <el-table-column prop="student" align="center" label="学员名称" min-width="150"></el-table-column>
-              <el-table-column prop="phone" align="center" label="联系电话" min-width="150"></el-table-column>
-              <el-table-column align="center" label="班级" min-width="150">
+              <el-table-column prop="student" align="center" :label="$t(`message.record_student_info`)" min-width="150"></el-table-column>
+              <el-table-column prop="phone" align="center" :label="$t(`message.consult_table_title_student_tel`)" min-width="150"></el-table-column>
+              <el-table-column align="center" :label="$t(`message.string_label_classroom`)" min-width="150">
                 <template slot-scope="scope">
                   <el-tooltip class="item" effect="dark" :content="scope.row.classroom" placement="top">
                     <div style="display:flex;justify-content: center;flex-direction:row;">
-                      <el-tag size="mini" style="margin-right:5px;">班</el-tag>
+                      <el-tag size="mini" style="margin-right:5px;">{{$t(`message.string_label_class`)}}</el-tag>
                       <div style="width:380px;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;">
                         {{scope.row.classroom}}
                       </div>
@@ -396,30 +396,30 @@
                   </el-tooltip>
                 </template>
               </el-table-column>
-              <el-table-column prop="course" align="center" label="课程" min-width="250"></el-table-column>
-              <el-table-column align="center" label="考勤状态" width="100">
+              <el-table-column prop="course" align="center" :label="$t(`message.string_label_course`)" min-width="250"></el-table-column>
+              <el-table-column align="center" :label="$t(`message.string_label_attendance_status`)" width="100">
                 <template slot-scope="scope">
-                  <el-tag v-show="scope.row.attendance==1" type="success" effect="dark" size="small">上课</el-tag>
-                  <el-tag v-show="scope.row.attendance==2" type="danger" effect="dark" size="small">旷课</el-tag>
-                  <el-tag v-show="scope.row.attendance==3" type="warning" effect="dark" size="small">请假</el-tag>
+                  <el-tag v-show="scope.row.attendance==1" type="success" effect="dark" size="small">{{$t(`message.record_class_begin`)}}</el-tag>
+                  <el-tag v-show="scope.row.attendance==2" type="danger" effect="dark" size="small">{{$t(`message.string_label_class_truancy`)}}</el-tag>
+                  <el-tag v-show="scope.row.attendance==3" type="warning" effect="dark" size="small">{{$t(`message.string_label_class_takeleave`)}}</el-tag>
                 </template>
               </el-table-column>
-              <el-table-column prop="classHour" align="center" label="学员课时" width="150"></el-table-column>
-              <el-table-column prop="teacher" align="center" label="教师" min-width="150"></el-table-column>
-              <el-table-column prop="school" align="center" label="上课校区" v-if="analyticalStuData('上课校区')"
+              <el-table-column prop="classHour" align="center" :label="$t(`message.string_label_student_course`)" width="150"></el-table-column>
+              <el-table-column prop="teacher" align="center" :label="$t(`message.string_label_teacher`)" min-width="150"></el-table-column>
+              <el-table-column prop="school" align="center" :label="$t(`message.record_study_school`)" v-if="analyticalStuData('1')"
                                min-width="150"></el-table-column>
-              <el-table-column prop="time" align="center" label="上课时间" width="150" v-if="analyticalStuData('上课时间')"
+              <el-table-column prop="time" align="center" :label="$t(`message.calendar_dialog_course_time`)" width="150" v-if="analyticalStuData('2')"
                                sortable :sort-method="sortRecordTime"></el-table-column>
-              <el-table-column prop="category" align="center" label="等级" v-if="analyticalStuData('等级')"
+              <el-table-column prop="category" align="center" :label="$t(`message.record_study_level`)" v-if="analyticalStuData('3')"
                                min-width="150"></el-table-column>
               <el-table-column fixed="right" width="90" align="center">
                 <template slot="header" slot-scope="scope">
                   <el-link :underline="false" style="color:#409EFF;font-weight:bold"
-                           @click="studentRecordFilter.customColumnVisible=true">操作
+                           @click="studentRecordFilter.customColumnVisible=true">{{$t(`message.string_label_handle`)}}
                   </el-link>
                 </template>
                 <template slot-scope="scope">
-                  <el-button @click="handSeeByStudent(scope.row)" type="primary" plain size="mini">查看</el-button>
+                  <el-button @click="handSeeByStudent(scope.row)" type="primary" plain size="mini">{{$t(`message.string_label_see`)}}</el-button>
                   <!--                  <el-button type="danger" plain size="small">删除</el-button>-->
                 </template>
               </el-table-column>
@@ -437,15 +437,15 @@
           </div>
         </el-card>
       </el-tab-pane>
-      <el-tab-pane label="课时汇总" :name="TAB_NAME_ARRAY[2]">
+      <el-tab-pane :label="$t(`message.record_class_item_all`)" :name="TAB_NAME_ARRAY[2]">
         <el-card shadow="always">
           <el-row>
             <el-row>
               <el-col :span="24">
                 <div style="display:flex;flex:1;justify-content:center">
                   <el-radio-group v-model="classHourRecordFilter.showRecordType" @change="changeRecordClassHourType">
-                    <el-radio-button label="1">教师课时</el-radio-button>
-                    <el-radio-button label="2">学员课时</el-radio-button>
+                    <el-radio-button label="1">{{$t(`message.string_label_teacher_course`)}}</el-radio-button>
+                    <el-radio-button label="2">{{$t(`message.string_label_student_course`)}}</el-radio-button>
                   </el-radio-group>
                 </div>
               </el-col>
@@ -455,14 +455,14 @@
               <el-date-picker
                 value-format="yyyy/MM/dd" style="width:340px" size="small" :clearable="false" type="daterange"
                 align="right"
-                unlink-panels range-separator="至" start-placeholder="上课日期" end-placeholder="下课日期"
+                unlink-panels :range-separator="$t(`message.picker_date_to_placeholder`)" :start-placeholder="$t(`message.record_course_start_date`)" :end-placeholder="$t(`message.record_course_end_date`)"
                 v-model="classHourRecordFilter.timeFrame" :picker-options="classHourRecordFilter.filter.pickerOptions">
               </el-date-picker>
               <el-select
                 v-show="classHourRecordFilter.showRecordType==1"
                 v-model="classHourRecordFilter.teacherArray"
                 size="small" multiple collapse-tags style="margin-left: 20px;"
-                placeholder="请选择教师">
+                :placeholder="$t(`message.record_please_select_teacher`)">
                 <el-option
                   v-for="item in classHourRecordFilter.teacherPackage"
                   :key="item.value"
@@ -478,7 +478,7 @@
                 v-show="classHourRecordFilter.showRecordType==2"
                 v-model="classHourRecordFilter.studentArray"
                 size="small" multiple collapse-tags style="margin-left: 20px;"
-                placeholder="请选择学生">
+                :placeholder="$t(`message.record_please_select_student`)">
                 <el-option
                   v-for="item in classHourRecordFilter.studentPackage"
                   :key="item.value"
@@ -490,7 +490,7 @@
                 v-show="classHourRecordFilter.showRecordType==2"
                 v-model="classHourRecordFilter.classroomArray"
                 size="small" multiple collapse-tags style="margin-left: 20px;"
-                placeholder="请选择班级">
+                :placeholder="$t(`message.student_management_choose_class`)">
                 <el-option
                   v-for="item in classHourRecordFilter.classroomPackage"
                   :key="item.value"
@@ -501,7 +501,7 @@
               <el-select
                 v-model="classHourRecordFilter.courseArray"
                 size="small" multiple collapse-tags style="margin-left: 20px;"
-                placeholder="请选择课程">
+                :placeholder="$t(`message.calendar_filter_select_course`)">
                 <el-option
                   v-for="(item,index) in classHourRecordFilter.coursePackage"
                   :key="index"
@@ -515,10 +515,10 @@
           <div style="display:flex;margin-top:-10px;margin-bottom:12px;">
 
             <div style="flex:1">
-              <el-button plain size="small" @click="exportClassHourRecordResult">导出当前结果</el-button>
+              <el-button plain size="small" @click="exportClassHourRecordResult">{{$t(`message.string_export_current_result`)}}</el-button>
             </div>
             <div style="flex:1;display:flex;justify-content:flex-end;">
-              <el-button type="primary" plain size="small" @click="onClickQueryAllHours">查询</el-button>
+              <el-button type="primary" plain size="small" @click="onClickQueryAllHours">{{$t(`message.string_label_search`)}}</el-button>
             </div>
           </div>
           <div v-show="classHourRecordFilter.showRecordType==1">
@@ -527,13 +527,13 @@
                 <template slot-scope="props">
                   <el-form style="margin: 0;padding:0">
                     <el-table :data="props.row.tableData" border style="width: 100%">
-                      <el-table-column prop="date" align="center" label="上课日期"></el-table-column>
-                      <el-table-column prop="school" align="center" label="上课校区"></el-table-column>
-                      <el-table-column align="center" label="班级" width="330">
+                      <el-table-column prop="date" align="center" :label="$t(`message.record_course_start_date`)"></el-table-column>
+                      <el-table-column prop="school" align="center" :label="$t(`message.record_study_school`)"></el-table-column>
+                      <el-table-column align="center" :label="$t(`message.string_label_classroom`)" width="330">
                         <template slot-scope="scope">
                           <el-tooltip class="item" effect="dark" :content="scope.row.class" placement="top">
                             <div style="display:flex;justify-content: center;flex-direction:row;">
-                              <el-tag size="mini" style="margin-right:5px;">班</el-tag>
+                              <el-tag size="mini" style="margin-right:5px;">{{$t(`message.string_label_class`)}}</el-tag>
                               <div style="width:310px;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;">
                                 {{scope.row.class}}
                               </div>
@@ -541,19 +541,19 @@
                           </el-tooltip>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="course" align="center" label="课程"></el-table-column>
-                      <el-table-column prop="studentCount" align="center" label="扣课时人数（人）"
+                      <el-table-column prop="course" align="center" :label="$t(`message.string_label_course`)"></el-table-column>
+                      <el-table-column prop="studentCount" align="center" :label="$t(`message.record_use_class_students`)"
                                        width="150"></el-table-column>
-                      <el-table-column prop="studentHour" align="center" label="学员课时" width="150"></el-table-column>
-                      <el-table-column prop="teacherHour" align="center" label="教师课时" width="150"></el-table-column>
+                      <el-table-column prop="studentHour" align="center" :label="$t(`message.string_label_student_course`)" width="150"></el-table-column>
+                      <el-table-column prop="teacherHour" align="center" :label="$t(`message.string_label_teacher_course`)" width="150"></el-table-column>
                     </el-table>
                   </el-form>
                 </template>
               </el-table-column>
-              <el-table-column prop="teacher" align="left" label="教师"></el-table-column>
-              <el-table-column prop="charge" align="center" label="扣课时人次（人）" width="150"></el-table-column>
-              <el-table-column prop="studentHour" align="center" label="学员课时" width="150"></el-table-column>
-              <el-table-column prop="teacherHour" align="center" label="教师课时" width="150"></el-table-column>
+              <el-table-column prop="teacher" align="left" :label="$t(`message.string_label_teacher`)"></el-table-column>
+              <el-table-column prop="charge" align="center" :label="$t(`message.record_use_class_students`)" width="150"></el-table-column>
+              <el-table-column prop="studentHour" align="center" :label="$t(`message.string_label_student_course`)" width="150"></el-table-column>
+              <el-table-column prop="teacherHour" align="center" :label="$t(`message.string_label_teacher_course`)" width="150"></el-table-column>
             </el-table>
             <div style="display:flex;justify-content:center;margin-top:20px;" v-show="teacherHourServerData.length>0">
               <el-pagination
@@ -572,33 +572,33 @@
                 <template slot-scope="props">
                   <el-form style="margin: 0;padding:0">
                     <el-table :data="props.row.tableData" border style="width: 100%">
-                      <el-table-column prop="date" align="center" label="上课日期" width="150"></el-table-column>
-                      <el-table-column prop="school" align="center" label="上课校区"></el-table-column>
-                      <el-table-column align="center" label="班级">
+                      <el-table-column prop="date" align="center" :label="$t(`message.record_course_start_date`)" width="150"></el-table-column>
+                      <el-table-column prop="school" align="center" :label="$t(`message.record_study_school`)"></el-table-column>
+                      <el-table-column align="center" :label="$t(`message.string_label_classroom`)">
                         <template slot-scope="scope">
                           <el-tooltip class="item" effect="dark" :content="scope.row.class" placement="top">
-                            <el-tag size="mini" style="margin-right:5px;">班</el-tag>
+                            <el-tag size="mini" style="margin-right:5px;">{{$t(`message.string_label_class`)}}</el-tag>
                             <div>{{scope.row.class}}</div>
                           </el-tooltip>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="course" align="center" label="课程"></el-table-column>
-                      <el-table-column prop="attendance" align="center" label="考勤状态" width="120">
+                      <el-table-column prop="course" align="center" :label="$t(`message.string_label_course`)"></el-table-column>
+                      <el-table-column prop="attendance" align="center" :label="$t(`message.string_label_attendance_status`)" width="120">
                         <template slot-scope="scope">
-                          <el-tag size="small" type="success" v-show="scope.row.attendance==1">上课</el-tag>
-                          <el-tag size="small" type="warning" v-show="scope.row.attendance==2">请假</el-tag>
-                          <el-tag size="small" type="danger" v-show="scope.row.attendance==3">旷课</el-tag>
-                          <el-tag size="small" type="info" v-show="scope.row.attendance==0">待处理</el-tag>
+                          <el-tag size="small" type="success" v-show="scope.row.attendance==1">{{$t(`message.record_class_begin`)}}</el-tag>
+                          <el-tag size="small" type="warning" v-show="scope.row.attendance==2">{{$t(`message.string_label_class_takeleave`)}}</el-tag>
+                          <el-tag size="small" type="danger" v-show="scope.row.attendance==3">{{$t(`message.string_label_class_truancy`)}}</el-tag>
+                          <el-tag size="small" type="info" v-show="scope.row.attendance==0">{{$t(`message.string_label_class_pending`)}}</el-tag>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="studentHour" align="center" label="学员课时" width="120"></el-table-column>
+                      <el-table-column prop="studentHour" align="center" :label="$t(`message.string_label_student_course`)" width="120"></el-table-column>
                     </el-table>
                   </el-form>
                 </template>
               </el-table-column>
-              <el-table-column prop="student" align="left" label="学员"></el-table-column>
-              <el-table-column prop="begins" align="center" label="应上课次" width="120"></el-table-column>
-              <el-table-column prop="studentHour" align="center" label="学员课时" width="120"></el-table-column>
+              <el-table-column prop="student" align="left" :label="$t(`message.string_label_student`)"></el-table-column>
+              <el-table-column prop="begins" align="center" :label="$t(`message.record_class_must_count`)" width="120"></el-table-column>
+              <el-table-column prop="studentHour" align="center" :label="$t(`message.string_label_student_course`)" width="120"></el-table-column>
             </el-table>
             <div style="display:flex;justify-content:center;margin-top:20px;" v-show="studentHourTableData.length>0">
               <el-pagination
@@ -617,36 +617,36 @@
     <als-class-report-dialog ref="classReportDialog"/>
     <als-class-edit-dialog ref="classReportEditDialog"/>
     <el-dialog
-      title="自定义表选项" :visible.sync="classRecordFilter.customColumnVisible" width="450px" center>
+      :title="$t(`message.record_dialog_custom_title`)" :visible.sync="classRecordFilter.customColumnVisible" width="450px" center>
       <el-checkbox :indeterminate="classRecordFilter.columnStyle.isIndeterminate"
-                   v-model="classRecordFilter.columnStyle.checkAll" @change="handleRecordCheckAllChange">全选
+                   v-model="classRecordFilter.columnStyle.checkAll" @change="handleRecordCheckAllChange">{{$t(`message.string_label_select_all`)}}
       </el-checkbox>
       <div style="margin: 15px 0;"></div>
       <el-checkbox-group v-model="classRecordFilter.columnStyle.checkedCities"
                          @change="handleRecordCheckedCitiesChange">>
-        <el-checkbox v-for="(city,index) in classRecordFilter.columnStyle.cities" :label="city" :key="index">{{city}}
+        <el-checkbox v-for="(city) in classRecordFilter.columnStyle.cities" :label="city.value" :key="city.value">{{city.label}}
         </el-checkbox>
       </el-checkbox-group>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="classRecordFilter.customColumnVisible = false">取 消</el-button>
-        <el-button type="primary" @click="customReportTableColumn">确 定</el-button>
+        <el-button @click="classRecordFilter.customColumnVisible = false">{{$t(`message.button_cancel`)}}</el-button>
+        <el-button type="primary" @click="customReportTableColumn">{{$t(`message.button_confirm`)}}</el-button>
       </span>
     </el-dialog>
     <el-dialog
-      title="自定义表选项" :visible.sync="studentRecordFilter.customColumnVisible" width="350px" center>
+      :title="$t(`message.record_dialog_custom_title`)" :visible.sync="studentRecordFilter.customColumnVisible" width="350px" center>
       <el-checkbox :indeterminate="studentRecordFilter.columnStyle.isIndeterminate"
-                   v-model="studentRecordFilter.columnStyle.checkAll" @change="handleStuRecordCheckAllChange">全选
+                   v-model="studentRecordFilter.columnStyle.checkAll" @change="handleStuRecordCheckAllChange">{{$t(`message.string_label_select_all`)}}
       </el-checkbox>
       <div style="margin: 15px 0;"></div>
       <el-checkbox-group v-model="studentRecordFilter.columnStyle.checkedCities"
                          @change="handleStuRecordCheckedCitiesChange">>
-        <el-checkbox v-for="(city,index) in studentRecordFilter.columnStyle.cities" :label="city" :key="index">
-          {{city}}
+        <el-checkbox v-for="(city) in studentRecordFilter.columnStyle.cities" :label="city.value" :key="city.value">
+          {{city.label}}
         </el-checkbox>
       </el-checkbox-group>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="studentRecordFilter.customColumnVisible = false">取 消</el-button>
-        <el-button type="primary" @click="customStuReportTableColumn">确 定</el-button>
+        <el-button @click="studentRecordFilter.customColumnVisible = false">{{$t(`message.button_cancel`)}}</el-button>
+        <el-button type="primary" @click="customStuReportTableColumn">{{$t(`message.button_confirm`)}}</el-button>
       </span>
     </el-dialog>
   </div>
@@ -686,7 +686,7 @@
         },
         data() {
             return {
-                routerConfig: [{name: '记上课', to: ''}],
+                routerConfig: [{name: '', to: ''}],
                 TAB_NAME_ARRAY: ['record_1', 'record_2', 'record_3'],
                 currentTabsName: '',
                 currentStudentHourPage: 1,
@@ -704,7 +704,7 @@
                         pickerOptions: {
                             shortcuts: [
                                 {
-                                    text: '最近一周',
+                                    text: '',
                                     onClick(picker) {
                                         const end = new Date();
                                         const start = new Date();
@@ -712,7 +712,7 @@
                                         picker.$emit('pick', [start, end]);
                                     }
                                 }, {
-                                    text: '最近一个月',
+                                    text: '',
                                     onClick(picker) {
                                         const end = new Date();
                                         const start = new Date();
@@ -720,7 +720,7 @@
                                         picker.$emit('pick', [start, end]);
                                     }
                                 }, {
-                                    text: '最近三个月',
+                                    text: '',
                                     onClick(picker) {
                                         const end = new Date();
                                         const start = new Date();
@@ -748,7 +748,7 @@
                         showColumns: [],
                         checkAll: false,
                         checkedCities: [],
-                        cities: ['上课时间', '上课校区', '等级'],
+                        cities: [{label:'',value:1}, {label:'',value:2}, {label:'',value:3}],
                         isIndeterminate: true
                     },
                     customColumnVisible: false,
@@ -763,7 +763,7 @@
                         showColumns: [],
                         checkAll: false,
                         checkedCities: [],
-                        cities: ['上课时间', '实到/应到', '上课校区', '等级', '备注', '创建人'],
+                        cities: [{label:'',value:1}, {label:'',value:2}, {label: '',value: 3}, {label: '',value: 4}, {label: '',value: 5}, {label:'',value:6}],
                         isIndeterminate: true
                     },
                     customColumnVisible: false,
@@ -771,15 +771,15 @@
                     showRecordType: 1, // 1按班级 2按学员
                     timeFrame: [], // 时间段
                     search: {
-                        targetCategory: {label: '班级名称', value: 1},
-                        category: [{label: '班级名称', value: 1}, {label: '教师名称', value: 3}, {label: '学生名称', value: 4}],
+                        targetCategory: {label: '', value: 1},
+                        category: [{label: '', value: 1}, {label: '', value: 3}, {label: '', value: 4}],
                         keyWorks: '',
                     },
                     filter: {
                         pickerOptions: {
                             shortcuts: [
                                 {
-                                    text: '最近一周',
+                                    text: '',
                                     onClick(picker) {
                                         const end = new Date();
                                         const start = new Date();
@@ -787,7 +787,7 @@
                                         picker.$emit('pick', [start, end]);
                                     }
                                 }, {
-                                    text: '最近一个月',
+                                    text: '',
                                     onClick(picker) {
                                         const end = new Date();
                                         const start = new Date();
@@ -795,7 +795,7 @@
                                         picker.$emit('pick', [start, end]);
                                     }
                                 }, {
-                                    text: '最近三个月',
+                                    text: '',
                                     onClick(picker) {
                                         const end = new Date();
                                         const start = new Date();
@@ -827,14 +827,11 @@
                         courseTypePackage: [],
                         coursePackage: [],
                         recordStatus: '', // 未选择 0  记上课 1 未记上课 2
-                        recordCategory: [{label: '已记录', value: 1}, {label: '未记录', value: 2}],
+                        recordCategory: [{label: '', value: 1}, {label: '', value: 2}],
                     },
                     search: {
-                        targetCategory: {label: '班级名称', value: 1},
-                        category: [{label: '班级名称', value: 1}, {label: '课程名称', value: 2}, {
-                            label: '教师名称',
-                            value: 3
-                        }, {label: '学生名称', value: 4}],
+                        targetCategory: {label: '', value: 1},
+                        category: [{label: '', value: 1}, {label: '', value: 2}, {label: '', value: 3}, {label: '', value: 4}],
                         keyWorks: '',
                     }
                 },
@@ -871,6 +868,11 @@
                 }
             }
         },
+        watch: {
+            '$i18n.locale': function () {
+                this.initLangData()
+            }
+        },
         mounted() {
             promptUtil.checkOverdue(this, storageUtil.readTeacherInfo().id) // true 表示已过期 false表示未过期
             // 订阅选中当前菜单项的消息
@@ -879,6 +881,7 @@
                     this.getRecordClassDataList(this.recordClassTabValue == 1)
                 }
             });
+            this.initLangData()
             if (this.$route.params.tabs && this.$route.params.item) {
                 this.tabActive = this.$route.params.tabs
                 this.totalCurrentTabs = this.$route.params.tabs
@@ -901,6 +904,35 @@
             this.initData()
         },
         methods: {
+            initLangData(){
+                this.routerConfig[0].name = this.$t(`message.record_header_title`)
+                this.classHourRecordFilter.filter.pickerOptions.shortcuts[0].text = this.$t(`message.string_label_nearest_week`)
+                this.classHourRecordFilter.filter.pickerOptions.shortcuts[1].text = this.$t(`message.string_label_nearest_month`)
+                this.classHourRecordFilter.filter.pickerOptions.shortcuts[2].text = this.$t(`message.string_label_nearest_quarter`)
+                this.studentRecordFilter.columnStyle.cities[0].label = this.$t(`message.calendar_dialog_course_time`)
+                this.studentRecordFilter.columnStyle.cities[1].label = this.$t(`message.record_study_school`)
+                this.studentRecordFilter.columnStyle.cities[2].label = this.$t(`message.record_study_level`)
+                this.classRecordFilter.columnStyle.cities[0].label = this.$t(`message.calendar_dialog_course_time`)
+                this.classRecordFilter.columnStyle.cities[1].label = this.$t(`message.string_label_should_turn`) + '/' + this.$t(`message.string_label_should_arrive`)
+                this.classRecordFilter.columnStyle.cities[2].label = this.$t(`message.record_study_school`)
+                this.classRecordFilter.columnStyle.cities[3].label = this.$t(`message.record_study_level`)
+                this.classRecordFilter.columnStyle.cities[4].label = this.$t(`message.string_label_remark`)
+                this.classRecordFilter.columnStyle.cities[5].label = this.$t(`message.record_study_creator`)
+                this.classRecordFilter.search.targetCategory.label = this.$t(`message.classroom_table_column_classname`)
+                this.classRecordFilter.search.category[0].label= this.$t(`message.classroom_table_column_classname`)
+                this.classRecordFilter.search.category[1].label= this.$t(`message.string_label_teacher_name`)
+                this.classRecordFilter.search.category[2].label= this.$t(`message.string_label_student_name`)
+                this.classRecordFilter.filter.pickerOptions.shortcuts[0].text = this.$t(`message.string_label_nearest_week`)
+                this.classRecordFilter.filter.pickerOptions.shortcuts[1].text = this.$t(`message.string_label_nearest_month`)
+                this.classRecordFilter.filter.pickerOptions.shortcuts[2].text = this.$t(`message.string_label_nearest_quarter`)
+                this.filter.search.targetCategory.label = this.$t(`message.classroom_table_column_classname`)
+                this.filter.search.category[0].label = this.$t(`message.classroom_table_column_classname`)
+                this.filter.search.category[1].label = this.$t(`message.string_label_course_name`)
+                this.filter.search.category[2].label = this.$t(`message.string_label_teacher_name`)
+                this.filter.search.category[3].label = this.$t(`message.string_label_student_name`)
+                this.filter.filter.recordCategory[0].label = this.$t(`message.string_label_record_ok`)
+                this.filter.filter.recordCategory[1].label = this.$t(`message.string_label_record_no`)
+            },
             // 点选 tabs时触发
             onClickTabs(obj) {
                 this.totalCurrentTabs = obj.name
@@ -1050,7 +1082,7 @@
                 }
                 getRecordAlreadyClassList(qs.stringify(queryInfo)).then(res => {
                     if (res.code == SUCCESS_CODE) {
-                        promptUtil.success(this, '数据准备完毕,等待下载中')
+                        promptUtil.success(this, this.$t(`message.string_label_export_success`))
                         window.open(res.data, "_self")
                     }
                     loading.close()
@@ -1105,7 +1137,7 @@
                 }
             },
             getExcelFromUrl(url){
-              promptUtil.success(this, '数据准备完毕,等待下载中')
+              promptUtil.success(this, this.$t(`message.string_label_export_success`))
               window.open(url, "_self")
             },
             queryRecordAlreadyClassKeyWords() {
@@ -1179,7 +1211,9 @@
                 }
             },
             handleStuRecordCheckAllChange(val) {
-                this.studentRecordFilter.columnStyle.checkedCities = val ? this.studentRecordFilter.columnStyle.cities : []
+                let indexArray = []
+                this.studentRecordFilter.columnStyle.cities.map(item=>indexArray.push(item.value))
+                this.studentRecordFilter.columnStyle.checkedCities = val ? indexArray : []
                 this.studentRecordFilter.columnStyle.isIndeterminate = false
             },
             handleStuRecordCheckedCitiesChange(value) {
@@ -1192,7 +1226,9 @@
                 this.studentRecordFilter.customColumnVisible = false
             },
             handleRecordCheckAllChange(val) {
-                this.classRecordFilter.columnStyle.checkedCities = val ? this.classRecordFilter.columnStyle.cities : []
+                let indexArray = []
+                this.classRecordFilter.columnStyle.cities.map(item=>indexArray.push(item.value))
+                this.classRecordFilter.columnStyle.checkedCities = val ? indexArray : []
                 this.classRecordFilter.columnStyle.isIndeterminate = false
             },
             handleRecordCheckedCitiesChange(value) {
@@ -1205,12 +1241,12 @@
                 this.classRecordFilter.customColumnVisible = false
             },
             // 学生解析数据
-            analyticalStuData(label) {
-                return this.studentRecordFilter.columnStyle.showColumns.findIndex(item => item == label) >= 0
+            analyticalStuData(value) {
+                return this.studentRecordFilter.columnStyle.showColumns.findIndex(item => item == value) >= 0
             },
             // 班级解析数据
-            analyticalData(label) {
-                return this.classRecordFilter.columnStyle.showColumns.findIndex(item => item == label) >= 0
+            analyticalData(value) {
+                return this.classRecordFilter.columnStyle.showColumns.findIndex(item => item == value) >= 0
             },
             // 点选过滤查询按钮
             onClickRecordFilterQuery() {
@@ -1315,9 +1351,9 @@
                 // });
             },
             onClickDelSchedule(obj) {
-                this.$confirm('此操作将永久删除该日程, 是否继续?', '提示', {
-                    confirmButtonText: '确定',
-                    cancelButtonText: '取消',
+                this.$confirm(this.$t(`message.record_dialog_content_delete_warning`), this.$t(`message.dialog_header_title_prompt`), {
+                    confirmButtonText: this.$t(`message.button_confirm`),
+                    cancelButtonText: this.$t(`message.button_cancel`),
                     type: 'warning'
                 }).then(() => {
                     delScheduleById(qs.stringify({
@@ -1329,7 +1365,7 @@
                         if (res.code == SUCCESS_CODE) {
                             this.$message({
                                 type: 'success',
-                                message: '删除成功!'
+                                message: this.$t(`message.prompt_delete_finish`)
                             });
                             this.getRecordClassDataList(this.recordClassTabValue == 1)
                         } else {
@@ -1341,13 +1377,13 @@
                     }).catch(err => {
                         this.$message({
                             type: 'info',
-                            message: '已取消删除'
+                            message: this.$t(`message.prompt_delete_cancel`)
                         });
                     })
                 }).catch(() => {
                     this.$message({
                         type: 'info',
-                        message: '已取消删除'
+                        message: this.$t(`message.prompt_delete_cancel`)
                     });
                 });
             },
@@ -1625,37 +1661,44 @@
             getWeekWithString(str) {
                 switch (str) {
                     case 'Monday':
-                        return '星期一'
+                        return this.$t(`message.string_label_mon`)
                     case 'Tuesday':
-                        return '星期二'
+                        return this.$t(`message.string_label_tue`)
                     case 'Wednesday':
-                        return '星期三'
+                        return this.$t(`message.string_label_wed`)
                     case 'Thursday':
-                        return '星期四'
+                        return this.$t(`message.string_label_thur`)
                     case 'Friday':
-                        return '星期五'
+                        return this.$t(`message.string_label_fri`)
                     case 'Saturday':
-                        return '星期六'
+                        return this.$t(`message.string_label_sat`)
                     case 'Sunday':
-                        return '星期日'
+                        return this.$t(`message.string_label_sun`)
                 }
             },
             // 根据字符串返回周几的值1~7
             getWeekValueWithString(str) {
+                const mon = this.$t(`message.string_label_mon`)   // Monday
+                const tue = this.$t(`message.string_label_tue`)   // Tuesday
+                const wed = this.$t(`message.string_label_wed`)   // Wednesday
+                const thur = this.$t(`message.string_label_thur`) // Thursday
+                const fri = this.$t(`message.string_label_fri`)   // Friday
+                const sat = this.$t(`message.string_label_sat`)   // Saturday
+                const sun = this.$t(`message.string_label_sun`)   // Sunday
                 switch (str) {
-                    case '星期一':
+                    case mon:
                         return 1
-                    case '星期二':
+                    case tue:
                         return 2
-                    case '星期三':
+                    case wed:
                         return 3
-                    case '星期四':
+                    case thur:
                         return 4
-                    case '星期五':
+                    case fri:
                         return 5
-                    case '星期六':
+                    case sat:
                         return 6
-                    case '星期日':
+                    case sun:
                         return 7
                     default:
                         return str

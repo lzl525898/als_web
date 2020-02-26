@@ -38,7 +38,7 @@
       name: "notice",
       data(){
         return{
-          routerConfig: [{name:'公告',to:''}],
+          routerConfig: [{name:'',to:''}],
           notices:[],
           pageShow:false,
           permitList:0,//分页总数
@@ -49,6 +49,7 @@
         }
       },
       mounted(){
+        this.routerConfig = [{name:this.$t(`message.string_label_announcement`),to:''}]
         promptUtil.checkOverdue(this, storageUtil.readTeacherInfo().id) // true 表示已过期 false表示未过期
         this.initNotice();
       },

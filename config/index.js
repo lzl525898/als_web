@@ -10,16 +10,16 @@ module.exports = {
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
     proxyTable: {
-      '/api': {
-        // 'http://101.200.56.18:9528
-        target: 'http://localhost',   //   https://www.alsrobot.vip  http://192.168.1.177:9527  https://www.alsrobot.vip
-        changeOrigin: true,
-        pathRewrite: {
-          '^/api': '/als_classroom/public/index.php/index'
-          // '^/api': '/admin.php/index'
-          // '^/api': '/als_classroom/public/index.php/adminapi/'
-        }
-      }
+      // '/api': {
+      //   // 'http://101.200.56.18:9528
+      //   target: 'http://localhost',   //   https://www.alsrobot.vip  http://192.168.1.177:9527  https://www.alsrobot.vip
+      //   changeOrigin: true,
+      //   pathRewrite: {
+      //     '^/api': '/als_classroom/public/index.php/index'
+      //     // '^/api': '/admin.php/index'
+      //     // '^/api': '/als_classroom/public/index.php/adminapi/'
+      //   }
+      // }
     },
     // Various Dev Server settings
     host: 'localhost', // can be overwritten by process.env.HOST

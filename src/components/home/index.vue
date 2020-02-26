@@ -14,7 +14,7 @@
                 <div style="display: flex;font-size:8px;color:#fff;margin-top: 10px;">
                   <div
                     style="width: 120px;text-align: right"
-                  >昵&nbsp&nbsp&nbsp&nbsp称&nbsp&nbsp:&nbsp
+                  >{{$t(`message.index_user_nick`)}}&nbsp&nbsp:&nbsp
                   </div>
                   <el-tooltip :content="$store.state.userName" placement="bottom" effect="light">
                     <div
@@ -24,7 +24,7 @@
                   </el-tooltip>
                 </div>
                 <div style="display: flex;font-size:8px;color:#fff;margin-top: 5px;">
-                  <div style="width: 120px;text-align: right">用户角色&nbsp&nbsp:&nbsp</div>
+                  <div style="width: 120px;text-align: right">{{$t(`message.index_user_role`)}}&nbsp&nbsp:&nbsp</div>
                   <div style="width: 90px;">&nbsp{{topBaseInfo.role}}</div>
                 </div>
 
@@ -45,7 +45,7 @@
                 <el-avatar style="width: 70px;height:70px;" :src="$store.state.userAvatar"></el-avatar>
               </div>
               <div style="display: flex;font-size:8px;color:#fff;margin-top: 10px;">
-                <div style="width: 120px;text-align: right">学生姓名&nbsp&nbsp:&nbsp</div>
+                <div style="width: 120px;text-align: right">{{$t(`message.consult_conversion_student_name`)}}&nbsp&nbsp:&nbsp</div>
                 <el-tooltip :content="$store.state.userName" placement="bottom" effect="light">
                   <div
                     style="width: 90px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;"
@@ -54,7 +54,7 @@
                 </el-tooltip>
               </div>
               <div style="display: flex;font-size:8px;color:#fff;margin-top: 5px;">
-                <div style="width: 120px;text-align: right">所在班级&nbsp&nbsp:&nbsp</div>
+                <div style="width: 120px;text-align: right">{{$t(`message.student_management_studentEditDialogVisible_class`)}}&nbsp&nbsp:&nbsp</div>
                 <el-tooltip :content="topBaseInfo.class" placement="bottom" effect="light">
                   <div
                     style="width: 90px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;"
@@ -77,7 +77,7 @@
                 <img style="width: 70px;height:70px;" :src="$store.state.userAvatar">
               </div>
               <div style="display: flex;font-size:8px;color:#fff;margin-top: 10px;">
-                <div style="width: 120px;text-align: right">教师姓名&nbsp&nbsp:&nbsp</div>
+                <div style="width: 120px;text-align: right">{{$t(`message.teacher_dialog_nick`)}}&nbsp&nbsp:&nbsp</div>
                 <el-tooltip :content="$store.state.userName" placement="bottom" effect="light">
                   <div
                     style="width: 90px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;"
@@ -86,7 +86,7 @@
                 </el-tooltip>
               </div>
               <div style="display: flex;font-size:8px;color:#fff;margin-top: 5px;">
-                <div style="width: 120px;text-align: right">用户角色&nbsp&nbsp:&nbsp</div>
+                <div style="width: 120px;text-align: right">{{$t(`message.index_user_role`)}}&nbsp&nbsp:&nbsp</div>
                 <el-tooltip :content="topBaseInfo.role" placement="bottom" effect="light">
                   <div
                     style="width: 90px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;"
@@ -144,10 +144,10 @@
       @open="overdueBeforeOpen"
       :before-close="beforeCloseEvent"
       center>
-        <div style="font-size: 1.5rem;color:#333;font-weight: bold;text-align: center;line-height: 1px">系统过期提醒</div>
-        <div style="font-size: 0.9rem;color:#333;font-weight: bold;margin-left: 40px;margin-top: 14px;width: 320px;padding-top: 13px;line-height: 20px">您的系统已过期，系统将为您保存数据6个月，过期后数据将全部删除。
-         <br />请拨打电话<span style="color:#409EFF">{{overDlg.phone}}</span>或关注右侧公众号联系客服，确认后点击
-          <el-link :underline="false" type="primary" style="font-size: 1.1rem;font-weight: bold;margin-top: -3px;" :href="overDlg.link">刷新</el-link>
+        <div style="font-size: 1.5rem;color:#333;font-weight: bold;text-align: center;line-height: 1px">{{$t(`message.system_expired_reminder`)}}</div>
+        <div style="font-size: 0.9rem;color:#333;font-weight: bold;margin-left: 40px;margin-top: 14px;width: 320px;padding-top: 13px;line-height: 20px">{{$t(`message.system_expired_title`)}}
+         <br />{{$t(`message.index_call_phone`)}}<span style="color:#409EFF">{{overDlg.phone}}</span>{{$t(`message.index_call_user_click`)}}
+          <el-link :underline="false" type="primary" style="font-size: 1.1rem;font-weight: bold;margin-top: -3px;" :href="overDlg.link">{{$t(`message.string_label_refresh_button`)}}</el-link>
         </div>
         <div style="float:right;margin-top: -107px;margin-right:40px">
           <el-image style="width: 110px; height: 110px;" fit="fill" :src="overDlg.qrcode"></el-image>
@@ -298,9 +298,9 @@
         if (role == 3) {
           this.topBaseInfo.class = baseInfo.className;
         } else if (role == 4) {
-          this.topBaseInfo.role = '直播教师';
+          this.topBaseInfo.role = this.$t(`message.string_label_live_teacher`);
         } else {
-          this.topBaseInfo.role = baseInfo.school_admin == 1 ? "校长" : "教师";
+          this.topBaseInfo.role = baseInfo.school_admin == 1 ? this.$t(`message.string_label_principal`) : this.$t(`message.string_label_teacher`);
         }
       },
       //初始化列表数据
@@ -327,7 +327,7 @@
                   }
                   this.dialogFormVisible = true;
                 } else {
-                  promptUtil.error(this, "网络异常，请稍后再试...");
+                  promptUtil.error(this, this.$t(`message.system_error_network`));
                 }
                 loading.close();
               })

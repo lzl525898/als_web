@@ -169,7 +169,6 @@ export default {
 
   // 登出
   logout() {
-    localStorage.removeItem(LANG)
     localStorage.removeItem(TEACHER_INFO)
     localStorage.removeItem(LOGIN_STATUS)
     localStorage.removeItem(USER_ROLE)

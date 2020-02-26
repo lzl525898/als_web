@@ -1,68 +1,5 @@
 <template>
   <div>
-    <!--    <div v-if="userRole==1">-->
-    <!--      &lt;!&ndash; 头部组件 &ndash;&gt;-->
-    <!--      <el-header class="header">-->
-    <!--        <span suffix-icon="el-icon-s-operation" v-if="none"></span>-->
-    <!--        <i class="el-icon-menu" @click="toggleCollapse" v-if="elIcon"></i>-->
-    <!--        <div class="system-title" v-if="asIntelligence">{{$store.state.schoolName}}</div>-->
-    <!--        <div class="dropmenu-avatar">-->
-    <!--          <div style="position: absolute;left:-200px;">-->
-    <!--            <el-dropdown>-->
-    <!--              <div v-if="explain" class="help">-->
-    <!--                <a href="javascript:void(0)">-->
-    <!--                  <i class="el-icon-s-grid"></i>-->
-    <!--                  <span>家长端</span>-->
-    <!--                </a>-->
-    <!--              </div>-->
-    <!--              <el-dropdown-menu slot="dropdown">-->
-    <!--                <div style="margin:0 5px 5px 5px">-->
-    <!--                  <div style="margin-left:5px;margin-right:5px">-->
-    <!--                    <img style="width: 100px; height: 100px" :src="qrCodeMobileImg"/>-->
-    <!--                  </div>-->
-    <!--                  <div style="font-size: 14px;color:#333;text-align: center;margin-top:5px;">微信扫一扫</div>-->
-    <!--                  <div style="font-size: 10px;color:#888;text-align: center;margin-top:5px;">进入家长端</div>-->
-    <!--                </div>-->
-    <!--              </el-dropdown-menu>-->
-    <!--            </el-dropdown>-->
-    <!--          </div>-->
-    <!--          <div style="position: absolute;left:-100px;">-->
-    <!--            <div class="help" @click="contact">-->
-    <!--              <a href="javascript:void(0)">-->
-    <!--                <i class="el-icon-phone"></i>-->
-    <!--                <span>联系我们</span>-->
-    <!--              </a>-->
-    <!--            </div>-->
-    <!--          </div>-->
-    <!--&lt;!&ndash;          <div style="position: absolute;left:-200px;">&ndash;&gt;-->
-    <!--&lt;!&ndash;            <div v-if="organizationInfoTogg" class="help" @click="organizationInfo">&ndash;&gt;-->
-    <!--&lt;!&ndash;              <a href="javascript:void(0)">&ndash;&gt;-->
-    <!--&lt;!&ndash;                <i class="el-icon-success"></i>&ndash;&gt;-->
-    <!--&lt;!&ndash;                <span>机构信息</span>&ndash;&gt;-->
-    <!--&lt;!&ndash;              </a>&ndash;&gt;-->
-    <!--&lt;!&ndash;            </div>&ndash;&gt;-->
-    <!--&lt;!&ndash;          </div>&ndash;&gt;-->
-    <!--          &lt;!&ndash; 下拉菜单 &ndash;&gt;-->
-    <!--          <el-dropdown @command="handleCommand" class="logoout">-->
-    <!--            <span class="el-dropdown-link">-->
-    <!--              <div style="width: 120px;height:100%;display: flex;align-items: center;">-->
-    <!--                <div style="width: 40px;">-->
-    <!--                  <el-avatar style="width: 36px;height:36px;" :src="$store.state.userAvatar"></el-avatar>-->
-    <!--                </div>-->
-    <!--                <div class="userName"-->
-    <!--                     style="width: 80px;margin-left: 10px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;"-->
-    <!--                >{{$store.state.userName}}</div>-->
-    <!--              </div>-->
-    <!--            </span>-->
-    <!--            <el-dropdown-menu slot="dropdown">-->
-    <!--              <el-dropdown-item command="persoinfo">个人信息</el-dropdown-item>-->
-    <!--&lt;!&ndash;              <el-dropdown-item command="originInformation" >机构信息</el-dropdown-item>&ndash;&gt;-->
-    <!--              <el-dropdown-item command="logout">退出</el-dropdown-item>-->
-    <!--            </el-dropdown-menu>-->
-    <!--          </el-dropdown>-->
-    <!--        </div>-->
-    <!--      </el-header>-->
-    <!--    </div>-->
     <div>
       <!-- 头部组件 -->
       <el-header class="header">
@@ -78,32 +15,32 @@
         <div class="dropmenu-avatar" style="display:flex">
           <el-dropdown @command="handleRoleCommand" v-show="demoStatus">
             <div style="height:100%;display:flex;align-items: center;color:#fff;margin-right:30px;cursor:pointer;">
-              <i class="el-icon-s-custom"/><span>角色切换</span>
+              <i class="el-icon-s-custom"/><span>{{$t(`message.index_role_change`)}}</span>
             </div>
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item command="master">校长账号</el-dropdown-item>
-              <el-dropdown-item command="teacher">教师账号</el-dropdown-item>
-              <el-dropdown-item command="student">学生账号</el-dropdown-item>
+              <el-dropdown-item command="master">{{$t(`message.index_role_account_school`)}}</el-dropdown-item>
+              <el-dropdown-item command="teacher">{{$t(`message.teacher_dialog_account`)}}</el-dropdown-item>
+              <el-dropdown-item command="student">{{$t(`message.student_management_student_account`)}}</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
-          <el-dropdown placement="bottom-start">
-            <div class="help">
-              <a href="javascript:void(0)">
-                <i class="el-icon-s-tools"></i>
-                <span>{{localLang}}</span>
-              </a>
-            </div>
-            <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item @click.native="switchLang('zh')">简体中文</el-dropdown-item>
-              <el-dropdown-item @click.native="switchLang('cht')">繁体中文</el-dropdown-item>
-              <el-dropdown-item @click.native="switchLang('en')">English</el-dropdown-item>
-            </el-dropdown-menu>
-          </el-dropdown>
+<!--          <el-dropdown placement="bottom-start">-->
+<!--            <div class="help">-->
+<!--              <a href="javascript:void(0)">-->
+<!--                <i class="el-icon-s-tools"></i>-->
+<!--                <span>{{localLang}}</span>-->
+<!--              </a>-->
+<!--            </div>-->
+<!--            <el-dropdown-menu slot="dropdown">-->
+<!--              <el-dropdown-item @click.native="switchLang('zh')">简体中文</el-dropdown-item>-->
+<!--              <el-dropdown-item @click.native="switchLang('cht')">繁体中文</el-dropdown-item>-->
+<!--              <el-dropdown-item @click.native="switchLang('en')">English</el-dropdown-item>-->
+<!--            </el-dropdown-menu>-->
+<!--          </el-dropdown>-->
           <el-dropdown>
             <div v-if="explain" class="help">
               <a href="javascript:void(0)">
                 <i class="el-icon-s-grid"></i>
-                <span>家长端入口</span>
+                <span>{{$t(`message.index_parent_into`)}}</span>
               </a>
             </div>
             <el-dropdown-menu slot="dropdown">
@@ -111,8 +48,8 @@
                 <div style="margin-left:5px;margin-right:5px">
                   <img style="width: 100px; height: 100px" :src="qrCodeMobileImg"/>
                 </div>
-                <div style="font-size: 14px;color:#333;text-align: center;margin-top:5px;">微信扫一扫</div>
-                <div style="font-size: 10px;color:#888;text-align: center;margin-top:5px;">进入家长端</div>
+                <div style="font-size: 14px;color:#333;text-align: center;margin-top:5px;">{{$t(`message.index_wx_scan`)}}</div>
+                <div style="font-size: 10px;color:#888;text-align: center;margin-top:5px;">{{$t(`message.index_wx_parent`)}}</div>
               </div>
             </el-dropdown-menu>
           </el-dropdown>
@@ -132,9 +69,9 @@
             </div>
           </span>
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item command="personCenter">个人中心</el-dropdown-item>
-              <el-dropdown-item command="personInfo">用户信息</el-dropdown-item>
-              <el-dropdown-item command="logout">退出系统</el-dropdown-item>
+              <el-dropdown-item command="personCenter">{{$t(`message.index_person_center`)}}</el-dropdown-item>
+              <el-dropdown-item command="personInfo">{{$t(`message.index_person_info`)}}</el-dropdown-item>
+              <el-dropdown-item command="logout">{{$t(`message.index_person_exit`)}}</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
 <!--          <div class="logout-btn" @click="onClickLogout">退出系统</div>-->
@@ -144,63 +81,67 @@
 
     <!-- 用户信息弹出框 -->
     <el-dialog
-      title="用户信息编辑"
+      :title="$t(`message.index_person_info_edit`)"
       :visible.sync="dialogFormVisible"
-      width="600px"
+      width="500px"
       :before-close="closeDialog"
     >
       <!-- table切换 -->
       <el-tabs v-model="activeName" @tab-click="handleClick">
-        <el-tab-pane label="个人资料" name="first">
+        <el-tab-pane :label="$t(`message.index_person_single`)" name="first">
           <!-- 个人资料表单 -->
-          <el-form :model="gridData" :rules="firstRules" ref="gridData">
-            <el-form-item label="头像:" :label-width="formLabelWidth">
-              <el-avatar :src="currentAvatar"></el-avatar>
-              <el-link :underline="false" type="primary" style="margin-top: -30px;" @click="avatarDialogVisible=true">
-                更换头像
-              </el-link>
-            </el-form-item>
-            <el-form-item label="账号:" :label-width="formLabelWidth">
-              <el-input v-model="gridData.account" autocomplete="off" disabled></el-input>
-            </el-form-item>
-            <el-form-item label="昵称:" :label-width="formLabelWidth" prop="nick">
-              <el-input v-model="gridData.nick" autocomplete="off"></el-input>
-            </el-form-item>
-            <el-form-item label="手机:" :label-width="formLabelWidth">
-              <el-input v-model="gridData.phone" autocomplete="off"></el-input>
-            </el-form-item>
-            <el-form-item label="班级:" :label-width="formLabelWidth">
-              <el-input v-model="gridData.classes.className" autocomplete="off" disabled></el-input>
-            </el-form-item>
-            <el-form-item label="备注:" :label-width="formLabelWidth">
-              <el-input v-model="gridData.remark" autocomplete="off"></el-input>
-            </el-form-item>
-          </el-form>
+          <el-row>
+            <el-col :span="20" :offset="2">
+              <el-form :model="gridData" :rules="firstRules" ref="gridData">
+                <el-form-item :label="$t(`message.index_person_avatar`)+':'" :label-width="formLabelWidth">
+                  <el-avatar :src="currentAvatar"></el-avatar>
+                  <el-link :underline="false" type="primary" style="margin-top: -30px;" @click="avatarDialogVisible=true">
+                    {{$t(`message.index_person_avatar_change`)}}
+                  </el-link>
+                </el-form-item>
+                <el-form-item :label="$t(`message.student_management_tableData_user_account`)+':'" :label-width="formLabelWidth">
+                  <el-input v-model="gridData.account" autocomplete="off" disabled></el-input>
+                </el-form-item>
+                <el-form-item :label="$t(`message.teacher_table_column_nick`)+':'" :label-width="formLabelWidth" prop="nick">
+                  <el-input v-model="gridData.nick" autocomplete="off"></el-input>
+                </el-form-item>
+                <el-form-item :label="$t(`message.student_management_create_student_phone`)+':'" :label-width="formLabelWidth">
+                  <el-input v-model="gridData.phone" autocomplete="off"></el-input>
+                </el-form-item>
+                <el-form-item :label="$t(`message.string_label_classroom`)+':'" :label-width="formLabelWidth">
+                  <el-input v-model="gridData.classes.className" autocomplete="off" disabled></el-input>
+                </el-form-item>
+                <el-form-item :label="$t(`message.string_label_remark`)+':'" :label-width="formLabelWidth">
+                  <el-input v-model="gridData.remark" autocomplete="off"></el-input>
+                </el-form-item>
+              </el-form>
+            </el-col>
+          </el-row>
         </el-tab-pane>
-        <el-tab-pane label="修改密码" name="second">
+        <el-tab-pane :label="$t(`message.index_person_update_pwd`)" name="second">
           <!-- 修改密码页面 -->
           <el-row>
-            <el-col :span="16" :offset="4">
+            <el-col :span="20" :offset="2">
               <el-form
                 :model="ruleForm"
                 :rules="rules"
                 ref="ruleForm"
-                label-width="100px"
+                :label-width="formLabelWidth"
                 class="demo-ruleForm"
               >
-                <el-form-item label="输入旧密码" prop="oldpassword">
-                  <el-input v-model="ruleForm.oldpassword" type="password" placeholder="请输入旧密" show-password></el-input>
+                <el-form-item :label="$t(`message.index_update_old`)" prop="oldpassword">
+                  <el-input v-model="ruleForm.oldpassword" type="password" :placeholder="$t(`message.index_update_old`)" show-password></el-input>
                 </el-form-item>
                 <!-- <el-form-item label="验证码" prop="yzm">
                       <el-input v-model="ruleForm.yzm" class="width"  placeholder="请输入验证码"></el-input>
                       <el-button type="primary" :disabled="disabled" v-show="show" @click="getCode">获取验证码</el-button>
                       <el-button type="primary" v-show="!show" class="count">{{count}} s</el-button>
                 </el-form-item>-->
-                <el-form-item label="输入新密码" prop="password">
-                  <el-input v-model="ruleForm.password" placeholder="请输入新密码" type="password" show-password></el-input>
+                <el-form-item :label="$t(`message.index_update_new`)" prop="password">
+                  <el-input v-model="ruleForm.password" :placeholder="$t(`message.index_update_new`)" type="password" show-password></el-input>
                 </el-form-item>
-                <el-form-item label="确认新密码" prop="reptpassword">
-                  <el-input v-model="ruleForm.reptpassword" placeholder="请确认新密码" type="password" show-password></el-input>
+                <el-form-item :label="$t(`message.index_confirm_new`)" prop="reptpassword">
+                  <el-input v-model="ruleForm.reptpassword" :placeholder="$t(`message.index_confirm_new`)" type="password" show-password></el-input>
                 </el-form-item>
               </el-form>
             </el-col>
@@ -238,7 +179,7 @@
         </div>
         <div class="footer-btn">
           <div class="scope-btn">
-            <label class="btn" for="uploads">选择图片</label>
+            <label class="btn" for="uploads">{{$t(`message.index_image_select`)}}</label>
             <input type="file" id="uploads" style="position:absolute; clip:rect(0 0 0 0);"
                    accept="image/png, image/jpeg, image/gif, image/jpg" @change="uploadImg($event, 1)">
             <el-button size="mini" icon="el-icon-plus" @click="changeScale(1)"></el-button>
@@ -248,7 +189,7 @@
           </div>
           <div class="upload-btn">
             <el-button type="primary" style="margin-left: 46px;" size="mini" @click="down('base64')"
-                       :loading="isUpdateAvatarLoading">上传头像
+                       :loading="isUpdateAvatarLoading">{{$t(`message.index_upload_avatar`)}}
             </el-button>
           </div>
         </div>
@@ -257,9 +198,9 @@
         <el-button
           @click="cancelWithUserDialog"
           :dialogFormVisible="dialogFormVisible"
-        >取 消
+        >{{$t(`message.button_cancel`)}}
         </el-button>
-        <el-button type="primary" @click="onClickWithUserDialog">确 定</el-button>
+        <el-button type="primary" @click="onClickWithUserDialog">{{$t(`message.button_confirm`)}}</el-button>
       </div>
     </el-dialog>
   </div>
@@ -324,33 +265,33 @@
                 // 弹出框 修改密码页面表单验证
                 rules: {
                     oldpassword: [
-                        {required: true, message: "请输入旧密码", trigger: "blur"}
+                        {required: true, message: "", trigger: "blur"}
                     ],
                     // yzm:[
                     //   { required: true, message: '请输入验证码', trigger: 'blur' },
                     // ],
                     password: [
-                        {required: true, message: "请输入新密码", trigger: "blur"},
+                        {required: true, message: "", trigger: "blur"},
                         {
                             min: 6,
                             max: 16,
-                            message: "密码长度在 6 到 12 个字符",
+                            message: "",
                             trigger: "blur"
                         }
                     ],
                     reptpassword: [
-                        {required: true, message: "再次输入密码", trigger: "blur"},
+                        {required: true, message: "", trigger: "blur"},
                         {
                             min: 6,
                             max: 16,
-                            message: "密码长度在 6 到 12 个字符",
+                            message: "",
                             trigger: "blur"
                         }
                     ]
                 },
                 // 弹出框 修改昵称表单验证
                 firstRules: {
-                    nick: [{pattern: /^[0-9a-zA-Z]|[\u4e00-\u9fa5]+$/, message: "含有特殊字符"}]
+                    nick: [{pattern:/^[\u4E00-\u9FA5A-Za-z0-9]{0,}$/, message: ""}]
                 },
                 isCollapse: false,
                 activeName: "first", //table切换
@@ -397,6 +338,7 @@
                 this.$router.replace({path: `/login`});
                 return;
             }
+            this.initLangData()
             // 订阅选中当前菜单项的消息
             PubSub.subscribe("currentMenuIndex", (msg, data) => {
                 this.currentItemActive = data;
@@ -405,6 +347,14 @@
             this.judgeRouter();
         },
         methods: {
+            initLangData(){
+                this.rules.oldpassword[0].message = this.$t(`message.index_update_old`)
+                this.rules.password[0].message = this.$t(`message.index_update_new`)
+                this.rules.password[1].message = this.$t(`message.index_password_length_error`)
+                this.rules.reptpassword[0].message = this.$t(`message.index_input_pwd_again`)
+                this.rules.reptpassword[1].message = this.$t(`message.index_password_length_error`)
+                this.firstRules.nick[0].message = this.$t(`message.teacher_form_valid_nick`)
+            },
             switchLang(lang){
               this.$i18n.locale = lang
               storageUtil.setLang(lang)
@@ -448,13 +398,13 @@
                             if (res.code == SUCCESS_CODE) {
                                 this.option.img = res.data.header_new
                                 vuexUtil.setUserAvatarWithState(this, this.option.img)
-                                promptUtil.success(this, '修改成功')
+                                promptUtil.success(this, this.$t(`message.string_label_update_success`))
                                 this.currentAvatar = this.option.img
                                 const userObjInfo = storageUtil.readTeacherInfo()
                                 userObjInfo.avatar = this.option.img
                                 storageUtil.saveTeacherInfo(userObjInfo)
                             } else {
-                                promptUtil.error(this, '修改失败')
+                                promptUtil.error(this, this.$t(`message.string_label_update_fail`))
                             }
                             this.isUpdateAvatarLoading = false
                             this.avatarDialogVisible = false
@@ -473,7 +423,7 @@
                 // this.option.img
                 let file = e.target.files[0]
                 if (!/\.(gif|jpg|jpeg|png|bmp|GIF|JPG|PNG)$/.test(e.target.value)) {
-                    alert('图片类型必须是.gif,jpeg,jpg,png,bmp中的一种')
+                    alert(this.$t(`message.index_image_suffix_type`))
                     return false
                 }
                 const reader = new FileReader()
@@ -527,12 +477,19 @@
                     if(this.gridData.nick==""){
                         this.dialogFormVisible = true;
                         loading.close();
-                        promptUtil.warning(this,"请输入昵称")
+                        promptUtil.warning(this,this.$t(`message.teacher_form_teacher_nick`))
                         return
                     }
-                    var mobile_mode=/^1[3456789]\d{9}$/;
-                    if(!mobile_mode.test(this.gridData.phone)){
-                        promptUtil.warning(this,"请输入正确的手机号")
+                    // var mobile_mode=/^1[3456789]\d{9}$/;
+                    // if(!mobile_mode.test(this.gridData.phone)){
+                    //     promptUtil.warning(this,"请输入正确的手机号")
+                    //     this.dialogFormVisible = true;
+                    //     loading.close();
+                    //     return
+                    // }
+                    var mobileCode = this.gridData.phone ? this.gridData.phone.trim() : ''
+                    if(mobileCode && mobileCode.length>0){
+                        promptUtil.warning(this,this.$t(`message.consult_rules_phone`))
                         this.dialogFormVisible = true;
                         loading.close();
                         return
@@ -551,7 +508,7 @@
                             loading.close();
                             if (res.code == SUCCESS_CODE) {
                                 this.$store.dispatch("updateUserName", this.gridData.nick); // 触发消息action调用
-                                promptUtil.success(this, "修改个人信息成功");
+                                promptUtil.success(this, this.$t(`message.index_update_person`));
                                 superBlockly.updateAccount()
                                 this.dialogFormVisible = false;
                             } else if (res.code == -2) { //
@@ -568,15 +525,15 @@
                 } else {
                     // 修改用户密码
                     if (this.ruleForm.oldpassword == this.ruleForm.password) {
-                        promptUtil.warning(this, "新密码与旧密码一致");
+                        promptUtil.warning(this, this.$t(`message.index_new_old_same`));
                         this.dialogFormVisible = true;
                         loading.close();
                         return;
                     }
                     // var reg = /^[\w]{6,12}$/
-                    let regg=/^[\da-z]{6,12}$/i
+                    let regg=/^[\da-z]{6,20}$/i
                     if (!regg.test(this.ruleForm.password)||!regg.test(this.ruleForm.password)) {
-                        promptUtil.warning(this, "密码长度在 6 到 12 个字符");
+                        promptUtil.warning(this, this.$t(`message.index_password_length_error`));
                         this.dialogFormVisible = true;
                         loading.close();
                         return
@@ -640,7 +597,7 @@
                 if (role == 3) {
                     this.topBaseInfo.class = baseInfo.className;
                 } else {
-                    this.topBaseInfo.role = baseInfo.school_admin == 1 ? "校长" : "教师";
+                    this.topBaseInfo.role = baseInfo.school_admin == 1 ? this.$t(`message.string_label_principal`) : this.$t(`message.string_label_teacher`);
                 }
             },
             // 退出触发方法
@@ -750,7 +707,7 @@
                                     }
                                     this.dialogFormVisible = true;
                                 } else {
-                                    promptUtil.error(this, "网络异常，请稍后再试...");
+                                    promptUtil.error(this, this.$t(`message.system_error_network`));
                                 }
                                 loading.close();
                             })

@@ -4,6 +4,7 @@
 import '../api/api'
 import '../api/restfulapi'
 import {qs, getUserRoleWithOverdue,getNoReadCount} from '../api/api'
+import storageUtil from "./storageUtil";
 const PROGRAM_STATUS='release' // release  debug
 const TIME_OUT=2000
 const MESSAGE_TYPE={
@@ -21,15 +22,27 @@ export default {
     //   duration: TIME_OUT});
   },
   timeout(that){
+    let lang = storageUtil.getLang()
+    let msg
     if (PROGRAM_STATUS=='debug') {
+      if(lang!='zh'){
+        msg = 'Error, see console'
+      }else{
+        msg = '出现异常，查看console'
+      }
       return that.$message({
-        message: '出现异常，查看console',
+        message: msg,
         center: true,
         type: MESSAGE_TYPE.ERROR,
         duration: TIME_OUT});
     } else {
+      if(lang!='zh'){
+        msg = 'wait...'
+      }else{
+        msg = '哪里出现了问题...'
+      }
       return that.$message({
-        message: '哪里出现了问题...',
+        message: msg,
         center: true,
         type: MESSAGE_TYPE.ERROR,
         duration: TIME_OUT});
@@ -57,9 +70,16 @@ export default {
       duration: TIME_OUT});
   },
   loading(that){
+    let lang = storageUtil.getLang()
+    let msg
+    if(lang!='zh'){
+      msg = 'Loading'
+    }else{
+      msg = '玩命加载中'
+    }
     const loading = that.$loading({
       lock: true,
-      text: '玩命加载中',
+      text: msg,
       spinner: 'el-icon-loading',
       background: 'rgba(0, 0, 0, 0.7)'
     })

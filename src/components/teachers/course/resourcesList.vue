@@ -40,40 +40,53 @@
           <el-input
             size="small"
             style="width: 240px"
-            placeholder="请输入查询信息"
+            :placeholder="$t(`message.course_ai_filter_search`)"
             v-model="inputQueryInfo"
             clearable
             @keydown.native.enter="queryClassInfo"
           ></el-input>
-          <el-button size="small" type="primary" icon="el-icon-search" @click="queryClassInfo">搜索</el-button>
+          <el-button size="small" type="primary" icon="el-icon-search" @click="queryClassInfo">{{$t(`message.student_management_search`)}}</el-button>
         </el-col>
       </el-row>
     </el-card>
     <el-card style="margin-top: 20px;">
       <el-row>
         <el-col :span="24" class="marginTop_10">
-          <label>课程名称 : </label><label>{{packageInfo.course_name}}</label>
+          <div style="display:flex;align-items:center">
+            <div class="classTitleCircle"></div><label>{{$t(`message.string_label_course_name`)}} : </label><label>{{packageInfo.course_name}}</label>
+          </div>
         </el-col>
         <el-col :span="24" class="marginTop_10">
-          <label>培养对象 : </label><label>{{packageInfo.training}}</label>
+          <div style="display:flex;align-items:center">
+            <div class="classTitleCircle"></div><label>{{$t(`message.course_ai_training`)}} : </label><label>{{packageInfo.training}}</label>
+          </div>
         </el-col>
         <el-col :span="24" class="marginTop_10">
-          <label>教具名称 : </label>
-          <span v-if="packageInfo.software && packageInfo.software.length>0" >
-            <span v-for="(item,index) in packageInfo.software" :key="index">
-              <label>
-                <el-tooltip v-if="item.con && item.con!=''" class="item" effect="dark" :content="item.con" placement="top">
-                  <el-link v-if="item.url&&item.url!=''" type="primary" :underline="false" :href="item.url" target="_blank" style="margin-top:-4px;"><span style="margin-right:5px;font-weight:bold;font-size:16px;">{{item.name}}</span></el-link>
+          <div style="display:flex;align-items:center">
+            <div class="classTitleCircle"></div>
+            <label>{{$t(`message.course_ai_software`)}} : </label>
+            <span v-if="packageInfo.software && packageInfo.software.length>0" >
+              <span v-for="(item,index) in packageInfo.software" :key="index">
+                <label>
+                  <el-tooltip v-if="item.con && item.con!=''" class="item" effect="dark" :content="item.con" placement="top">
+                    <el-link v-if="item.url&&item.url!=''" type="primary" :underline="false" :href="item.url" target="_blank" style="margin-top:-4px;"><span style="margin-right:5px;font-weight:bold;font-size:16px;">{{item.name}}</span></el-link>
+                    <span v-else :underline="false" style="color:#303133;margin-right:10px;font-size:16px;">{{item.name}}</span>
+                  </el-tooltip>
                   <span v-else :underline="false" style="color:#303133;margin-right:10px;font-size:16px;">{{item.name}}</span>
-                </el-tooltip>
-                <span v-else :underline="false" style="color:#303133;margin-right:10px;font-size:16px;">{{item.name}}</span>
-              </label>
+                </label>
+              </span>
             </span>
-          </span>
-          <span v-else>--</span>
+            <span v-else>--</span>
+          </div>
         </el-col>
         <el-col :span="24" class="marginTop_10">
-          <label>课程简介 : </label><label>{{packageInfo.introduce}}</label>
+            <div style="display:flex;align-items:baseline">
+              <div style="display:flex;align-items:center">
+                <div class="classTitleCircle"></div>
+                <div>{{$t(`message.course_ai_desc`)}} : </div>
+              </div>
+              <div :style="{width:clientWidth+'px'}">{{packageInfo.introduce}}</div>
+            </div>
         </el-col>
       </el-row>
     </el-card>
@@ -89,18 +102,18 @@
       <el-table-column
         prop="ke_xu"
         align="center"
-        label="课序"
+        :label="$t(`message.course_ai_sort`)"
         width="100"
       >
 <!--        :index="indexMethod"-->
       </el-table-column>
-      <el-table-column label="课程名称" @click="resourcesListShow" width="370">
+      <el-table-column show-overflow-tooltip :label="$t(`message.string_label_course_name`)" @click="resourcesListShow" width="370">
         <template slot-scope="scope">
           <div style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;width:350px">{{scope.row.name}}</div>
         </template>
       </el-table-column>
-      <el-table-column prop="con" label="课程介绍" show-overflow-tooltip></el-table-column>
-      <el-table-column label="阶段" width="220">
+      <el-table-column prop="con" :label="$t(`message.course_ai_info`)" show-overflow-tooltip></el-table-column>
+      <el-table-column :label="$t(`message.course_ai_stage`)" width="220">
         <template slot-scope="scope">
           <div style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;width:200px">{{scope.row.stage}}</div>
         </template>
@@ -115,7 +128,7 @@
         :current-page="currentPage"
         :page-size="pageSize"
         layout="total, prev, pager, next, jumper"
-        :total="databaseInfoList"教具名称
+        :total="databaseInfoList"
       ></el-pagination>
     </el-row>
   </div>
@@ -128,6 +141,7 @@
     import storageUtil from "../../../utils/storageUtil";
     import vuexUtils from "../../../utils/vuexUtils";
     import '../../../api/restfulapi';
+    import $ from 'jquery';
     import {
         qs,
         getCoursesCategory,
@@ -152,12 +166,29 @@
                 // packageInfo: {software:'',introduce:''}, // 课程包信息
                 packageInfo: {course_name: '', training: '', introduce: '', software: ''},
                 // course_name training_object desc software
-                resourcesList: [] // 列表内容
+                resourcesList: [], // 列表内容
+                clientWidth: ''
             };
         },
+        watch: {
+            '$i18n.locale': function () {
+                this.initLangData()
+                this.clientWidth = window.innerWidth || document.documentElement.clientWidth|| document.body.clientWidth
+                this.clientWidth = this.clientWidth -540
+            }
+        },
+        created(){
+            this.clientWidth = window.innerWidth || document.documentElement.clientWidth|| document.body.clientWidth
+            this.clientWidth = this.clientWidth -540
+        },
         mounted() {
+            window.onresize = ()=>{
+                this.clientWidth = window.innerWidth || document.documentElement.clientWidth|| document.body.clientWidth
+                this.clientWidth = this.clientWidth -540
+            }
             promptUtil.checkOverdue(this, storageUtil.readTeacherInfo().id) // true 表示已过期 false表示未过期
             //  面包屑显示首页效果
+            this.initLangData()
             PubSub.publish("currentMenuIndex", "/resources");
             if(vuexUtils.checkMenuExist(this,'resources').target){
               let obj = {name:vuexUtils.checkMenuExist(this,'resources').target.name,id:this.$route.params.id}
@@ -207,6 +238,10 @@
             }
         },
         methods: {
+            initLangData(){
+                this.routerConfig[0].name = this.$t(`message.course_ai_header_title`)
+                this.routerConfig[1].name = this.$t(`message.course_ai_course_catalog`)
+            },
             // 获取课程类别改变状态
             categoryGroupChange(val) {
                 const ids = stringUtil.array2String(val, ",")
@@ -357,8 +392,8 @@
                 this.$router.push({path: "/resourcesListShow/" + event.id});
               }else{
                 this.$notify({
-                  title: '系统通知',
-                  message: '您没有该堂课程的访问权限，如需开通请联系我们',
+                  title: this.$t(`message.system_info`),
+                  message: this.$t(`message.course_ai_no_auth_item`),
                   type: 'warning'
                 });
               }
@@ -442,6 +477,13 @@
 
   .marginTop_10 {
     margin-top: 10px;
+  }
+  .classTitleCircle {
+    height: 8px;
+    width: 8px;
+    border-radius: 8px;
+    background-color: #00a2ff;
+    margin-right: 10px;
   }
 </style>
 

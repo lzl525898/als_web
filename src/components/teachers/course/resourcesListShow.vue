@@ -6,96 +6,13 @@
         <als-child-header :config="routerConfig"/>
       </el-col>
     </el-row>
-    <!-- tableq切换 -->
-    <!--    <el-tabs-->
-    <!--      v-model="activeName"-->
-    <!--      @tab-click="handleClick"-->
-    <!--      style="height:95%"-->
-    <!--      class="elContainer"-->
-    <!--    >-->
-    <!--        <el-tab-pane label="课件" name="first">-->
-    <!--          <el-row>-->
-    <!--            <el-col :span="24">-->
-    <!--              <div class="border_b">-->
-    <!--                <h5>{{pptName}}</h5>-->
-    <!--              </div>-->
-    <!--            </el-col>-->
-    <!--          </el-row>-->
-    <!--          <div class="nopdfUrlImg" v-if="pptUrl==null ||pptUrl==''">-->
-    <!--            <img src="../../../../static/images/base/nodata.png" alt>-->
-    <!--          </div>-->
-    <!--          <div class="coverBox" ref="coverBox" v-show="pptUrl&&pptUrl!=''">-->
-    <!--            &lt;!&ndash;                    <span class="spanColor">666</span>&ndash;&gt;-->
-    <!--            &lt;!&ndash;          <div class="cover"></div>&ndash;&gt;-->
-    <!--            <div class="loadingPPtBox"><img src="../../../../static/images/base/loading.gif" alt="" id="loadingPPt"></div>-->
-    <!--            <iframe class="ListIframe" id="iframe" :src="pptUrl" style="border:1px solid #aabbcc;max-width: 100%;"-->
-    <!--                    allowfullscreen="true" mozallowfullscreen="true" webkitallowfullscreen="true"></iframe>-->
-    <!--            &lt;!&ndash; <iframe id="iframe" src="https://show.zohopublic.com.cn/publish/gfdzn1a008a803acd4c68b0520dc80d63224a/params?toolbar=true&menu=false&loop=true" width="1193" height="707" style="border:1px solid #aabbcc;max-width: 100%;" allowfullscreen="true" mozallowfullscreen="true" webkitallowfullscreen="true"></iframe> &ndash;&gt;-->
-    <!--          </div>-->
-    <!--          &lt;!&ndash; width="1193"-->
-    <!--          height="707"&ndash;&gt;-->
-    <!--          &lt;!&ndash; <iframe id="iframe" src="https://show.zohopublic.com.cn/publish/gfdzn1a008a803acd4c68b0520dc80d63224a/params?toolbar=true&menu=false&loop=true" width="1193" height="707" style="border:1px solid #aabbcc;max-width: 100%;" allowfullscreen="true" mozallowfullscreen="true" webkitallowfullscreen="true"></iframe> &ndash;&gt;-->
-    <!--          &lt;!&ndash; </div> &ndash;&gt;-->
-    <!--          &lt;!&ndash; 轮播ppt开始 &ndash;&gt;-->
-    <!--        </el-tab-pane>-->
-    <!--        <el-tab-pane label="教案" name="second">-->
-    <!--          &lt;!&ndash;        <als-loading v-show="isShowPdfLoading"></als-loading>&ndash;&gt;-->
-    <!--          <el-row>-->
-    <!--            <el-col :span="24">-->
-    <!--              <div class="border_b">-->
-    <!--                <h5>{{pdfName}}</h5>-->
-    <!--              </div>-->
-    <!--            </el-col>-->
-    <!--          </el-row>-->
-    <!--          &lt;!&ndash; 放置品pdf  background-color:blue;&ndash;&gt;-->
-    <!--          <div>-->
-    <!--            <div class="nopdfUrlImg" v-if="pdfUrl==null||pdfUrl==''">-->
-    <!--              <img src="../../../../static/images/base/nodata.png" alt>-->
-    <!--            </div>-->
-    <!--            <div class="content" v-if="pdfUrl||pdfUrl!=''">-->
-    <!--              <div class="my_teachingPlan">-->
-    <!--                <pdf-->
-    <!--                  v-for="i in numPages"-->
-    <!--                  :key="i"-->
-    <!--                  :src="pdfUrl"-->
-    <!--                  :page="i"-->
-    <!--                  @progress="pdfProgress($event)">-->
-    <!--                </pdf>-->
-    <!--              </div>-->
-    <!--            </div>-->
-    <!--          </div>-->
-    <!--        </el-tab-pane>-->
-    <!--        <el-tab-pane label="视频" name="third">-->
-    <!--          <el-row>-->
-    <!--            <el-col :span="24">-->
-    <!--              <div class="border_b">-->
-    <!--                <h5>{{videoName}}</h5>-->
-    <!--              </div>-->
-    <!--            </el-col>-->
-    <!--          </el-row>-->
-    <!--          <div class="nopdfUrlImg" v-if="stepsInformation==null||stepsInformation.length==0">-->
-    <!--            <img src="../../../../static/images/base/nodata.png" alt>-->
-    <!--          </div>-->
-    <!--          <div v-if="stepsInformation||stepsInformation.length!=0">-->
-    <!--            <div style="display: flex;justify-content: center;flex-direction:column;">-->
-    <!--              &lt;!&ndash;            <input type="button" value="播放" onclick="player.videoPlay()">&ndash;&gt;-->
-    <!--              <div id="video" style="width:60%;height:100%;margin: 0 auto;"></div>-->
-    <!--              <el-steps :active="stepActive" align-center style="margin-top: 50px">-->
-    <!--                <el-step :title="item.title" v-for="(item,index) in stepsInformation" :key="index"-->
-    <!--                         @click.native="handItemStepClick(index)" style="cursor: pointer"></el-step>-->
-    <!--              </el-steps>-->
-    <!--            </div>-->
-    <!--          </div>-->
-    <!--        </el-tab-pane>-->
-    <!--    </el-tabs>-->
-
     <el-tabs
       v-model="activeName"
       @tab-click="handleClick"
       style="height:95%"
       class="elContainer"
     >
-      <el-tab-pane label="课件" name="first" v-if="pptUrl&&pptUrl!=''">
+      <el-tab-pane :label="$t(`message.course_ai_course_ware`)" name="first" v-if="pptUrl&&pptUrl!=''">
         <el-row>
           <el-col :span="24">
             <div class="border_b">
@@ -104,22 +21,14 @@
           </el-col>
         </el-row>
         <div class="coverBox" ref="coverBox" v-show="pptUrl&&pptUrl!=''">
-          <!--                    <span class="spanColor">666</span>-->
-          <!--          <div class="cover"></div>-->
           <div class="loadingPPtBox"><img src="../../../../static/images/base/loading.gif"
                                           alt="" id="loadingPPt"></div>
           <iframe class="ListIframe" id="iframe" :src="pptUrl" style="border:1px solid #aabbcc;max-width: 100%;"
                   allowfullscreen="true" mozallowfullscreen="true" webkitallowfullscreen="true"></iframe>
           <!-- <iframe id="iframe" src="https://show.zohopublic.com.cn/publish/gfdzn1a008a803acd4c68b0520dc80d63224a/params?toolbar=true&menu=false&loop=true" width="1193" height="707" style="border:1px solid #aabbcc;max-width: 100%;" allowfullscreen="true" mozallowfullscreen="true" webkitallowfullscreen="true"></iframe> -->
         </div>
-        <!-- width="1193"
-        height="707"-->
-        <!-- <iframe id="iframe" src="https://show.zohopublic.com.cn/publish/gfdzn1a008a803acd4c68b0520dc80d63224a/params?toolbar=true&menu=false&loop=true" width="1193" height="707" style="border:1px solid #aabbcc;max-width: 100%;" allowfullscreen="true" mozallowfullscreen="true" webkitallowfullscreen="true"></iframe> -->
-        <!-- </div> -->
-        <!-- 轮播ppt开始 -->
       </el-tab-pane>
-      <el-tab-pane label="教案" name="second" v-if="pdfUrl&&pdfUrl!=''">
-        <!--        <als-loading v-show="isShowPdfLoading"></als-loading>-->
+      <el-tab-pane :label="$t(`message.course_ai_course_plan`)" name="second" v-if="pdfUrl&&pdfUrl!=''">
         <el-row>
           <el-col :span="24">
             <div class="border_b">
@@ -142,7 +51,7 @@
           </div>
         </div>
       </el-tab-pane>
-      <el-tab-pane label="视频" name="third" v-if="stepsInformation&&stepsInformation.length!=0" >
+      <el-tab-pane :label="$t(`message.course_ai_course_video`)" name="third" v-if="stepsInformation&&stepsInformation.length!=0" >
         <el-row>
           <el-col :span="24">
             <div class="border_b">
@@ -152,7 +61,6 @@
         </el-row>
         <div>
           <div style="display: flex;justify-content: center;flex-direction:column;">
-            <!--            <input type="button" value="播放" onclick="player.videoPlay()">-->
             <div id="video" style="width:60%;height:100%;margin: 0 auto;"></div>
             <el-steps :active="stepActive" align-center style="margin-top: 50px">
               <el-step :title="item.title" v-for="(item,index) in stepsInformation" :key="index"
@@ -188,11 +96,8 @@
   import alspdf from '../../commons/pdf/pdf'
   import childHeader from '../../component/childHeader'
   import customLoading from '../../component/customLoading'
-
   export default {
-
     //视频
-    // name: 'ckplayerPlugin',
     name: "Pdf",
     components: {
       'pdf': pdf,
@@ -202,13 +107,8 @@
     },
     data() {
       return {
-        routerConfig: [{
-          name: vuexUtils.checkMenuExist(this, 'resources').target.name,
-          to: '/resources'
-        }, {name: '课程目录', to: '/resourcesList/' + this.$store.state.currentCoursePackageId}, {
-          name: '课程详情',
-          to: ''
-        }],
+        routerConfig: [{name: vuexUtils.checkMenuExist(this, 'resources').target.name, to: '/resources'},
+            {name: '', to: '/resourcesList/' + this.$store.state.currentCoursePackageId}, {name: '', to: ''}],
         //pdf
         pdfName: "",
         pdfUrl: "",
@@ -248,10 +148,21 @@
         // videoArray: [],
       };
     },
+    watch: {
+        '$i18n.locale': function () {
+            this.initLangData()
+        },
+        // currentStatus(val, oldval) {
+        //     if (val == 1) {
+        //         // this.isShowPdfLoading = false
+        //     }
+        // }
+    },
     mounted() {
       if (!this.$store.state.currentCoursePackageId || this.$store.state.currentCoursePackageId == '') {
         this.$router.replace({path: '/resources'})
       }
+      this.initLangData()
       promptUtil.checkOverdue(this, storageUtil.readTeacherInfo().id) // true 表示已过期 false表示未过期
       //  面包屑显示首页效果
       PubSub.publish("currentMenuIndex", "/resources");
@@ -337,6 +248,11 @@
       $("#video").css({"width":"60%","height":"100%"})
     },
     methods: {
+      initLangData(){
+          this.routerConfig[0].name = this.$t(`message.course_ai_header_title`)
+          this.routerConfig[1].name = this.$t(`message.course_ai_course_catalog`)
+          this.routerConfig[2].name = this.$t(`message.course_ai_course_detail`)
+      },
       handItemStepClick(val) {
         this.stepActive = val + 1
         this.currentCkplayer(this.stepActive)
@@ -494,15 +410,7 @@
           promptUtil.LOG('trafficStatistics-err', err)
         })
       }
-    },
-    watch: {
-      currentStatus(val, oldval) {
-        if (val == 1) {
-          // this.isShowPdfLoading = false
-        }
-      }
     }
-
   };
 </script>
 <style scoped>

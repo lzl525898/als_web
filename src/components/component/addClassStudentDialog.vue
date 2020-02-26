@@ -1,13 +1,13 @@
 <template>
   <div>
     <el-dialog
-      title="添加上课学员"
+      :title="$t(`message.record_detail_add_student`)"
       :visible.sync="dialogVisible"
-      width="45%"
+      width="660px"
       :before-close="handleClose">
       <el-row>
         <el-alert
-          title="当前课程：CooCoo基础课；系统支持非同课程插班"
+          :title="$t(`message.record_dialog_current_course`)+'：'+targetCourseName+'；'+$t(`message.record_dialog_support_insert_class`)"
           type="warning"
           :closable="false"
           class="marginTopBottom">
@@ -17,7 +17,7 @@
         <el-form>
           <el-col :span="16">
             <el-form-item>
-              <el-select v-model="dialogForm.currentClass" clearable placeholder="请选择班级" style="width: 100%"
+              <el-select v-model="dialogForm.currentClass" clearable :placeholder="$t(`message.consult_select_label_title`)" style="width: 100%"
                          @change="currentClassChange" size="small">
                 <el-option
                   v-for="item in dialogForm.selectClassArray"
@@ -30,7 +30,7 @@
           </el-col>
           <el-col :span="6">
             <el-form-item>
-              <el-input v-model="dialogForm.studenName" placeholder="请输入学生姓名" size="small"></el-input>
+              <el-input v-model="dialogForm.studenName" :placeholder="$t(`message.student_management_enter_student_name`)" size="small"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="2">
@@ -51,7 +51,7 @@
             width="30">
           </el-table-column>
           <el-table-column
-            label="学员"
+            :label="$t(`message.string_label_student`)"
             align="center"
             width="120px"
           >
@@ -63,12 +63,12 @@
           </el-table-column>
           <el-table-column
             prop="className"
-            label="班级名称"
+            :label="$t(`message.classroom_table_column_classname`)"
             align="center"
           >
           </el-table-column>
           <el-table-column
-            label="手机号"
+            :label="$t(`message.student_management_create_student_phone`)"
             align="center"
           >
             <template slot-scope="scope">{{ scope.row.phone }}</template>
@@ -76,9 +76,9 @@
         </el-table>
       </el-card>
       <span slot="footer" class="dialog-footer" style="display: flex; justify-content: space-between;margin-top: 8px">
-          <el-button @click="dialogVisible = false" size="mini">取 消</el-button>
+          <el-button @click="dialogVisible = false" size="mini">{{$t(`message.button_cancel`)}}</el-button>
         <div v-if="selectStudentNum==0">
-             <el-tag :type="selectType" style="margin-top: 10px">已选择学员{{selectStudentNum}}名<i
+             <el-tag :type="selectType" style="margin-top: 10px">{{$t(`message.record_dialog_already_select_student`)}}{{selectStudentNum}}{{$t(`message.record_dialog_already_select_student_sin`)}}<i
                class="el-icon-circle-close" style="padding-left: 3px;cursor: pointer" v-show="showClose"></i></el-tag>
         </div>
         <div v-else>
@@ -86,12 +86,12 @@
             <div v-for="(item,index) in multipleSelection" :key="index" slot="content">{{item.name}}<i
               style="padding-left: 5px;cursor: pointer" class="el-icon-circle-close"
               @click="coloseItemStudent(item.id)"></i><br/><br/></div>
-            <el-tag :type="selectType" style="margin-top: 10px">已选择学员{{selectStudentNum}}名<i
+            <el-tag :type="selectType" style="margin-top: 10px">{{$t(`message.record_dialog_already_select_student`)}}{{selectStudentNum}}{{$t(`message.record_dialog_already_select_student_sin`)}}<i
               class="el-icon-circle-close" style="padding-left: 3px;cursor: pointer" v-show="showClose"
               @click="toggleSelection()"></i></el-tag>
           </el-tooltip>
         </div>
-        <el-button type="primary" @click="dialogSure" size="mini">确 定</el-button>
+        <el-button type="primary" @click="dialogSure" size="mini">{{$t(`message.button_confirm`)}}</el-button>
       </span>
 
       <!-- 分页 -->
@@ -120,12 +120,13 @@
         name: "addClassStudentDialog",
         data() {
             return {
-                num: "555",
+                targetCourseName: '',
+                num: "",
                 dialogVisible: false,//添加上课学生dialog
                 dialogForm: {
                     studenName: '',
                     currentClass: '',//dialog当前选择的班级
-                    selectClassArray: [{label: '全部', value: 0}],
+                    selectClassArray: [{label: '', value: 0}],
                 },
                 tableData: [],
                 queryFromServer: [],// 列表数据从服务器返回
@@ -143,17 +144,23 @@
                 studentInformationArray: []
             }
         },
+        watch: {
+            '$i18n.locale': function () {
+                this.dialogForm.selectClassArray[0].label = this.$t(`message.string_label_all`)
+            }
+        },
         mounted() {
-
+          this.dialogForm.selectClassArray[0].label = this.$t(`message.string_label_all`)
         },
         methods: {
-            start(obj, val) {
+            start(obj, val, courseName) {
                 this.queryFromServer.length = 0
                 this.queryFromServer = []
                 this.handleCurrentChange(this.currentPage)
                 this.dialogForm.currentClass = val.label
                 this.dialogVisible = true
-                obj.unshift({label: '全部', value: 0})
+                this.targetCourseName = courseName
+                obj.unshift({label: this.$t(`message.string_label_all`), value: 0})
                 this.dialogForm.selectClassArray = obj
             },
             //关闭dialog
@@ -180,7 +187,7 @@
                         this.sendStudentArray.push(obj)
                     })
                 }else{
-                    promptUtil.warning(this,'请选择学生')
+                    promptUtil.warning(this,this.$t(`message.record_please_select_student`))
                     return
                 }
                 saveAddClassStudentData(qs.stringify({
@@ -200,10 +207,10 @@
                                         cs_id:item.cs_id,
                                         num: 1,
                                         itemCheckedBox: [],
-                                        checkItemStatus: [{key: 1, label: '上课'}, {key: 3, label: '请假'}, {
-                                            key: 2,
-                                            label: '旷课'
-                                        }],
+                                        checkItemStatus: [
+                                            {key: 1, label: this.$t(`message.string_label_start_class`)},
+                                            {key: 3, label: this.$t(`message.string_label_class_takeleave`)},
+                                            {key: 2, label: this.$t(`message.string_label_class_truancy`)}],
                                     }
                                     this.studentInformationArray.push(obj)
                                 })

@@ -1,11 +1,11 @@
 <template>
   <div>
-    <el-dialog title="编辑日程" :visible.sync="dialogVisible" width="840px" :before-close="beforeCloseDialog">
+    <el-dialog :title="$t(`message.record_edit_day`)" :visible.sync="dialogVisible" width="840px" :before-close="beforeCloseDialog">
       <el-form :model="classEditorForm" :rules="classEditorRules" ref="classEditorForm" label-width="100px">
         <el-row :gutter="20" style="margin: 0 0 0 -20px;padding: 0;">
           <el-col :span="8">
-            <el-form-item label="课程分类" prop="coursePackage" size="mini" class="fontWeight">
-              <el-select v-model="classEditorForm.coursePackage" placeholder="请选择课程分类" style="width: 150px" @change="onChangeCoursePackage">
+            <el-form-item :label="$t(`message.calendar_dialog_class_category`)" prop="coursePackage" size="mini" class="fontWeight">
+              <el-select v-model="classEditorForm.coursePackage" :placeholder="$t(`message.calendar_dialog_class_category_warning`)" style="width: 150px" @change="onChangeCoursePackage">
                   <el-option
                     v-for="item in addSchedulesInfo.courseArray"
                     :key="item.value"
@@ -16,15 +16,15 @@
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="课程类型" prop="courseType" size="mini" class="fontWeight">
-              <el-select v-model="classEditorForm.courseType" placeholder="请选择课程类型" style="width: 150px" @change="onChangeCourseType">
+            <el-form-item :label="$t(`message.index_course_class_type`)" prop="courseType" size="mini" class="fontWeight">
+              <el-select v-model="classEditorForm.courseType" :placeholder="$t(`message.calendar_dialog_class_type_warning`)" style="width: 150px" @change="onChangeCourseType">
                 <el-option v-for="item in addSchedulesInfo.courseTypeArray" :key="item.value" :label="item.label" :value="item.value" :disabled="item.status==1?false:true"></el-option>
               </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="8" v-show="isShowCourseStage">
-            <el-form-item label="课程阶段" prop="courseStage" size="mini" class="fontWeight">
-              <el-select v-model="classEditorForm.courseStage" placeholder="请选择课程阶段" style="width: 150px" @change="onChangeCourseStage">
+            <el-form-item :label="$t(`message.calendar_dialog_class_stage`)" prop="courseStage" size="mini" class="fontWeight">
+              <el-select v-model="classEditorForm.courseStage" :placeholder="$t(`message.calendar_dialog_class_stage_warning`)" style="width: 150px" @change="onChangeCourseStage">
                 <el-option v-for="item in addSchedulesInfo.courseStageArray" :key="item.value" :label="item.label" :value="item.value" :disabled="item.status==1?false:true"></el-option>
               </el-select>
             </el-form-item>
@@ -32,8 +32,8 @@
         </el-row>
         <el-row :gutter="20" style="margin: 0 0 0 -20px;padding: 0;">
           <el-col :span="8">
-            <el-form-item label="授课教师" prop="teacher" size="mini" class="fontWeight">
-              <el-select v-model="classEditorForm.teacher.id" placeholder="请选择授课教师" style="width: 150px" @change="onChangeTeacher">
+            <el-form-item :label="$t(`message.calendar_filter_teacher`)" prop="teacher" size="mini" class="fontWeight">
+              <el-select v-model="classEditorForm.teacher.id" :placeholder="$t(`message.calendar_filter_select_teacher`)" style="width: 150px" @change="onChangeTeacher">
                 <el-option
                   v-for="item in addSchedulesInfo.teacherArray"
                   :key="item.value"
@@ -48,13 +48,13 @@
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="学生数量" prop="student" size="mini" class="fontWeight">
-              <el-input-number v-model="classEditorForm.student" :min="1" :max="100" label="学生数量" style="width: 150px" @change="onChangeStudent"></el-input-number>
+            <el-form-item :label="$t(`message.user_system_school_student_count`)" prop="student" size="mini" class="fontWeight">
+              <el-input-number v-model="classEditorForm.student" :min="1" :max="100" :label="$t(`message.user_system_school_student_count`)" style="width: 150px" @change="onChangeStudent"></el-input-number>
             </el-form-item>
           </el-col>
           <el-col :span="8" v-show="isShowClassRoom">
-            <el-form-item label="授课班级" prop="classroom" size="mini" class="fontWeight">
-              <el-select v-model="classEditorForm.classroom" placeholder="请选择授课班级" style="width: 150px">
+            <el-form-item :label="$t(`message.calendar_filter_class`)" prop="classroom" size="mini" class="fontWeight">
+              <el-select v-model="classEditorForm.classroom" :placeholder="$t(`message.calendar_filter_select_class_point`)" style="width: 150px">
                 <el-option v-for="item in addSchedulesInfo.classroomArray" :key="item.value" :label="item.label" :value="item.value"></el-option>
               </el-select>
             </el-form-item>
@@ -62,25 +62,25 @@
         </el-row>
         <el-row :gutter="20" style="margin: 0 0 0 -20px;padding: 0;">
           <el-col :span="8">
-            <el-form-item label="课程类型" prop="classType" size="mini" class="fontWeight">
+            <el-form-item :label="$t(`message.index_course_class_type`)" prop="classType" size="mini" class="fontWeight">
               <el-switch
                 :disabled="true"
                 style="margin-top: -4px;"
                 v-model="classEditorForm.classType"
-                active-text="周期课"
-                inactive-text="临时课">
+                :active-text="$t(`message.string_label_course_cycle`)"
+                :inactive-text="$t(`message.string_label_course_temporary`)">
               </el-switch>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row :gutter="20" style="margin: 0 0 0 -20px;padding: 0;">
           <el-col :span="24">
-            <el-form-item label="上课时间" prop="schedules" size="mini" class="fontWeight">
+            <el-form-item :label="$t(`message.calendar_dialog_course_time`)" prop="schedules" size="mini" class="fontWeight">
               <div v-show="!classEditorForm.classType">
                 <div class="class-hours" v-for="item in classEditorForm.schedulesTmp" :key="item.id">
-                  <el-date-picker v-model="item.day" type="date" placeholder="选择日期" value-format="yyyy-MM-dd"></el-date-picker>
+                  <el-date-picker v-model="item.day" type="date" :placeholder="$t(`message.picker_date_day_placeholder`)" value-format="yyyy-MM-dd"></el-date-picker>
                   <el-time-select
-                    placeholder="起始时间"
+                    :placeholder="$t(`message.picker_time_start_placeholder`)"
                     v-model="item.startTime"
                     :picker-options="{
                         start: item.startRuleTime,
@@ -89,7 +89,7 @@
                       }">
                   </el-time-select>
                   <el-time-select
-                    placeholder="结束时间"
+                    :placeholder="$t(`message.picker_time_end_placeholder`)"
                     v-model="item.endTime"
                     :picker-options="{
                         start: item.endRuleTime,
@@ -102,11 +102,11 @@
               </div>
               <div v-show="classEditorForm.classType">
                 <div class="class-hours" v-for="item in classEditorForm.schedulesCycle" :key="item.id">
-                  <el-select v-model="item.week" placeholder="请选择课程周" style="width: 220px">
+                  <el-select v-model="item.week" :placeholder="$t(`message.calendar_dialog_course_weeks`)" style="width: 220px">
                     <el-option v-for="weekItem in weeksArray" :key="weekItem.value" :label="weekItem.label" :value="weekItem.value"></el-option>
                   </el-select>
                   <el-time-select
-                    placeholder="起始时间"
+                    :placeholder="$t(`message.picker_time_start_placeholder`)"
                     v-model="item.startTime"
                     :picker-options="{
                         start: item.startRuleTime,
@@ -115,7 +115,7 @@
                       }">
                   </el-time-select>
                   <el-time-select
-                    placeholder="结束时间"
+                    :placeholder="$t(`message.picker_time_end_placeholder`)"
                     v-model="item.endTime"
                     :picker-options="{
                         start: item.endRuleTime,
@@ -131,14 +131,14 @@
         </el-row>
         <el-row :gutter="20" style="margin: 0 0 0 -20px;padding: 0;">
           <el-col :span="24">
-            <el-form-item label="备注" prop="desc" size="mini" class="fontWeight">
-              <el-input type="textarea" v-model="classEditorForm.desc" :rows="2" placeholder="请输入内容"></el-input>
+            <el-form-item :label="$t(`message.string_label_remark`)" prop="desc" size="mini" class="fontWeight">
+              <el-input type="textarea" v-model="classEditorForm.desc" :rows="2" :placeholder="$t(`message.calendar_dialog_course_cycle_placeholder`)"></el-input>
             </el-form-item>
           </el-col>
         </el-row>
         <div style="display:flex;justify-content:flex-end;padding:0;margin: 0 10px 0 0;">
-          <el-button @click="beforeCloseDialog" size="small">取 消</el-button>
-          <el-button type="primary" @click="editClassEditorSchedules" size="small" :loading="isUpdateLoading">确定</el-button>
+          <el-button @click="beforeCloseDialog" size="small">{{$t(`message.button_cancel`)}}</el-button>
+          <el-button type="primary" @click="editClassEditorSchedules" size="small" :loading="isUpdateLoading">{{$t(`message.button_confirm`)}}</el-button>
         </div>
       </el-form>
     </el-dialog>
@@ -158,13 +158,13 @@
     data(){
       return{
         weeksArray: [
-          {label:'星期一',value:1},
-          {label:'星期二',value:2},
-          {label:'星期三',value:3},
-          {label:'星期四',value:4},
-          {label:'星期五',value:5},
-          {label:'星期六',value:6},
-          {label:'星期日',value:7}
+          {label:'',value:1},
+          {label:'',value:2},
+          {label:'',value:3},
+          {label:'',value:4},
+          {label:'',value:5},
+          {label:'',value:6},
+          {label:'',value:7}
         ],
         dialogVisible: false,
         isShowCourseStage: true,
@@ -184,32 +184,26 @@
         },
         classEditorRules: {
           coursePackage: [
-            { required: true, message: '请选择课程分类', trigger: 'blur' }
+            { required: true, message: '', trigger: 'blur' }
           ],
           courseType: [
-            { required: true, message: '请选择课程类型', trigger: 'blur' }
+            { required: true, message: '', trigger: 'blur' }
           ],
           courseStage: [
-            { required: true, message: '请选择课程阶段', trigger: 'blur' }
+            { required: true, message: '', trigger: 'blur' }
           ],
           teacher: [
-            { required: true, message: '请选择授课教师', trigger: 'blur' }
+            { required: true, message: '', trigger: 'blur' }
           ],
           classroom: [
-            { required: true, message: '请选择授课班级', trigger: 'blur' }
+            { required: true, message: '', trigger: 'blur' }
           ],
           courseCycle: [
-            { required: true, message: '请输入课程周期', trigger: 'blur' },
-            {
-              pattern: /^\+?[1-9][0-9]*$/,  //正则
-              message: '请输入大于0的整数'
-            }
+            { required: true, message: '', trigger: 'blur' },
+            {pattern: /^\+?[1-9][0-9]*$/, message: ''}
           ],
           student: [
-            {
-              pattern: /^\+?[1-9][0-9]*$/,  //正则
-              message: '必须大于0'
-            }
+            {pattern: /^\+?[1-9][0-9]*$/, message: ''}
           ]
         },
         addSchedulesInfo: { // 添加新课程时需要从服务器获取的数据
@@ -223,10 +217,35 @@
         isUpdateLoading: false,
       }
     },
+    watch: {
+        '$i18n.locale': function () {
+            this.initLangData()
+        }
+    },
     mounted() {
+      this.initLangData()
       this.isUpdateLoading = false
     },
     methods:{
+      initLangData(){
+          this.weeksArray = [
+              {label:this.$t(`message.string_label_mon`),value:1},
+              {label:this.$t(`message.string_label_tue`),value:2},
+              {label:this.$t(`message.string_label_wed`),value:3},
+              {label:this.$t(`message.string_label_thur`),value:4},
+              {label:this.$t(`message.string_label_fri`),value:5},
+              {label:this.$t(`message.string_label_sat`),value:6},
+              {label:this.$t(`message.string_label_sun`),value:7}
+          ]
+          this.classEditorRules.coursePackage[0].message = this.$t(`message.calendar_dialog_class_category_warning`)
+          this.classEditorRules.courseType[0].message = this.$t(`message.calendar_dialog_class_type_warning`)
+          this.classEditorRules.courseStage[0].message = this.$t(`message.calendar_dialog_class_stage_warning`)
+          this.classEditorRules.teacher[0].message = this.$t(`message.calendar_filter_select_teacher`)
+          this.classEditorRules.classroom[0].message = this.$t(`message.calendar_filter_select_class_point`)
+          this.classEditorRules.courseCycle[0].message = this.$t(`message.calendar_filter_select_course_week`)
+          this.classEditorRules.courseCycle[1].message = this.$t(`message.calendar_filter_input_about_zero`)
+          this.classEditorRules.student[0].message = this.$t(`message.calendar_filter_input_about_zero`)
+      },
       editClassEditorSchedules(){
         // packageId 表示的时calendarid
         this.isUpdateLoading = true
@@ -252,7 +271,7 @@
           schedule: obj
         })).then(res=>{
           if(res.code==SUCCESS_CODE){
-            promptUtil.success(this,'修改成功')
+            promptUtil.success(this,this.$t(`message.string_label_update_success`))
             PubSub.publish("REFRESH_COURSE_RECORD", 'ok');
           } else {
             promptUtil.warning(this, res.msg)
@@ -485,41 +504,48 @@
       getWeekWithString(str){
         switch (str) {
           case 'Monday':
-            return '星期一'
-          case 'Tuesday':
-            return '星期二'
-          case 'Wednesday':
-            return '星期三'
-          case 'Thursday':
-            return '星期四'
-          case 'Friday':
-            return '星期五'
-          case 'Saturday':
-            return '星期六'
-          case 'Sunday':
-            return '星期日'
+                return this.$t(`message.string_label_mon`)
+            case 'Tuesday':
+                return this.$t(`message.string_label_tue`)
+            case 'Wednesday':
+                return this.$t(`message.string_label_wed`)
+            case 'Thursday':
+                return this.$t(`message.string_label_thur`)
+            case 'Friday':
+                return this.$t(`message.string_label_fri`)
+            case 'Saturday':
+                return this.$t(`message.string_label_sat`)
+            case 'Sunday':
+                return this.$t(`message.string_label_sun`)
         }
       },
       // 根据字符串返回周几的值1~7
       getWeekValueWithString(str){
-        switch (str) {
-          case '星期一':
-            return 1
-          case '星期二':
-            return 2
-          case '星期三':
-            return 3
-          case '星期四':
-            return 4
-          case '星期五':
-            return 5
-          case '星期六':
-            return 6
-          case '星期日':
-            return 7
-          default:
-            return str
-        }
+          const mon = this.$t(`message.string_label_mon`)   // Monday
+          const tue = this.$t(`message.string_label_tue`)   // Tuesday
+          const wed = this.$t(`message.string_label_wed`)   // Wednesday
+          const thur = this.$t(`message.string_label_thur`) // Thursday
+          const fri = this.$t(`message.string_label_fri`)   // Friday
+          const sat = this.$t(`message.string_label_sat`)   // Saturday
+          const sun = this.$t(`message.string_label_sun`)   // Sunday
+          switch (str) {
+              case mon:
+                  return 1
+              case tue:
+                  return 2
+              case wed:
+                  return 3
+              case thur:
+                  return 4
+              case fri:
+                  return 5
+              case sat:
+                  return 6
+              case sun:
+                  return 7
+              default:
+                  return str
+          }
       },
     }
   }

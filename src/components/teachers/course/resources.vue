@@ -38,12 +38,12 @@
           <el-input
             style="width: 240px;"
             size="small"
-            placeholder="请输入查询信息"
+            :placeholder="$t(`message.course_ai_filter_search`)"
             v-model="inputQueryInfo"
             clearable
             @keydown.native.enter="queryClassInfo"
           ></el-input>
-          <el-button  size="small" type="primary" icon="el-icon-search" @click="queryClassInfo">搜索</el-button>
+          <el-button  size="small" type="primary" icon="el-icon-search" @click="queryClassInfo">{{$t(`message.student_management_search`)}}</el-button>
         </el-col>
       </el-row>
     </el-card>
@@ -52,7 +52,7 @@
       <el-col>
         <div class="grid-content bg-purple-light">
           <div v-if="!courseInfo || courseInfo.length==0">
-            <div style="font-size: 30px;color:#e6e6e6;font-weight: bold;display: flex;justify-content: center;align-items: center;height: 400px;">暂未开通课程</div>
+            <div style="font-size: 30px;color:#e6e6e6;font-weight: bold;display: flex;justify-content: center;align-items: center;height: 400px;">{{$t(`message.course_ai_no_data`)}}</div>
           </div>
           <div v-else class="el-box" v-for="(item,index) in courseInfo" :key="index">
             <div @click="databaseList" style="cursor: pointer;" v-if="item.if_in==1">
@@ -78,7 +78,11 @@
                       {{item.lesson}}
                     </p>
                   </div>
-                  <div style="padding-top: 10px;margin-right: 16px;"><el-tag :current-id="item.id" effect="plain" style="font-weight:bold">{{item.parent_name}}</el-tag></div>
+                  <div style="padding-top: 10px;margin-right: 16px;">
+                    <el-tooltip class="item" effect="dark" :content="item.parent_name" placement="top">
+                      <el-tag :current-id="item.id" effect="plain" style="font-weight:bold;max-width:95px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{item.parent_name}}</el-tag>
+                    </el-tooltip>
+                  </div>
                 </div>
               </div>
             </div>
@@ -102,7 +106,11 @@
                         {{item.lesson}}
                       </p>
                     </div>
-                    <div style="padding-top: 10px;margin-right: 16px;"><el-tag :current-id="item.id" effect="plain" style="font-weight:bold;opacity:0.5;">{{item.parent_name}}</el-tag></div>
+                    <div style="padding-top: 10px;margin-right: 16px;">
+                      <el-tooltip class="item" effect="dark" :content="item.parent_name" placement="top">
+                        <el-tag :current-id="item.id" effect="plain" style="font-weight:bold;opacity:0.5;max-width:95px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{item.parent_name}}</el-tag>
+                      </el-tooltip>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -148,11 +156,20 @@
       promptUtil.checkOverdue(this, storageUtil.readTeacherInfo().id) // true 表示已过期 false表示未过期
       PubSub.publish("currentMenuIndex", "/resources");
       // this.isShowLiveInfo = storageUtil.readUserRole()==1 ||storageUtil.readUserRole()==2 ? true : false
+      this.initLangData()
       this.initPackageCategory()
         //2.获取列表内容
       this.getCoursePackage();
     },
+    watch: {
+      '$i18n.locale': function () {
+          this.initLangData()
+      }
+    },
     methods: {
+      initLangData(){
+          this.routerConfig[0].name = this.$t(`message.course_ai_header_title`)
+      },
       initPackageCategory(){
         const loading = promptUtil.loading(this);
         getCoursesCategory(
@@ -228,8 +245,8 @@
       },
       lockClick(){
         this.$notify({
-          title: '系统通知',
-          message: '您没有该门课程的访问权限，如需开通请联系我们',
+          title: this.$t(`message.system_info`),
+          message: this.$t(`message.course_ai_no_auth_read`),
           type: 'warning'
         });
       },

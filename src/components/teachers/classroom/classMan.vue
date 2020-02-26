@@ -8,7 +8,15 @@
     </el-row>
     <!-- 查询 -->
     <el-row :gutter="16">
-      <el-col :span="3">
+     <el-col v-if="judgeCnEn=='en'" :span="5">
+        <el-input
+          :placeholder="$t(`message.classroom_search_input_placeholder`)"
+          v-model="inputQueryInfo"
+          clearable
+          @keydown.native.enter="queryClassInfo"
+        ></el-input>
+      </el-col>
+       <el-col v-else :span="4">
         <el-input
           :placeholder="$t(`message.classroom_search_input_placeholder`)"
           v-model="inputQueryInfo"
@@ -19,7 +27,7 @@
       <el-col :span="1">
         <el-button type="primary" icon="el-icon-search" @click="queryClassInfo">{{$t(`message.student_management_search`)}}</el-button>
       </el-col>
-      <el-col :span="20"></el-col>
+      <!-- <el-col :span="18"></el-col> -->
     </el-row>
     <!-- 添加班级 -->
     <el-row>
@@ -39,7 +47,7 @@
           type="index"
           :index="indexMethod"
           :label="$t(`message.student_management_tableData_number`)"
-          width="60"
+           :width="indexMethodLableWidth"
         ></el-table-column>
         <el-table-column align="center" prop="class_name" :label="$t(`message.classroom_table_column_classname`)"></el-table-column>
         <el-table-column align="center" prop="stucount" :label="$t(`message.classroom_table_column_count`)"></el-table-column>
@@ -174,11 +182,16 @@
         ruleFormWithClassRoom: { name: "", remarks: "", isNew: true, current: 0 }, //编辑数据
         rulesWithClassRoom: {
           name: [{ required: true, message: "", trigger: "blur" }]
-        }
+        },
+        judgeCnEn:'',
+        indexMethodLableWidth:''
       };
     },
     watch: {
       '$i18n.locale': function () {
+          this.judgeCnEn = storageUtil.getLang();
+          this.judgeCnEn = storageUtil.getLang();
+          this.judgeCnEn == "zh" || this.judgeCnEn == "cht"?this.indexMethodLableWidth="60px":this.indexMethodLableWidth="120px"
           this.routerConfig[0].name = this.$t(`message.classroom_header_title`)
           this.rulesWithClassRoom.name[0].message = this.$t(`message.classroom_search_input_placeholder`)
       }
@@ -188,7 +201,9 @@
       this.rulesWithClassRoom.name[0].message = this.$t(`message.classroom_search_input_placeholder`)
       promptUtil.checkOverdue(this, storageUtil.readTeacherInfo().id) // true 表示已过期 false表示未过期
       PubSub.publish("currentMenuIndex", "/classMan");
-      const loading = promptUtil.loading(this);
+      this.judgeCnEn = storageUtil.getLang();
+      this.judgeCnEn == "zh" || this.judgeCnEn == "cht"?this.indexMethodLableWidth="60px":this.indexMethodLableWidth="120px"
+       const loading = promptUtil.loading(this);
       // 初始化需要获取学校当前所有班级信息数组
       getAllClass(
         qs.stringify({
