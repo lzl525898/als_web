@@ -6,106 +6,152 @@
         <als-child-header :config="routerConfig"/>
       </el-col>
     </el-row>
-    <!--    查询条件-->
     <el-card style="margin-top:10px">
-      <div style="display:flex">
-        <div style="display:flex;align-items:center;">
-          <div style="margin-right:5px;font-size:14px">开始时间</div>
-          <el-date-picker
-            size="small"
-            @change="searchChangeTime"
-            v-model="search.startTimeSearch"
-            type="daterange"
-            range-separator="至"
-            start-placeholder="开始日期"
-            end-placeholder="结束日期"
-            style="width:280px"
-            align="right"
-          >
-          </el-date-picker>
-        </div>
-        <div style="display:flex;align-items:center;margin-left:10px">
-          <div style="margin-right:5px;font-size:14px">直播状态</div>
-          <el-select
-            v-model="search.liveState"
-            clearable
-            placeholder="请选择"
-            size="small"
-            @change="liveStateChange"
-            style="width: 150px !important;"
-          >
-            <el-option
-              v-for="item in search.liveStateArray"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            >
-            </el-option>
-          </el-select>
-        </div>
-        <!-- 课程类型 -->
-        <div style="display:flex;align-items:center;margin-left:10px">
-          <div style="margin-right:5px;font-size:14px">课程类型</div>
-          <el-select
-            v-model="search.liveType"
-            clearable
-            placeholder="请选择"
-            size="small"
-            @change="liveTypeChange"
-            style="width:150px !important;"
-          >
-            <el-option
-              v-for="item in search.liveTypeArray"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            >
-            </el-option>
-          </el-select>
-        </div>
-        <div style="display:flex;justify-content:flex-end;flex:1">
-          <el-button type="danger" size="small" @click="multiDelLive"
-          >删除
-          </el-button
-          >
-          <el-button
-            type="primary"
-            size="small"
-            @click="addLiveClass('addRuleForm', '1')"
-            style="margin-right:10px"
-          >创建直播课
-          </el-button
-          >
-          <div style="display:flex;position: relative;margin-right:220px;background-color:red;">
-            <el-input
-              v-model="search.name"
-              placeholder="搜索课程名称"
-              style="width:150px;z-index:998;left:0;position:absolute"
-              size="small"
-            ></el-input>
-            <el-button
-              type="primary"
-              icon="el-icon-search"
-              size="small"
-              style="z-index:999;left:146px;position:absolute"
-              @click="searchName"
-              :loading="searchLoading"
-            >搜索
-            </el-button
-            >
-          </div>
+      <div slot="header">
+        <div style="display: flex;">
+          <div style="height: 20px;width: 3px;background-color: #00a2ff;"></div>
+          <div style="line-height:20px;margin-left:5px;">直播课程</div>
         </div>
       </div>
+      <el-row :gutter="20">
+        <el-col :span="12">
+          <el-card shadow="hover">
+            <div style="display:flex;">
+              <el-image style="width: 120px; height: 120px"  src="../../static/images/base/online/dabanke_bg.png"></el-image>
+              <div style="display:flex;flex:1;">
+                <div style="display:flex;flex-direction:column;flex:1;padding-right:10px;padding-left:10px">
+                  <div class="course-title-base">大班课</div>
+                  <div class="course-kind-base">场景:&nbsp;适用于公开课 / 精品课 / 串讲课 / 在线答疑 / 招生课</div>
+                  <div class="course-kind-base">特色:&nbsp;支持支持音频 / 视频实景上课 / 发起点名 / 签到 / 桌面屏幕共享 / 课堂互动交流</div>
+                  <div class="course-kind-base">直播端:&nbsp;PC客户端 / 网页端 / App</div>
+                </div>
+                <div style="display:flex;align-items:center">
+                  <el-button type="primary" @click="handleClickCreateLiveCourse()">创建直播</el-button>
+                </div>
+              </div>
+            </div>
+          </el-card>
+        </el-col>
+        <el-col :span="12">
+          <el-card shadow="hover">
+            <div style="display:flex;">
+              <el-image style="width: 120px; height: 120px"  src="../../static/images/base/online/xiaobanke_bg.png"></el-image>
+              <div style="display:flex;flex:1;">
+                <div style="display:flex;flex-direction:column;flex:1;padding-right:10px;padding-left:10px">
+                  <div class="course-title-base">小班课</div>
+                  <div class="course-kind-base">场景:&nbsp;适用于K12教育 / 少儿英语 / 职业培训 / 素质教育 / 语言培训</div>
+                  <div class="course-kind-base">特色:&nbsp;支持多人同步音视频 / 多滚屏互动黑板 / 多维度教学场控 / 多元化互动课件</div>
+                  <div class="course-kind-base">直播端:&nbsp;PC客户端 / 网页端 / App</div>
+                </div>
+                <div style="display:flex;align-items:center">
+                  <el-button type="primary" @click="handleClickCreateLiveCourse()">创建直播</el-button>
+                </div>
+              </div>
+            </div>
+          </el-card>
+        </el-col>
+      </el-row>
     </el-card>
-    <!--   列表-->
     <el-card style="margin-top:20px;margin-bottom:20px;min-height:600px" v-show="isDataLoading">
       <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;color:#909399;min-height:600px">
         <div><i class="el-icon-loading"/></div>
         <div style="font-size:14px;margin-top:5px">玩命加载中</div>
       </div>
     </el-card>
+    <!--   列表-->
     <div v-show="!isDataLoading">
       <el-card style="margin-top: 20px;margin-bottom:20px">
+        <div slot="header">
+          <div style="display: flex;">
+            <div style="height: 20px;width: 3px;background-color: #00a2ff;"></div>
+            <div style="line-height:20px;margin-left:5px;">全部直播课程</div>
+          </div>
+        </div>
+        <!--    查询条件-->
+        <div style="display:flex;margin-bottom:20px">
+          <div style="display:flex;align-items:center;">
+            <div style="margin-right:5px;font-size:14px">开始时间</div>
+            <el-date-picker
+              size="small"
+              @change="searchChangeTime"
+              v-model="search.startTimeSearch"
+              type="daterange"
+              range-separator="至"
+              start-placeholder="开始日期"
+              end-placeholder="结束日期"
+              style="width:280px"
+              align="right"
+            >
+            </el-date-picker>
+          </div>
+          <div style="display:flex;align-items:center;margin-left:10px">
+            <div style="margin-right:5px;font-size:14px">直播状态</div>
+            <el-select
+              v-model="search.liveState"
+              clearable
+              placeholder="请选择"
+              size="small"
+              @change="liveStateChange"
+              style="width: 150px !important;"
+            >
+              <el-option
+                v-for="item in search.liveStateArray"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              >
+              </el-option>
+            </el-select>
+          </div>
+          <!-- 课程类型 -->
+          <div style="display:flex;align-items:center;margin-left:10px">
+            <div style="margin-right:5px;font-size:14px">课程类型</div>
+            <el-select
+              v-model="search.liveType"
+              clearable
+              placeholder="请选择"
+              size="small"
+              @change="liveTypeChange"
+              style="width:150px !important;"
+            >
+              <el-option
+                v-for="item in search.liveTypeArray"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              >
+              </el-option>
+            </el-select>
+          </div>
+          <div style="display:flex;justify-content:flex-end;flex:1">
+            <el-button type="danger" size="small" @click="multiDelLive" style="margin-right:10px">删除</el-button>
+<!--            <el-button-->
+<!--              type="primary"-->
+<!--              size="small"-->
+<!--              @click="addLiveClass('addRuleForm', '1')"-->
+<!--              style="margin-right:10px"-->
+<!--            >创建直播课-->
+<!--            </el-button>-->
+            <div style="display:flex;position: relative;margin-right:220px;background-color:red;">
+              <el-input
+                v-model="search.name"
+                placeholder="搜索课程名称"
+                style="width:150px;z-index:998;left:0;position:absolute"
+                size="small"
+              ></el-input>
+              <el-button
+                type="primary"
+                icon="el-icon-search"
+                size="small"
+                style="z-index:999;left:146px;position:absolute"
+                @click="searchName"
+                :loading="searchLoading"
+              >搜索
+              </el-button
+              >
+            </div>
+          </div>
+        </div>
         <el-table
           :data="tableData"
           border
@@ -123,31 +169,33 @@
                 <div class="image-wrapper">
                   <img :src="scope.row.cover" class="image"/>
                 </div>
-                <div style="flex:1;margin-top:-4px">
+                <div style="flex:1;margin-top:8px">
                   <el-tooltip class="item" effect="dark" :content="scope.row.name" placement="right">
                     <div style="overflow: hidden;text-overflow:ellipsis;white-space: nowrap;width:250px">
                       <span style="font-weight:600">{{scope.row.name}}</span>
                     </div>
                   </el-tooltip>
-                  <div style="font-size:12px">类型：
-                    <span v-if="scope.row.classType==1" style="color:#409EFF;font-weight:bold">小班课</span>
-                    <span v-else style="color:green;font-weight:bold">大班课</span>
-                  </div>
                   <div style="font-size:12px">创建者: <span>{{scope.row.createName}}</span></div>
                   <div style="font-size:12px">创建时间: <span>{{scope.row.createDate}}</span></div>
                 </div>
               </div>
             </template>
           </el-table-column>
+          <el-table-column  align="center" label="类型" width="80px">
+            <template slot-scope="scope">
+              <span v-if="scope.row.classType==1">小班课</span>
+              <span v-else  >大班课</span>
+            </template>
+          </el-table-column>
           <el-table-column
             align="center"
             prop="status"
             label="状态"
-            width="120px"
+            width="110px"
           >
           </el-table-column>
           <el-table-column
-            width="120px"
+            width="110px"
             align="center"
             prop="backStatus"
             label="回放状态"
@@ -165,21 +213,21 @@
             align="center"
             prop="startTime"
             label="开始时间"
-            width="160px"
+            width="150px"
           >
           </el-table-column>
           <el-table-column
             align="center"
             prop="endTime"
             label="结束日期"
-            width="160px"
+            width="150px"
           >
           </el-table-column>
           <el-table-column
             align="center"
             fixed="right"
             label="操作"
-            width="120px"
+            width="100px"
           >
             <template slot-scope="scope">
               <el-dropdown placement="bottom">
@@ -859,6 +907,9 @@ export default {
     this.getClassTableList();
   },
   methods: {
+      handleClickCreateLiveCourse(){
+         this.addLiveClass('addRuleForm', '1')
+      },
       changeDateTimeForm(val){
           if(val!=null){
                 if(this.sign==1||this.bofangTypeTime==0){
@@ -967,7 +1018,7 @@ export default {
       this.addRuleForm.classes = [];
       this.resetAddRuleForm();
       this.addRuleForm.longTime = "2020-02-07 01:00:00";
-    if (this.role != 1) {
+      if (this.role != 1) {
         this.addRuleForm.speakTeacher = storageUtil.readTeacherInfo().real_name;
       }
       this.getAllTeacher();
@@ -1194,10 +1245,10 @@ export default {
       });
     },
     // 重置表单信息
-    resetAddRuleForm() {
+    resetAddRuleForm(classType="1") {
       this.addRuleForm = {
         //创建课程表单
-        classType: "1",
+        classType: classType,
         name: "",
         num: "",
         startTime: "",
@@ -1564,6 +1615,26 @@ export default {
 </script>
 
 <style scoped>
+  .course-title-base{
+    height: 15px;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-align-items: center;
+    align-items: center;
+    font-size: 16px;
+    font-family: PingFangSC-Medium,PingFang SC;
+    font-weight: 500;
+    color: #333333;
+    line-height: 15px;
+  }
+  .course-kind-base{
+    margin-top: 9px;
+    font-size: 11px;
+    font-family: PingFangSC-Regular,PingFang SC;
+    font-weight: 400;
+    color: #666666;
+    line-height: 22px;
+  }
 .fl {
   float: left;
   /*margin: 0;*/
