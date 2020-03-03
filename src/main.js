@@ -33,6 +33,7 @@ Vue.use(VueLazyload, {
 })
 import Print from 'vue-print-nb'
 import {
+  Backtop,
   PageHeader,
   Pagination,
   Dialog,
@@ -108,7 +109,7 @@ import {
   Step,
   Steps,
 } from 'element-ui';
-
+Vue.use(Backtop);
 Vue.use(Print);
 Vue.use(PageHeader);
 Vue.use(Pagination);

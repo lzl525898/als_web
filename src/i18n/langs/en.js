@@ -424,6 +424,10 @@ const en = {
     course_ai_course_ware: 'Courseware',
     course_ai_course_plan: 'Lesson plan',
     course_ai_course_video: 'Video',
+    // 订阅服务
+    subscribe_service_header_title: '服务订购',
+    // 开通课程
+    course_buy_header_title: '课程开通'
   },
 }
 

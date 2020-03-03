@@ -37,6 +37,7 @@ const taskSee = resolve => require(['@/components/teachers/task/taskSee'], resol
 const taskDetail = resolve => require(['@/components/teachers/task/taskDetail'], resolve)
 const loginIndex = resolve => require(['@/components/view/loginIndex'], resolve)
 const viewIndex = resolve => require(['@/components/view/viewIndex'], resolve)
+const freeTrial = resolve => require(['@/components/view/freeTrial'], resolve)
 const callUs = resolve => require(['@/components/view/callUs'], resolve)
 const joinIn = resolve => require(['@/components/view/joinIn'], resolve)
 const students = resolve => require(['@/components/students/home/student'], resolve)
@@ -88,6 +89,10 @@ const workContent = resolve => require(['@/components/view/workContent'],resolve
 const personCenter = resolve => require(['@/components/view/personCenter'],resolve)
 const liveStatistics = resolve => require(['@/components/teachers/report/liveStatistics'],resolve)
 const liveIntoClassroom = resolve => require(['@/components/teachers/liveManagement/intoLive'],resolve)
+const subscribeService = resolve => require(['@/components/home/subscribeService'],resolve)
+const courseBuy = resolve => require(['@/components/home/courseBuy'],resolve)
+const buyStep = resolve => require(['@/components/home/confirmOrder'], resolve)
+const serviceOrder = resolve => require(['@/components/home/serviceOrder'], resolve)
 
 Vue.use(Router)
 
@@ -401,6 +406,26 @@ export default new Router({
           meta: { requireAuth: true},
           component: feedback
         },{
+          path: ROUTER_SUB_SERVICE, // 服务订购
+          name: 'subscribeService',
+          meta: { requireAuth: true },
+          component: subscribeService
+        },{
+          path: ROUTER_COURSE_BUY, // 开通课程
+          name: 'courseBuy',
+          meta: { requireAuth: true },
+          component: courseBuy
+        },{
+          path: ROUTER_BUY_STEP, // 订单确认
+          name: 'buyStep',
+          meta: { requireAuth: true },
+          component: buyStep
+        },{
+          path: ROUTER_SERVICE_RECORD, // 订购记录
+          name: 'serviceOrder',
+          meta: { requireAuth: true },
+          component: serviceOrder
+        },{
           path: ROUTER_FEEDBACK_ADD, // 问题反馈
           name: 'addFeedback',
           meta: { requireAuth: true},
@@ -543,6 +568,11 @@ export default new Router({
       name: 'liveIntoClassroom',
       meta: {requireAuth: false},
       component: liveIntoClassroom
+    },{  // 体验注册页面
+      path: '/register',
+      name: 'freeTrial',
+      meta: { requireAuth: false },
+      component: freeTrial
     }]
 })
 

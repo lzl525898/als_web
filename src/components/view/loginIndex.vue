@@ -4,16 +4,18 @@
       <div class="nav">
         <div class="containerRef">
           <div class="left">
-            <img src="../../../static/images/base/newIndex/smallLogo.png" alt class="loginWidth">
-            <p style="float: left;padding-left: 8px;line-height: 30px"><span
-              style="font-size: 25px;color: #fff">{{$t(`message.index_base_title`)}}</span><b
-              style="font-size: 20px;color: #fff;font-weight: normal">（AEP）</b></p>
-            <div style="height:60px;display:flex;align-items:center;margin-left:5px">
-              <img src="../../../static/images/base/newestIndex/international.png" alt="">
-              <el-select v-model="currentSystemLang" size="mini" style="width:100px;margin-left:5px" @change="handleChangeLang">
-                <el-option label="简体中文" value="zh"></el-option>
-                <el-option label="English" value="en"></el-option>
-              </el-select>
+            <div @click="handleClickHome" style="cursor:pointer">
+              <img src="../../../static/images/base/newIndex/smallLogo.png" alt class="loginWidth">
+              <p style="float: left;padding-left: 8px;line-height: 30px"><span
+                style="font-size: 25px;color: #fff">{{$t(`message.index_base_title`)}}</span><b
+                style="font-size: 20px;color: #fff;font-weight: normal">（AEP）</b></p>
+              <div style="height:60px;display:flex;align-items:center;margin-left:5px">
+                <img src="../../../static/images/base/newestIndex/international.png" alt="">
+                <el-select v-model="currentSystemLang" size="mini" style="width:100px;margin-left:5px" @change="handleChangeLang">
+                  <el-option label="简体中文" value="zh"></el-option>
+                  <el-option label="English" value="en"></el-option>
+                </el-select>
+              </div>
             </div>
           </div>
           <div class="right">
@@ -29,6 +31,9 @@
               </li>
               <li>
                 <a href="http://www.alsedu.cn/support.html" target="_blank" style="display: block">{{$t(`message.index_base_banner_support`)}}</a>
+              </li>
+              <li>
+                <el-button type="primay" round size="small" @click="handleClickFreeTrial">免费试用系统</el-button>
               </li>
             </ul>
           </div>
@@ -343,6 +348,16 @@
             this.verificationCode()
         },
         methods: {
+            handleClickHome(){
+                this.$router.replace({path: '/home'})
+            },
+            handleClickFreeTrial(){
+                // let routeUrl = this.$router.resolve({
+                //     path: "/register"
+                // });
+                // window.open(routeUrl.href, '_blank');
+                this.$router.replace({path: '/register'})
+            },
             handleChangeLang(val) {
                 this.currentSystemLang = val
                 this.$i18n.locale = val;
@@ -703,6 +718,10 @@
     /*color: #008ccf;*/
     color: #00cfff;
     /*color: #fff;*/
+  }
+
+  .ulList  li:last-child:hover{
+    border-bottom:none;
   }
 
   .contentBox {

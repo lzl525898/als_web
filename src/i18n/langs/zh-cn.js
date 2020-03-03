@@ -536,6 +536,10 @@ const cn = {
     course_ai_course_ware: '课件',
     course_ai_course_plan: '教案',
     course_ai_course_video: '视频',
+    // 订阅服务
+    subscribe_service_header_title: '服务订购',
+    // 开通课程
+    course_buy_header_title: '课程开通'
   },
 }
 export default cn;

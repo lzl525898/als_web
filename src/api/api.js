@@ -3,17 +3,11 @@ import qs from 'qs'
 import storageUtil from '../utils/storageUtil'
 import router from '../router'
 import './restfulapi'
-const WEB_URL = 'https://www.alsrobot.vip'
+// const WEB_URL = 'https://www.alsrobot.vip'
 // const WEB_URL = 'http://101.200.56.18:9528'
-// const WEB_URL = 'http://localhost'
-//const baseURL = 'http://101.200.56.18:9528/als_classroom/public/index.php/index'
-// const baseURL = 'https://company.alsrobot.vip/als_classroom/public/index.php/index'
-// const baseURL = 'https://www.alsrobot.vip/als_classroom/public/index.php/index'
-//const baseURL = 'http://vip.alsrobot.com/als_classroom/public/index.php/index'
-//const baseURL = 'http://101.200.56.18:9528/als_classroom/public/index.php/index'
-// const baseURL = 'http://192.168.1.177:9527/admin.php/index'
-const baseURL = WEB_URL + '/als_classroom/public/index.php/index'
-// const baseURL = '/api'
+const WEB_URL = 'http://localhost'
+// const baseURL = WEB_URL + '/als_classroom/public/index.php/index'
+const baseURL = '/api'
 window.baseURL=baseURL
 global.DEBUG = true
 
@@ -188,6 +182,10 @@ const getSchoolDueInfo = params => {
 const userLogin = params => {
   return axios.post('index/login', params).then(res => res.data)
 }
+//体验注册验证
+const freeTrialLogin = params => {
+  return axios.post('school/school_register', params).then(res => res.data)
+}
 //获取banner图
 const getBannerImage = params => {
   return axios.post('index/return_banner', params).then(res => res.data)
@@ -208,6 +206,10 @@ const smsCode = params => {
 // 验证获取的手机验证码
 const smsVerify = params => {
   return axios.post('sms/yz', params).then(res => res.data)
+}
+// 注册页面验证手机并获取验证码
+const smsFreeCode = params => {
+  return axios.post('sms/send_index', params).then(res => res.data)
 }
 //通过短信找回密码
 const forgetPasswordBySMS = params => {
@@ -1255,6 +1257,15 @@ const delTableListLiveInformation = params => {
 const disableLive = params => {
   return axios.post(`live_school/waste_in`, params).then(res => res.data)
 }
+//================================订购服务=====================================
+// 获取所有版本信息
+const getVersionInfo = params => {
+  return axios.get(`web/get_version_info`, params).then(res => res.data)
+}
+// 获取订购服务数据列表
+const serviceFuncList = params => {
+  return axios.get(`web/service_func_list`, params).then(res => res.data)
+}
 
 export {
   qs,
@@ -1279,6 +1290,7 @@ export {
   updateUserInfo,
   updateUserPassword,
   smsVerify,
+  smsFreeCode,
   smsCode,
   forgetPasswordBySMS,
   getSchoolInfo,
@@ -1464,6 +1476,7 @@ export {
   getRecordClassList,
   getRecordAlreadyClassList,
   getRecordStudentInfo,
+  freeTrialLogin,
   getBannerImage,
   getAllHourFilterData,
   getAllHourTeacherList,
@@ -1531,6 +1544,8 @@ export {
   getLiveStudentTableInformation,
   getLiveTeacherTableInformation,
   getLiveEchartsInformation,
+  serviceFuncList,
+  getVersionInfo,
 }
 
 

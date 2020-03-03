@@ -602,19 +602,23 @@
             },
             // 退出触发方法
             logout() {
-                const loading = promptUtil.loading(this);
-                loginOut().then(res => {
-                    if (res.code == SUCCESS_CODE) {
-                        setTimeout(() => {
-                            loading.close();
-                            // 清除登录状态
-                            storageUtil.logout();
-                            // 跳转到登录页面
-                            this.$router.replace({path: `/login`});
-                            promptUtil.success(this, res.msg);
-                        }, 200);
-                    }
-                })
+                // const loading = promptUtil.loading(this);
+                // loginOut().then(res => {
+                //     if (res.code == SUCCESS_CODE) {
+                //         setTimeout(() => {
+                //             loading.close();
+                //             // 清除登录状态
+                //             storageUtil.logout();
+                //             // 跳转到登录页面
+                //             this.$router.replace({path: `/login`});
+                //             promptUtil.success(this, res.msg);
+                //         }, 200);
+                //     }
+                // })
+                storageUtil.logout();
+                // 跳转到登录页面
+                this.$router.replace({path: `/login`});
+                promptUtil.success(this, res.msg);
             },
             originInformation() {
 

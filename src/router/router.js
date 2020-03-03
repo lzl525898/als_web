@@ -84,6 +84,10 @@ global.ROUTER_EXAM_ANALYSIS = '/analysisExam' // 分析考试
 
 global.ROUTER_EQUIPMENT_CENTER = '/equipment' // 器材中心
 global.ROUTER_EQUIPMENT_CENTERDETAILS = '/equipment/:id' // 器材中心
+global.ROUTER_SUB_SERVICE = '/personalService/serviceBuy' // 服务订购
+global.ROUTER_COURSE_BUY = '/personalService/courseBuy' // 课程开通
+global.ROUTER_BUY_STEP = '/personalService/buyStep' // 开通确认
+global.ROUTER_SERVICE_RECORD = '/personalService/order' // 订购记录
 
 
 
