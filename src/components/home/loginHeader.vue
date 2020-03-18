@@ -602,21 +602,20 @@
             },
             // 退出触发方法
             logout() {
-                // const loading = promptUtil.loading(this);
-                // loginOut().then(res => {
-                //     if (res.code == SUCCESS_CODE) {
-                //         setTimeout(() => {
-                //             loading.close();
-                //             // 清除登录状态
-                //             storageUtil.logout();
-                //             // 跳转到登录页面
-                //             this.$router.replace({path: `/login`});
-                //             promptUtil.success(this, res.msg);
-                //         }, 200);
-                //     }
-                // })
-                storageUtil.logout();
-                // 跳转到登录页面
+                const loading = promptUtil.loading(this);
+                loginOut().then(res => {
+                    if (res.code == SUCCESS_CODE) {
+                        setTimeout(() => {
+                            loading.close();
+                            // 清除登录状态
+                            storageUtil.logout();
+                            // 跳转到登录页面
+                            this.$router.replace({path: `/login`});
+                            promptUtil.success(this, res.msg);
+                        }, 200);
+                    }
+                })
+                //跳转到登录页面
                 this.$router.replace({path: `/login`});
                 promptUtil.success(this, res.msg);
             },
@@ -651,9 +650,9 @@
                     if (res.code == SUCCESS_CODE) {
                         storageUtil.logout();
                         const userArray = [
-                            {username:'ALS2892535927',password:'111000'}, // 校长 吕洋
-                            {username:'ALS2420973387',password:'111000'}, // 教师 聪聪老师
-                            {username:'ALS4684433520',password:'111000'}  // 学生 李艾泽
+                            {username:'ALS2892535927',password:'741369asd'}, // 校长 吕洋
+                            {username:'ALS2420973387',password:'741369asd'}, // 教师 聪聪老师
+                            {username:'ALS4684433520',password:'741369asd'}  // 学生 李艾泽
                         ]
                         let userInfo = null;
                         if (command==='master') {

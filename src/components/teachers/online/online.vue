@@ -11,15 +11,18 @@
         <div style="display: flex;">
           <div style="height: 20px;width: 3px;background-color: #00a2ff;"></div>
           <div style="line-height:20px;margin-left:5px;">直播课程</div>
+          <div style="flex:1;display:flex;justify-content:flex-end" v-if="role==1">
+            <el-link :underline="false"><span style="color:#409EFF" @click="handleClickIntoLiveBuy">直播点数</span></el-link>
+          </div>
         </div>
       </div>
       <el-row :gutter="20">
         <el-col :span="12">
           <el-card shadow="hover">
             <div style="display:flex;">
-              <el-image style="width: 120px; height: 120px"  src="../../static/images/base/online/dabanke_bg.png"></el-image>
+              <el-image style="width: 120px; height: 120px"  :src="dabankeImg"></el-image>
               <div style="display:flex;flex:1;">
-                <div style="display:flex;flex-direction:column;flex:1;padding-right:10px;padding-left:10px">
+                <div style="display:flex;flex-direction:column;flex:1;padding-right:10px;width:360px">
                   <div class="course-title-base">大班课</div>
                   <div class="course-kind-base">场景:&nbsp;适用于公开课 / 精品课 / 串讲课 / 在线答疑 / 招生课</div>
                   <div class="course-kind-base">特色:&nbsp;支持支持音频 / 视频实景上课 / 发起点名 / 签到 / 桌面屏幕共享 / 课堂互动交流</div>
@@ -35,9 +38,9 @@
         <el-col :span="12">
           <el-card shadow="hover">
             <div style="display:flex;">
-              <el-image style="width: 120px; height: 120px"  src="../../static/images/base/online/xiaobanke_bg.png"></el-image>
+              <el-image style="width: 120px; height: 120px"  :src="xiaobankeImg"></el-image>
               <div style="display:flex;flex:1;">
-                <div style="display:flex;flex-direction:column;flex:1;padding-right:10px;padding-left:10px">
+                <div style="display:flex;flex-direction:column;flex:1;padding-right:10px;width:360px">
                   <div class="course-title-base">小班课</div>
                   <div class="course-kind-base">场景:&nbsp;适用于K12教育 / 少儿英语 / 职业培训 / 素质教育 / 语言培训</div>
                   <div class="course-kind-base">特色:&nbsp;支持多人同步音视频 / 多滚屏互动黑板 / 多维度教学场控 / 多元化互动课件</div>
@@ -65,6 +68,9 @@
           <div style="display: flex;">
             <div style="height: 20px;width: 3px;background-color: #00a2ff;"></div>
             <div style="line-height:20px;margin-left:5px;">全部直播课程</div>
+            <div style="flex:1;display:flex;justify-content:flex-end" v-if="role==1">
+              <el-link :underline="false"><span style="color:#409EFF" @click="handleClickIntoLiveDetail">直播详情</span></el-link>
+            </div>
           </div>
         </div>
         <!--    查询条件-->
@@ -163,7 +169,7 @@
         >
           <el-table-column align="center" type="selection" width="55">
           </el-table-column>
-          <el-table-column align="left" label="课程名称">
+          <el-table-column label="课程名称" min-width="320px">
             <template slot-scope="scope">
               <div style="display:flex;padding:10px 0 0 10px;">
                 <div class="image-wrapper">
@@ -171,7 +177,7 @@
                 </div>
                 <div style="flex:1;margin-top:8px">
                   <el-tooltip class="item" effect="dark" :content="scope.row.name" placement="right">
-                    <div style="overflow: hidden;text-overflow:ellipsis;white-space: nowrap;width:250px">
+                    <div style="overflow: hidden;text-overflow:ellipsis;white-space: nowrap;width:160px">
                       <span style="font-weight:600">{{scope.row.name}}</span>
                     </div>
                   </el-tooltip>
@@ -186,6 +192,9 @@
               <span v-if="scope.row.classType==1">小班课</span>
               <span v-else  >大班课</span>
             </template>
+          </el-table-column>
+          <el-table-column align="center" label="预计消耗" width="110px">
+            <template slot-scope="scope">{{scope.row.liveCount}}直播点</template>
           </el-table-column>
           <el-table-column
             align="center"
@@ -716,6 +725,7 @@ import stringUtil from "../../../utils/stringUtil";
 import pagination from "../../commons/pagination/pagination";
 import vuexUtils from "../../../utils/vuexUtils";
 import "../../../api/restfulapi";
+import "../../../router/router";
 import vueQr from "vue-qr";
 import childHeader from "../../component/childHeader";
 import {
@@ -738,6 +748,8 @@ export default {
   },
   data() {
     return {
+      dabankeImg: require('../../../../static/images/base/online/dabanke_bg.png'),
+      xiaobankeImg: require('../../../../static/images/base/online/xiaobanke_bg.png'),
       isDataLoading: true, // 是否第一次加载 显示加载中
       qrCodeMobileImg: require("../../../../static/images/base/moblie.png"),
       isLimit: "number",
@@ -887,13 +899,14 @@ export default {
   },
   mounted() {
     this.isDataLoading = true
-    this.role = storageUtil.readTeacherInfo().school_admin;
+    promptUtil.checkOverdue(this, storageUtil.readTeacherInfo().id) // true 表示已过期 false表示未过期
+    this.role = storageUtil.readTeacherInfo().school_admin; // 1 校长
+    PubSub.publish("currentMenuIndex", "/online");
     //创建课程中获取班级以及学生呢个指派班级
     getClassAndStudentByTeacher(
       qs.stringify({ teacher_id: storageUtil.readTeacherInfo().id })
     )
       .then(res => {
-        PubSub.publish("currentMenuIndex", "/online");
         if (res.code == SUCCESS_CODE) {
           if (res.data && res.data != "[]") {
             this.classesInfo = res.data;
@@ -907,6 +920,12 @@ export default {
     this.getClassTableList();
   },
   methods: {
+      handleClickIntoLiveDetail(){
+          this.$router.push({path: ROUTER_STATISTICS_LIVE})
+      },
+      handleClickIntoLiveBuy(){
+          this.$router.push({path: ROUTER_LIVE_POINT})
+      },
       handleClickCreateLiveCourse(){
          this.addLiveClass('addRuleForm', '1')
       },
@@ -1340,43 +1359,50 @@ export default {
              this.tableData = [];
              if (res.data && res.data != "[]") {
                 res.data.forEach(res => {
-                const obj = {
-                  id: res.id,
-                  cover: res.cover,
-                  createDate: res.create_date,
-                  createName: res.create_name,
-                  status: res.bofang_msg,
-                  name: res.title,
-                  backStatus: res.back_msg, //转码成功 转码中
-                  backType: res.back_status, //只有100的时候可以看回放
-                  teacher: res.teacher_name,
-                  startTime: res.starttime,
-                  bofangType: res.bofang_type, //!0时可以管理 未开播
-                  endTime: res.endtime,
-                  longTime: res.long_str,
-                  webUrl: res.web_url,
-                  clientUrl: res.client_url,
-                  maxUser: res.max_users,
-                  type: res.is_video_main,
-                  teacherId: res.teacher_id,
-                  studentIdArray: res.student_ids,
-                  studentCode: res.student_code,
-                  teacherCode: res.teacher_code,
-                  backArray: res.back,
-                  classType: res.class_type,
-                  // classTypeString: res.class_type == 1 ? "小班课" : "大班课"
-                };
-                this.tableData.push(obj);
-              });
-              this.$refs.alsPageination.setCurrentPage(this.currentPage);
-              this.$refs.alsPageination.setServerData(this.tableData);
-            }
+                  const obj = {
+                    id: res.id,
+                    cover: res.cover,
+                    createDate: res.create_date,
+                    createName: res.create_name,
+                    status: res.bofang_msg,
+                    name: res.title,
+                    backStatus: res.back_msg, //转码成功 转码中
+                    backType: res.back_status, //只有100的时候可以看回放
+                    teacher: res.teacher_name,
+                    startTime: res.starttime,
+                    bofangType: res.bofang_type, //!0时可以管理 未开播
+                    endTime: res.endtime,
+                    longTime: res.long_str,
+                    webUrl: res.web_url,
+                    clientUrl: res.client_url,
+                    maxUser: res.max_users,
+                    type: res.is_video_main,
+                    teacherId: res.teacher_id,
+                    studentIdArray: res.student_ids,
+                    studentCode: res.student_code,
+                    teacherCode: res.teacher_code,
+                    backArray: res.back,
+                    classType: res.class_type,
+                    liveCount: res.liveCount,
+                    // classTypeString: res.class_type == 1 ? "小班课" : "大班课"
+                  };
+                  this.tableData.push(obj);
+                });
+              }else{
+                 this.currentPage = 1
+             }
+             this.$refs.alsPageination.setCurrentPage(this.currentPage);
+             this.$refs.alsPageination.setServerData(this.tableData);
           } else if (res.code == ERROR_CODE) {
             promptUtil.warning(this, res.msg);
           }
         })
         .catch(err => {
-         promptUtil.LOG("queryExam-err", err);
+            this.tableData = []
+            this.currentPage = 1
+            this.$refs.alsPageination.setCurrentPage(this.currentPage);
+            this.$refs.alsPageination.setServerData(this.tableData);
+            promptUtil.LOG("getLiveList-err", err);
         });
     },
     //多选删除

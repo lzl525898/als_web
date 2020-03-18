@@ -1,125 +1,130 @@
 <template>
   <div>
-    <el-row>
-      <el-col :span="24">
-        <als-child-header :config="routerConfig"/>
-      </el-col>
-    </el-row>
-    <el-row :gutter="16">
-      <el-col :span="3">
-        <el-input
-          :placeholder="$t(`message.teacher_input_placeholder`)"
-          v-model="inputQueryInfo"
-          clearable
-          @keydown.native.enter="queryClassInfo"
-        ></el-input>
-      </el-col>
-      <el-col :span="1">
-        <el-button type="primary" icon="el-icon-search" @click="queryClassInfo">{{$t(`message.student_management_search`)}}</el-button>
-      </el-col>
-      <el-col :span="20"></el-col>
-    </el-row>
-    <el-row>
-      <el-button type="primary" icon="el-icon-plus" @click="addTeacher">{{$t(`message.teacher_button_add_teacher`)}}</el-button>
-      <label v-show="teacherMaxCount!=''" style="color: #999;font-weight: bold;margin-left: 20px">{{$t(`message.teacher_label_add_left_msg`)}} <span style="color:#333">{{teacherMaxCount}}</span> {{$t(`message.teacher_label_add_right_msg`)}}</label>
-    </el-row>
-    <el-row>
-      <el-table
-        :data="tableData"
-        border
-        style="width: 100%"
-        :header-row-style="{'color':'#409EFF'}"
-      >
-        <el-table-column
-          align="center"
-          props="id"
-          type="index"
-          :index="indexMethod"
-          :label="$t(`message.student_management_tableData_number`)"
-          width="60"
-        ></el-table-column>
-        <el-table-column align="center" :label="$t(`message.student_management_tableData_user_account`)">
-          <template slot-scope="scope">
-            <div>{{scope.row.account}}<label style="margin-left:10px"><el-tag type="danger" size="mini" v-if="scope.row.id==currentTeacherCountId">校长</el-tag><el-tag size="mini" v-else>教师</el-tag></label></div>
-          </template>
-        </el-table-column>
-        <el-table-column align="center" prop="nick" :label="$t(`message.teacher_table_column_nick`)"></el-table-column>
-        <el-table-column align="center" :label="$t(`message.string_label_sex`)">
-          <template slot-scope="scope">
-            <span v-if="scope.row.sex==1">{{$t(`message.string_label_male`)}}</span>
-            <span v-if="scope.row.sex==2">{{$t(`message.string_label_female`)}}</span>
-            <span v-if="scope.row.sex==0">{{$t(`message.student_management_tableData_user_sex_secrecy`)}}</span>
-          </template>
-        </el-table-column>
-        <el-table-column align="center" prop="phone" :label="$t(`message.student_management_create_student_phone`)"></el-table-column>
-        <el-table-column align="center" :label="$t(`message.student_management_tableData_user_class`)" style="width: 300px">
-          <template slot-scope="scope">
-            <el-popover
-              placement="top-start"
-              :title="$t(`message.student_management_tableData_user_class`)"
-              width="240"
-              trigger="click">
-              <div>
-                <el-tag style="margin-left: 5px;margin-bottom: 5px;" effect="plain" v-for="(item,index) in scope.row.classes.classNames" :key="index">{{item}}</el-tag>
-              </div>
-              <div slot="reference" class="classRoomItems">{{scope.row.classes.className}}</div>
-            </el-popover>
-          </template>
-        </el-table-column>
-        <el-table-column align="center" prop="remarks" :label="$t(`message.user_system_school_table_label_desc`)"></el-table-column>
-        <el-table-column align="center" :label="$t(`message.student_management_tableData_user_operation`)" width="380">
-          <template slot-scope="scope">
-            <el-button
-              v-if="scope.row.bcb==1"
-              size="mini"
-              type="success"
-              plain
-              @click.native="intSuperBlockly"
-            >{{$t(`message.student_management_tableData_operation_enter_programming`)}}</el-button>
-            <el-button
-              v-else
-              size="mini"
-              type="primary"
-              plain
-              @click.native="bindSuperblockly({index: scope.$index, row:scope.row})"
-            >{{$t(`message.student_management_tableData_operation_binding_programming`)}}</el-button>
-            <el-button
-              class="mt"
-              size="mini"
-              plain
-              @click="showEditTeacherDialog({index: scope.$index, row:scope.row})"
-            >{{$t(`message.string_label_edit`)}}
-            </el-button>
-            <el-button
-              class="mt"
-              size="mini"
-              plain
-              @click="showPwdTeacherDialog({index: scope.$index, row:scope.row})"
-            >{{$t(`message.student_management_tableData_operation_password`)}}
-            </el-button>
-            <el-button
-              class="mt"
-              size="mini"
-              type="danger"
-              plain
-              @click="showDelTeacherDialog({index: scope.$index, row:scope.row})"
-              :disabled="scope.row.id==currentTeacherCountId"
-            >{{$t(`message.string_label_delete`)}}
-            </el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-    </el-row>
-    <el-row type="flex" justify="center">
-      <el-pagination
-        background
-        @current-change="handleCurrentChange"
-        :current-page="currentPage"
-        :page-size="pageSize"
-        layout="total, prev, pager, next, jumper"
-        :total="teacherInfoList"
-      ></el-pagination>
-    </el-row>
+    <div v-if="!isAuth">
+      <als-no-auth/>
+    </div>
+    <div v-if="isAuth">
+      <el-row>
+        <el-col :span="24">
+          <als-child-header :config="routerConfig"/>
+        </el-col>
+      </el-row>
+      <el-row :gutter="16">
+        <el-col :span="3">
+          <el-input
+            :placeholder="$t(`message.teacher_input_placeholder`)"
+            v-model="inputQueryInfo"
+            clearable
+            @keydown.native.enter="queryClassInfo"
+          ></el-input>
+        </el-col>
+        <el-col :span="1">
+          <el-button type="primary" icon="el-icon-search" @click="queryClassInfo">{{$t(`message.student_management_search`)}}</el-button>
+        </el-col>
+        <el-col :span="20"></el-col>
+      </el-row>
+      <el-row>
+        <el-button type="primary" icon="el-icon-plus" @click="addTeacher">{{$t(`message.teacher_button_add_teacher`)}}</el-button>
+        <label v-show="teacherMaxCount!=''" style="color: #999;font-weight: bold;margin-left: 20px">{{$t(`message.teacher_label_add_left_msg`)}} <span style="color:#333">{{teacherMaxCount}}</span> {{$t(`message.teacher_label_add_right_msg`)}}</label>
+      </el-row>
+      <el-row>
+        <el-table
+          :data="tableData"
+          border
+          style="width: 100%"
+          :header-row-style="{'color':'#409EFF'}"
+        >
+          <el-table-column
+            align="center"
+            props="id"
+            type="index"
+            :index="indexMethod"
+            :label="$t(`message.student_management_tableData_number`)"
+            width="60"
+          ></el-table-column>
+          <el-table-column align="center" :label="$t(`message.student_management_tableData_user_account`)">
+            <template slot-scope="scope">
+              <div>{{scope.row.account}}<label style="margin-left:10px"><el-tag type="danger" size="mini" v-if="scope.row.id==currentTeacherCountId">校长</el-tag><el-tag size="mini" v-else>教师</el-tag></label></div>
+            </template>
+          </el-table-column>
+          <el-table-column align="center" prop="nick" :label="$t(`message.teacher_table_column_nick`)"></el-table-column>
+          <el-table-column align="center" :label="$t(`message.string_label_sex`)">
+            <template slot-scope="scope">
+              <span v-if="scope.row.sex==1">{{$t(`message.string_label_male`)}}</span>
+              <span v-if="scope.row.sex==2">{{$t(`message.string_label_female`)}}</span>
+              <span v-if="scope.row.sex==0">{{$t(`message.student_management_tableData_user_sex_secrecy`)}}</span>
+            </template>
+          </el-table-column>
+          <el-table-column align="center" prop="phone" :label="$t(`message.student_management_create_student_phone`)"></el-table-column>
+          <el-table-column align="center" :label="$t(`message.student_management_tableData_user_class`)" style="width: 300px">
+            <template slot-scope="scope">
+              <el-popover
+                placement="top-start"
+                :title="$t(`message.student_management_tableData_user_class`)"
+                width="240"
+                trigger="click">
+                <div>
+                  <el-tag style="margin-left: 5px;margin-bottom: 5px;" effect="plain" v-for="(item,index) in scope.row.classes.classNames" :key="index">{{item}}</el-tag>
+                </div>
+                <div slot="reference" class="classRoomItems">{{scope.row.classes.className}}</div>
+              </el-popover>
+            </template>
+          </el-table-column>
+          <el-table-column align="center" prop="remarks" :label="$t(`message.user_system_school_table_label_desc`)"></el-table-column>
+          <el-table-column align="center" :label="$t(`message.student_management_tableData_user_operation`)" width="380">
+            <template slot-scope="scope">
+              <el-button
+                v-if="scope.row.bcb==1"
+                size="mini"
+                type="success"
+                plain
+                @click.native="intSuperBlockly"
+              >{{$t(`message.student_management_tableData_operation_enter_programming`)}}</el-button>
+              <el-button
+                v-else
+                size="mini"
+                type="primary"
+                plain
+                @click.native="bindSuperblockly({index: scope.$index, row:scope.row})"
+              >{{$t(`message.student_management_tableData_operation_binding_programming`)}}</el-button>
+              <el-button
+                class="mt"
+                size="mini"
+                plain
+                @click="showEditTeacherDialog({index: scope.$index, row:scope.row})"
+              >{{$t(`message.string_label_edit`)}}
+              </el-button>
+              <el-button
+                class="mt"
+                size="mini"
+                plain
+                @click="showPwdTeacherDialog({index: scope.$index, row:scope.row})"
+              >{{$t(`message.student_management_tableData_operation_password`)}}
+              </el-button>
+              <el-button
+                class="mt"
+                size="mini"
+                type="danger"
+                plain
+                @click="showDelTeacherDialog({index: scope.$index, row:scope.row})"
+                :disabled="scope.row.id==currentTeacherCountId"
+              >{{$t(`message.string_label_delete`)}}
+              </el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+      </el-row>
+      <el-row type="flex" justify="center">
+        <el-pagination
+          background
+          @current-change="handleCurrentChange"
+          :current-page="currentPage"
+          :page-size="pageSize"
+          layout="total, prev, pager, next, jumper"
+          :total="teacherInfoList"
+        ></el-pagination>
+      </el-row>
+    </div>
     <el-dialog
       :title="$t(`message.student_management_tableData_operation_editInformation`)"
       :visible.sync="teacherDialogFormVisible"
@@ -246,10 +251,15 @@
     getTeacherList,
   } from "@/api/api.js";
   import childHeader from '../../component/childHeader'
+  import noAuthContent from '../../component/noAuthContent'
   export default {
-    components:{"als-child-header": childHeader},
+    components:{
+        "als-child-header": childHeader,
+        "als-no-auth": noAuthContent,
+    },
     data() {
       return {
+        isAuth:false, // 是否具有权限
         routerConfig: [{name:this.$t(`message.teacher_header_title`),to:''}],
         inputQueryInfo: "", // 搜索内容
         tableData: [], // 班级数据
@@ -322,65 +332,69 @@
     mounted() {
       promptUtil.checkOverdue(this, storageUtil.readTeacherInfo().id) // true 表示已过期 false表示未过期
       PubSub.publish("currentMenuIndex", "/teacherMan");
-      const loading = promptUtil.loading(this);
-      // 1.初始化需要获取学校当前拥有的所有班级数组
-      // 2.获取学校当前所有的教师信息数组
-      this.currentTeacherCountId = storageUtil.readTeacherInfo().id;
-      getTeacherCount(qs.stringify({school_id:storageUtil.readTeacherInfo().school_id})).then(res=>{
-        this.teacherMaxCount = res.data==0 ? 2 : res.data
-      }).catch(err=>promptUtil.LOG("getTeacherCount-err",err))
-      getAllClass(
-        qs.stringify({
-          school_id: storageUtil.readTeacherInfo().school_id,
-          teacher_id: storageUtil.readTeacherInfo().id,
-          role_id: 1
-        })
-      )
-        .then(res => {
-          PubSub.publish("currentMenuIndex", "/teacherMan");
-          this.allClassNames = [];
-          if (res.code == SUCCESS_CODE) {
-            if (res.data && res.data != '[]') {
-              res.data.forEach(item => {
-                const classObj = {classId: item.id, className: item.class_name};
-                this.allClassNames.push(classObj);
+      let menuItem = storageUtil.getMenu().find(item=> item.url=='teacherMan')
+      if(menuItem && menuItem.if_in==1){ // 有权限
+          this.isAuth = true
+          const loading = promptUtil.loading(this);
+          // 1.初始化需要获取学校当前拥有的所有班级数组
+          // 2.获取学校当前所有的教师信息数组
+          this.currentTeacherCountId = storageUtil.readTeacherInfo().id;
+          getTeacherCount(qs.stringify({school_id:storageUtil.readTeacherInfo().school_id})).then(res=>{
+              this.teacherMaxCount = res.data==0 ? 2 : res.data
+          }).catch(err=>promptUtil.LOG("getTeacherCount-err",err))
+          getAllClass(
+              qs.stringify({
+                  school_id: storageUtil.readTeacherInfo().school_id,
+                  teacher_id: storageUtil.readTeacherInfo().id,
+                  role_id: 1
+              })
+          ).then(res => {
+              PubSub.publish("currentMenuIndex", "/teacherMan");
+              this.allClassNames = [];
+              if (res.code == SUCCESS_CODE) {
+                  if (res.data && res.data != '[]') {
+                      res.data.forEach(item => {
+                          const classObj = {classId: item.id, className: item.class_name};
+                          this.allClassNames.push(classObj);
+                      });
+                  }
+                  loading.close();
+              } else {
+                  loading.close();
+                  promptUtil.wait(this);
+              }
+          })
+              .catch(err => {
+                  loading.close();
+                  PubSub.publish("currentMenuIndex", "/teacherMan");
+                  promptUtil.LOG("getAllClass-err",err);
               });
-            }
-            loading.close();
-          } else {
-            loading.close();
-            promptUtil.wait(this);
-          }
-        })
-        .catch(err => {
-          loading.close();
-          PubSub.publish("currentMenuIndex", "/teacherMan");
-          promptUtil.LOG("getAllClass-err",err);
-        });
-      getTeacherList(
-        qs.stringify({school_id: storageUtil.readTeacherInfo().school_id})
-      )
-        .then(res => {
-          if (res.code == SUCCESS_CODE) {
-            if (res.data && res.data != '[]') {
-              this.queryFromServer = res.data;
-              this.tableData = this.queryFromServer.slice(
-                (this.currentPage - 1) * this.pageSize,
-                this.pageSize + (this.currentPage - 1) * this.pageSize
-              );
-            } else {
-              this.tableData = [];
-            }
-            this.getTableContentTimeoutId = null;
-          } else {
-            promptUtil.wait(this);
-          }
-          loading.close();
-        })
-        .catch(err => {
-          loading.close();
-          promptUtil.LOG("getTeacherList-err",err);
-        });
+          getTeacherList(
+              qs.stringify({school_id: storageUtil.readTeacherInfo().school_id})
+          ).then(res => {
+              if (res.code == SUCCESS_CODE) {
+                  if (res.data && res.data != '[]') {
+                      this.queryFromServer = res.data;
+                      this.tableData = this.queryFromServer.slice(
+                          (this.currentPage - 1) * this.pageSize,
+                          this.pageSize + (this.currentPage - 1) * this.pageSize
+                      );
+                  } else {
+                      this.tableData = [];
+                  }
+                  this.getTableContentTimeoutId = null;
+              } else {
+                  promptUtil.wait(this);
+              }
+              loading.close();
+          })
+              .catch(err => {
+                  loading.close();
+                  promptUtil.LOG("getTeacherList-err",err);
+              });
+      }else{ // 无权限
+          this.isAuth = false
+      }
     },
     methods: {
       intSuperBlockly(){

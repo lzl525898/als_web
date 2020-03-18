@@ -1,61 +1,66 @@
 <template>
   <div>
-    <el-row>
-      <el-col :span="24">
-        <als-child-header :config="routerConfig"/>
-      </el-col>
-    </el-row>
-    <el-card style="margin:20px 0" shadow="always">
-      <el-row type="flex" align="middle">
-        <el-col :span="12">
-          <div style="display: flex;">
-            <div style="height: 20px;width: 3px;background-color: #00a2ff;"></div>
-            <div style="line-height:20px;margin-left:5px;">证书模板
-              <el-tooltip class="item" effect="dark" content="证书模板最多可以创建10个" placement="top-start">
-                <el-link :underline="false" style="margin-left:5px;"><i class="el-icon-info"></i></el-link>
-              </el-tooltip></div>
-          </div>
-        </el-col>
-        <el-col :span="12">
-          <div style="display:flex;justify-content:flex-end;">
-            <el-button type="primary" size="small" @click="onClickCreate">创建模板</el-button>
-          </div>
+    <div v-show="!isAuth">
+      <als-no-auth/>
+    </div>
+    <div v-show="isAuth">
+      <el-row>
+        <el-col :span="24">
+          <als-child-header :config="routerConfig"/>
         </el-col>
       </el-row>
-    </el-card>
-    <div v-show="initStatus==true"></div>
-    <div v-show="initStatus==false">
-      <el-card style="margin-bottom:20px" shadow="always" body-style="min-height:640px;">
-        <div v-show="certModalStatus==false">
-          <div style="display:flex;justify-content:center;margin-top:40px;align-items:center;">
-            <img style="width:300px;" src="../../../static/images/base/nodata.png" alt>
-          </div>
-        </div>
-        <div v-show="certModalStatus==true">
-          <div style="display:flex;justify-content:flex-start;flex-wrap:wrap">
-            <div style="margin:20px 20px 20px 20px" v-for="(item,index) in certModal" :key="index">
-              <el-card body-style="padding:0px;width:300px;" >
-                <el-image  :src="item.src" class="image" :preview-src-list="item.srcList" :id="'print_cert_id_'+item.id"></el-image>
-                <div style="padding: 14px;">
-                  <span>{{item.title}}</span>
-                  <div class="bottom clearfix">
-                    <time class="time">{{item.date}}</time>
-                    <el-tooltip class="item" effect="dark" content="删除证书" placement="top-start" :hide-after="600">
-                      <el-button type="danger" size="mini" plain icon="el-icon-delete" circle class="button" @click="onClickDelele(item)"></el-button>
-                    </el-tooltip>
-                    <el-tooltip class="item" effect="dark" content="打印证书" placement="top-start" :hide-after="600">
-                      <el-button type="primary" size="mini" plain icon="el-icon-printer" circle class="button" v-print="`#print_cert_id_`+item.id"></el-button>
-                    </el-tooltip>
-                    <el-tooltip class="item" effect="dark" content="下载证书" placement="top-start" :hide-after="600">
-                      <el-button type="primary" size="mini" plain icon="el-icon-download" circle class="button" @click="onClickDownload(item)"></el-button>
-                    </el-tooltip>
-                  </div>
-                </div>
-              </el-card>
+      <el-card style="margin:20px 0" shadow="always">
+        <el-row type="flex" align="middle">
+          <el-col :span="12">
+            <div style="display: flex;">
+              <div style="height: 20px;width: 3px;background-color: #00a2ff;"></div>
+              <div style="line-height:20px;margin-left:5px;">证书模板
+                <el-tooltip class="item" effect="dark" content="证书模板最多可以创建10个" placement="top-start">
+                  <el-link :underline="false" style="margin-left:5px;"><i class="el-icon-info"></i></el-link>
+                </el-tooltip></div>
+            </div>
+          </el-col>
+          <el-col :span="12">
+            <div style="display:flex;justify-content:flex-end;">
+              <el-button type="primary" size="small" @click="onClickCreate">创建模板</el-button>
+            </div>
+          </el-col>
+        </el-row>
+      </el-card>
+      <div v-show="initStatus==true"></div>
+      <div v-show="initStatus==false">
+        <el-card style="margin-bottom:20px" shadow="always" body-style="min-height:640px;">
+          <div v-show="certModalStatus==false">
+            <div style="display:flex;justify-content:center;margin-top:40px;align-items:center;">
+              <img style="width:300px;" src="../../../static/images/base/nodata.png" alt>
             </div>
           </div>
-        </div>
-      </el-card>
+          <div v-show="certModalStatus==true">
+            <div style="display:flex;justify-content:flex-start;flex-wrap:wrap">
+              <div style="margin:20px 20px 20px 20px" v-for="(item,index) in certModal" :key="index">
+                <el-card body-style="padding:0px;width:300px;" >
+                  <el-image  :src="item.src" class="image" :preview-src-list="item.srcList" :id="'print_cert_id_'+item.id"></el-image>
+                  <div style="padding: 14px;">
+                    <span>{{item.title}}</span>
+                    <div class="bottom clearfix">
+                      <time class="time">{{item.date}}</time>
+                      <el-tooltip class="item" effect="dark" content="删除证书" placement="top-start" :hide-after="600">
+                        <el-button type="danger" size="mini" plain icon="el-icon-delete" circle class="button" @click="onClickDelele(item)"></el-button>
+                      </el-tooltip>
+                      <el-tooltip class="item" effect="dark" content="打印证书" placement="top-start" :hide-after="600">
+                        <el-button type="primary" size="mini" plain icon="el-icon-printer" circle class="button" v-print="`#print_cert_id_`+item.id"></el-button>
+                      </el-tooltip>
+                      <el-tooltip class="item" effect="dark" content="下载证书" placement="top-start" :hide-after="600">
+                        <el-button type="primary" size="mini" plain icon="el-icon-download" circle class="button" @click="onClickDownload(item)"></el-button>
+                      </el-tooltip>
+                    </div>
+                  </div>
+                </el-card>
+              </div>
+            </div>
+          </div>
+        </el-card>
+      </div>
     </div>
     <als-cert-dialog ref="alsCertGenDialog"></als-cert-dialog>
   </div>
@@ -63,6 +68,7 @@
 <script>
   import PubSub from 'pubsub-js'
   import childHeader from '../component/childHeader'
+  import noAuthContent from "../component/noAuthContent";
   import certGenDialog from '../component/certGenDialog'
   import storageUtil from '../../utils/storageUtil'
   import promptUtil from '../../utils/promptUtil'
@@ -76,9 +82,10 @@
   } from '../../api/api'
   export default {
     name: "cert",
-    components:{"als-child-header": childHeader,"als-cert-dialog":certGenDialog},
+    components:{"als-child-header": childHeader,"als-no-auth":noAuthContent,"als-cert-dialog":certGenDialog},
     data(){
       return{
+        isAuth: false,
         initStatus: true,
         certModalStatus: false,
         certPrintId:'',
@@ -89,10 +96,17 @@
     mounted() {
       promptUtil.checkOverdue(this, storageUtil.readTeacherInfo().id) // true 表示已过期 false表示未过期
       PubSub.publish("currentMenuIndex", ROUTER_CERT);
-      PubSub.subscribe("getCertList", (msg, data) => {
-        this.initData(false)
-      });
-      this.initData()
+      let menuItem = storageUtil.getMenu().find(item=> item.url=='cert')
+      if(menuItem && menuItem.if_in==1){ // 有权限
+          this.isAuth = true
+          PubSub.subscribe("getCertList", (msg, data) => {
+              this.initData(false)
+          });
+          this.initData()
+      } else {
+          this.isAuth = false
+      }
+
     },
     watch:{
       certModal(val){

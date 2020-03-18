@@ -11,7 +11,7 @@
           <span class="step-finish">2.确认订单信息</span> - - - - -
           <span id="course_step_3" class="step-wait">3.确认开通</span> - - - - -
           <span id="course_step_4" class="step-wait">4.等待客服开通</span></div>
-        <div class="school-title">订购店铺：{{schoolName}}</div>
+        <div class="school-title">订购机构：{{schoolName}}</div>
         <el-table :data="tableData" :header-cell-style="{'color':'#353535','fontSize':'16px','background':'#eef1f6'}">
           <el-table-column prop="name" label="课程名称"></el-table-column>
           <el-table-column prop="date" label="可用时长" width="90" align="center"></el-table-column>

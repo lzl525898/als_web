@@ -124,7 +124,7 @@
         praise:false,isShowLoginLabel:false,praiseCount:0,shareUrl:'',
         praiseOk: require('../../assets/discover/praise-ok.png'),praiseNo: require('../../assets/discover/praise-no.png'),
         sb3Value:'', workUrl:'', workName:'', category:[], userName:'',scratchLoading:true,seeCount:0,
-        republishTime:'', updateTime:'', workDesc:'', handleInfo:'', avatar: '',percentage:0,
+        republishTime:'', updateTime:'', workDesc:'', handleInfo:'', avatar: '',percentage:0,worksUserId:0,
       }
     },
     destroyed(){
@@ -159,11 +159,9 @@
         },1000)
       },
       getScratchDetailData(){
-        const userId = storageUtil.readTeacherInfo() ? storageUtil.readTeacherInfo().id : 0
         const roleId = storageUtil.readTeacherInfo().role_id
         getScratchDetail(qs.stringify({
-          scratch_id: this.scratchId,
-          user_id: userId,
+          scratch_id: this.scratchId
         })).then(res=>{
           if(res.code==SUCCESS_CODE){
             if(res.data && res.data!='[]'){
@@ -180,13 +178,14 @@
               this.sb3Value = res.data.worksUrl
               this.category = res.data.category
               this.shareUrl = res.data.shareUrl
+              this.worksUserId = res.data.student_id
               // if(global.DEBUG){
               //   this.workUrl = "https://www.alsrobot.vip/scratch/player.html?id=1572485356DWBMY0JM&edit=false&look=true"
               // }else{
               //
               // }
                 // ?user_id=用户id&id=任务id&type=1&role=2&device=1
-              this.workUrl = ROUTER_SCRATCH_CREATE + '/player.html?user_id='+userId+"&id="+this.scratchId+'&type=1&role='+roleId+'&device=1'
+              this.workUrl = ROUTER_SCRATCH_CREATE + '/player.html?user_id='+this.worksUserId+"&id="+this.scratchId+'&type=1&role='+roleId+'&device=1'
               for(let i=0;i<100;i++){
                 setTimeout(()=>{
                   this.percentage = this.percentage + 1

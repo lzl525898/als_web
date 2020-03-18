@@ -5,7 +5,7 @@
         <als-child-header :config="routerConfig"/>
       </el-col>
     </el-row>
-    <div style="overflow: hidden">
+    <div style="overflow: hidden;margin-top: 20px">
       <el-row :gutter="20">
         <el-col :span="12">
           <el-card>
@@ -15,7 +15,7 @@
         </el-col>
         <el-col :span="12">
           <el-card>
-            <div style="height: 440px">
+            <div style="height: 434px">
               <p class="title">存储详情</p>
               <div style="width: 80%;margin: 0 auto;margin-top: 80px">
                 <div style="display: flex;justify-content: space-between">
@@ -97,7 +97,6 @@
 
 <script>
     const echarts = require("echarts");
-    import $ from 'jquery'
     import PubSub from "pubsub-js"
     import '../../../router/router'
     import {
@@ -162,6 +161,8 @@
             }
         },
         mounted() {
+            promptUtil.checkOverdue(this, storageUtil.readTeacherInfo().id) // true 表示已过期 false表示未过期
+            PubSub.publish("currentMenuIndex", "/flow");
             flowStatistics(qs.stringify({
                 school_id: storageUtil.readTeacherInfo().school_id,
             })).then(res => {

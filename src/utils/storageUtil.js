@@ -18,13 +18,26 @@ const OVERDUE = 'als_overdue'
 const TMP_LOGIN = 'als_tmp_login'
 const LANG = 'als_local_lang'
 const AREA = 'als_user_area'
+const MENU_INFO = 'als_menu_info'
 
 export default {
+  saveMenu(menu){
+    let childMenuArray = []
+    menu.map(item=>{
+      if(item&&item.children&&item.children.length&&item.children.length>0){
+        childMenuArray = childMenuArray.concat(item.children)
+      }
+    })
+    window.sessionStorage.setItem(MENU_INFO,JSON.stringify(childMenuArray))
+  },
+  getMenu(){
+    return JSON.parse(window.sessionStorage.getItem(MENU_INFO) || '[]')
+  },
   setAreaContent(area){
     window.sessionStorage.setItem(AREA,JSON.stringify(area))
   },
   getAreaContent(){
-    return JSON.parse(window.localStorage.getItem(AREA) || '[]')
+    return JSON.parse(window.sessionStorage.getItem(AREA) || '[]')
   },
   // 设置语言
   setLang(lang){

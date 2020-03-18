@@ -17,7 +17,7 @@
                 </span><span class="header-wrapper-content-wrap-div-text">人次</span>
             </div>
             <div class="header-wrapper-content-wrap-div-img">
-              <img :src=liveClassStatistics.today.url />
+              <el-image style="width:80px;height:56px;border-radius:5px;" :src=liveClassStatistics.today.url />
             </div>
           </div>
         </div>
@@ -32,7 +32,7 @@
                 </span><span class="header-wrapper-content-wrap-div-text">人次</span>
             </div>
             <div class="header-wrapper-content-wrap-div-img">
-              <img :src=liveClassStatistics.highest.url />
+              <el-image style="width:80px;height:56px;border-radius:5px;" :src=liveClassStatistics.highest.url />
             </div>
           </div>
         </div>
@@ -47,7 +47,7 @@
                 </span><span class="header-wrapper-content-wrap-div-text">课次</span>
             </div>
             <div class="header-wrapper-content-wrap-div-img">
-              <img :src=liveClassStatistics.todayNum.url />
+              <el-image style="width:80px;height:56px;border-radius:5px;" :src=liveClassStatistics.todayNum.url />
             </div>
           </div>
         </div>
@@ -62,7 +62,7 @@
                 </span><span class="header-wrapper-content-wrap-div-text">人次</span>
             </div>
             <div class="header-wrapper-content-wrap-div-img">
-              <img :src=liveClassStatistics.allPeopleNum.url />
+              <el-image style="width:80px;height:56px;border-radius:5px;" :src=liveClassStatistics.allPeopleNum.url />
             </div>
           </div>
         </div>
@@ -77,7 +77,7 @@
                 </span><span class="header-wrapper-content-wrap-div-text">课次</span>
             </div>
             <div class="header-wrapper-content-wrap-div-img">
-              <img :src=liveClassStatistics.liveAllNum.url />
+              <el-image style="width:80px;height:56px;border-radius:5px;" :src=liveClassStatistics.liveAllNum.url />
             </div>
           </div>
         </div>
@@ -893,9 +893,9 @@ export default {
 }
 
 .header-wrapper-content-wrap-div-img img {
-  width: 80px;
-  height: 56px;
-  border-radius: 5px;
+  width:80px;
+  height:56px;
+  border-radius:5px;
 }
 
 .el-card.is-always-shadow,

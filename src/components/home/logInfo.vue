@@ -1,101 +1,106 @@
 <template>
   <div>
-    <als-child-header :config="routerConfig"/>
-    <el-row>
-      <el-col :span="24">
-        <div style="display:flex;flex:1;justify-content:center">
-          <el-radio-group v-model="recordType" @change="changeLogType">
-            <el-radio-button label="1">登录日志</el-radio-button>
-            <el-radio-button label="2">操作日志</el-radio-button>
-            <el-radio-button label="3">上传日志</el-radio-button>
-          </el-radio-group>
-        </div>
-      </el-col>
-    </el-row>
-    <el-card style="margin-top: 20px;">
-      <div style="display: flex;">
-        <div class="v_line"></div>
-        <div class="v_line_text">数据范围</div>
-      </div>
-      <el-row style="margin-left: 20px;margin-top: 20px;">
-        <div style="display:flex;align-items: center;">
-          <label>日期范围</label>
-          <div style="margin-left:20px">
-            <el-tooltip class="item" effect="dark" :content="tag.date" placement="top" v-for="(tag,index) in dataTag"
-                        :key="index">
-              <el-tag :type="tag.type" class="tag_width" :key="index" @click.native="onClickDataTag(tag.id)">
-                {{tag.label}}
-              </el-tag>
-            </el-tooltip>
-            <el-date-picker @change="onChangeDatePicker" style="width:220px" size="small" value-format="yyyy/MM/dd"
-                            :clearable="false" v-model="dataFrame" type="daterange" range-separator=""
-                            start-placeholder="请选择日期"></el-date-picker>
+    <div v-show="!isAuth">
+      <als-no-auth/>
+    </div>
+    <div v-show="isAuth">
+      <als-child-header :config="routerConfig"/>
+      <el-row>
+        <el-col :span="24">
+          <div style="display:flex;flex:1;justify-content:center">
+            <el-radio-group v-model="recordType" @change="changeLogType">
+              <el-radio-button label="1">登录日志</el-radio-button>
+              <el-radio-button label="2">操作日志</el-radio-button>
+              <el-radio-button label="3">上传日志</el-radio-button>
+            </el-radio-group>
           </div>
-          <div style="flex:1;margin-right:0;display:flex;justify-content:flex-end;">
-            <el-button size="small" type="primary" @click="onClickQuery" :loading="isLoading">查询</el-button>
-          </div>
-        </div>
+        </el-col>
       </el-row>
-    </el-card>
-    <el-card style="margin-top: 20px;">
-      <div style="background-color:#D4DFE5;height: 40px;display:flex;align-items:center;padding-left:20px;"
-           v-show="recordType==1">
-        当前结果：<span class="record-span-color">{{loginData.length}}</span>条数据
-        <el-link type="primary" :underline="false" style="margin-top:1px;margin-left:5px;" @click="onExportReport(1)">
-          导出>>
-        </el-link>
+      <el-card style="margin-top: 20px;">
+        <div style="display: flex;">
+          <div class="v_line"></div>
+          <div class="v_line_text">数据范围</div>
+        </div>
+        <el-row style="margin-left: 20px;margin-top: 20px;">
+          <div style="display:flex;align-items: center;">
+            <label>日期范围</label>
+            <div style="margin-left:20px">
+              <el-tooltip class="item" effect="dark" :content="tag.date" placement="top" v-for="(tag,index) in dataTag"
+                          :key="index">
+                <el-tag :type="tag.type" class="tag_width" :key="index" @click.native="onClickDataTag(tag.id)">
+                  {{tag.label}}
+                </el-tag>
+              </el-tooltip>
+              <el-date-picker @change="onChangeDatePicker" style="width:220px" size="small" value-format="yyyy/MM/dd"
+                              :clearable="false" v-model="dataFrame" type="daterange" range-separator=""
+                              start-placeholder="请选择日期"></el-date-picker>
+            </div>
+            <div style="flex:1;margin-right:0;display:flex;justify-content:flex-end;">
+              <el-button size="small" type="primary" @click="onClickQuery" :loading="isLoading">查询</el-button>
+            </div>
+          </div>
+        </el-row>
+      </el-card>
+      <el-card style="margin-top: 20px;">
+        <div style="background-color:#D4DFE5;height: 40px;display:flex;align-items:center;padding-left:20px;"
+             v-show="recordType==1">
+          当前结果：<span class="record-span-color">{{loginData.length}}</span>条数据
+          <el-link type="primary" :underline="false" style="margin-top:1px;margin-left:5px;" @click="onExportReport(1)">
+            导出>>
+          </el-link>
+        </div>
+        <el-table :data="tableData" border style="width: 100%" v-show="recordType==1" ref="logLoginTable">
+          <el-table-column prop="name" label="用户" align="center"></el-table-column>
+          <el-table-column label="操作类型" align="center">
+            <template slot-scope="scope">
+              <div v-show="scope.row.type==1" style="color:#67C23A">{{scope.row.handle}}</div>
+              <div v-show="scope.row.type==2" style="color:#E6A23C">{{scope.row.handle}}</div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="browser" label="浏览器及版本号" align="center"></el-table-column>
+          <el-table-column prop="system" label="操作系统" align="center"></el-table-column>
+          <el-table-column prop="ip" label="IP地址" align="center"></el-table-column>
+          <el-table-column prop="time" label="登录/登出时间" align="center"></el-table-column>
+        </el-table>
+        <div style="background-color:#D4DFE5;height: 40px;display:flex;align-items:center;padding-left:20px;"
+             v-show="recordType==2">
+          当前结果：<span class="record-span-color">{{handleData.length}}</span>条数据
+          <el-link type="primary" :underline="false" style="margin-top:1px;margin-left:5px;" @click="onExportReport(2)">
+            导出>>
+          </el-link>
+        </div>
+        <el-table :data="tableData" border style="width: 100%" v-show="recordType==2" ref="logHandleTable">
+          <el-table-column prop="handle" label="操作记录"></el-table-column>
+          <el-table-column prop="time" label="操作时间" align="center" width="250"></el-table-column>
+          <el-table-column prop="name" label="操作人员" align="center" width="250"></el-table-column>
+          <el-table-column prop="system" label="操作系统" align="center" width="250"></el-table-column>
+          <el-table-column prop="browser" label="浏览器及版本号" align="center" width="250"></el-table-column>
+          <el-table-column prop="ip" label="IP地址" align="center" width="250"></el-table-column>
+        </el-table>
+        <div style="background-color:#D4DFE5;height: 40px;display:flex;align-items:center;padding-left:20px;"
+             v-show="recordType==3">
+          当前结果：<span class="record-span-color">{{uploadData.length}}</span>条数据
+          <el-link type="primary" :underline="false" style="margin-top:1px;margin-left:5px;" @click="onExportReport(3)">
+            导出>>
+          </el-link>
+        </div>
+        <el-table :data="tableData" border style="width: 100%" v-show="recordType==3" ref="logUploadinTable">
+          <el-table-column prop="name" label="操作人" align="center"></el-table-column>
+          <el-table-column prop="time" label="上传时间" align="center"></el-table-column>
+          <el-table-column prop="file" label="上传文件格式" align="center"></el-table-column>
+          <el-table-column prop="size" label="上传文件大小" align="center"></el-table-column>
+        </el-table>
+      </el-card>
+      <div style="display:flex;justify-content:center;margin-top:20px;" v-show="serverDataList">
+        <el-pagination
+          background
+          @current-change="serverDataChange"
+          :current-page="currentPage"
+          :page-size="pageSize"
+          layout="total, prev, pager, next, jumper"
+          :total="serverDataList"
+        ></el-pagination>
       </div>
-      <el-table :data="tableData" border style="width: 100%" v-show="recordType==1" ref="logLoginTable">
-        <el-table-column prop="name" label="用户" align="center"></el-table-column>
-        <el-table-column label="操作类型" align="center">
-          <template slot-scope="scope">
-            <div v-show="scope.row.type==1" style="color:#67C23A">{{scope.row.handle}}</div>
-            <div v-show="scope.row.type==2" style="color:#E6A23C">{{scope.row.handle}}</div>
-          </template>
-        </el-table-column>
-        <el-table-column prop="browser" label="浏览器及版本号" align="center"></el-table-column>
-        <el-table-column prop="system" label="操作系统" align="center"></el-table-column>
-        <el-table-column prop="ip" label="IP地址" align="center"></el-table-column>
-        <el-table-column prop="time" label="登录/登出时间" align="center"></el-table-column>
-      </el-table>
-      <div style="background-color:#D4DFE5;height: 40px;display:flex;align-items:center;padding-left:20px;"
-           v-show="recordType==2">
-        当前结果：<span class="record-span-color">{{handleData.length}}</span>条数据
-        <el-link type="primary" :underline="false" style="margin-top:1px;margin-left:5px;" @click="onExportReport(2)">
-          导出>>
-        </el-link>
-      </div>
-      <el-table :data="tableData" border style="width: 100%" v-show="recordType==2" ref="logHandleTable">
-        <el-table-column prop="handle" label="操作记录"></el-table-column>
-        <el-table-column prop="time" label="操作时间" align="center" width="250"></el-table-column>
-        <el-table-column prop="name" label="操作人员" align="center" width="250"></el-table-column>
-        <el-table-column prop="system" label="操作系统" align="center" width="250"></el-table-column>
-        <el-table-column prop="browser" label="浏览器及版本号" align="center" width="250"></el-table-column>
-        <el-table-column prop="ip" label="IP地址" align="center" width="250"></el-table-column>
-      </el-table>
-      <div style="background-color:#D4DFE5;height: 40px;display:flex;align-items:center;padding-left:20px;"
-           v-show="recordType==3">
-        当前结果：<span class="record-span-color">{{uploadData.length}}</span>条数据
-        <el-link type="primary" :underline="false" style="margin-top:1px;margin-left:5px;" @click="onExportReport(3)">
-          导出>>
-        </el-link>
-      </div>
-      <el-table :data="tableData" border style="width: 100%" v-show="recordType==3" ref="logUploadinTable">
-        <el-table-column prop="name" label="操作人" align="center"></el-table-column>
-        <el-table-column prop="time" label="上传时间" align="center"></el-table-column>
-        <el-table-column prop="file" label="上传文件格式" align="center"></el-table-column>
-        <el-table-column prop="size" label="上传文件大小" align="center"></el-table-column>
-      </el-table>
-    </el-card>
-    <div style="display:flex;justify-content:center;margin-top:20px;" v-show="serverDataList">
-      <el-pagination
-        background
-        @current-change="serverDataChange"
-        :current-page="currentPage"
-        :page-size="pageSize"
-        layout="total, prev, pager, next, jumper"
-        :total="serverDataList"
-      ></el-pagination>
     </div>
   </div>
 </template>
@@ -115,12 +120,13 @@
     import promptUtil from '../../utils/promptUtil'
     import storageUtil from '../../utils/storageUtil'
     import childHeader from '../component/childHeader'
-
+    import noAuthContent from '../component/noAuthContent'
     export default {
-        components: {"als-child-header": childHeader},
+        components: {"als-child-header": childHeader,"als-no-auth":noAuthContent},
         name: "logInfo",
         data() {
             return {
+                isAuth:false,
                 routerConfig: [{name: '日志信息', to: ''}],
                 recordType: 1, // 1登录  2 操作
                 tableData: [],
@@ -161,7 +167,13 @@
         mounted() {
             promptUtil.checkOverdue(this, storageUtil.readTeacherInfo().id) // true 表示已过期 false表示未过期
             PubSub.publish("currentMenuIndex", ROUTER_LOG_INFO)
-            this.initData()
+            let menuItem = storageUtil.getMenu().find(item=> item.url=='loginfo')
+            if(menuItem && menuItem.if_in==1){ // 有权限
+                this.isAuth = true
+                this.initData()
+            }else{
+                this.isAuth = false
+            }
         },
         methods: {
             initData() {

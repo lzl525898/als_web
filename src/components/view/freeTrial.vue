@@ -246,7 +246,7 @@ export default {
             this.successShow = false;
             //跳转的页面写在此处
             // window.close()
-            this.$router.push({ path: "/login" });
+            this.$router.replace({ path: "/login" });
           }
         }, 1000);
       }

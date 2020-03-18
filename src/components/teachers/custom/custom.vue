@@ -1,81 +1,86 @@
 <template>
     <div>
-      <!-- 面包屑 -->
-      <el-row>
-        <el-col :span="24">
-          <als-child-header :config="routerConfig"/>
-        </el-col>
-      </el-row>
-      <el-card shadow="always">
+      <div v-if="!isAuth">
+        <als-no-auth/>
+      </div>
+      <div v-if="isAuth">
         <el-row>
-          <el-col :span="20">
-            <el-row type="flex" align="small" v-for="type in filterInfo" :key="type.id">
-              <el-col>
-                <el-checkbox-group v-model="categoryGroup" size="small" @change="categoryGroupChange">
-                  <el-checkbox-button v-for="(category,index) in type.category" :label="category.id" :key="index" >{{category.label}}</el-checkbox-button>
-                </el-checkbox-group>
-              </el-col>
-            </el-row>
-            <el-row>
-              <el-col>
-                <el-input placeholder="请输入查询信息" v-model="queryInfo" size="small" style="width: 240px;"></el-input>
-                <el-button size="small" type="primary" icon="el-icon-search" @click="queryPackageInfo">搜索</el-button>
-              </el-col>
-            </el-row>
-          </el-col>
-          <el-col :span="4">
-          <div style="display: flex;width: 100%;justify-content: flex-end;">
-            <el-button type="primary" @click="addCustomCourse">添加课程</el-button>
-          </div>
+          <el-col :span="24">
+            <als-child-header :config="routerConfig"/>
           </el-col>
         </el-row>
-        <el-divider></el-divider>
-        <el-row :gutter="20" style="margin-top: 20px;">
-          <el-col>
-            <div v-show="courseShowStatus==0" style="height: 200px"></div>
-            <div v-show="courseShowStatus==1">
-              <div class="nodata">
-                <img style="width:300px;" src="../../../../static/images/base/nodata.png" alt>
+        <el-card shadow="always">
+          <el-row>
+            <el-col :span="20">
+              <el-row type="flex" align="small" v-for="type in filterInfo" :key="type.id">
+                <el-col>
+                  <el-checkbox-group v-model="categoryGroup" size="small" @change="categoryGroupChange">
+                    <el-checkbox-button v-for="(category,index) in type.category" :label="category.id" :key="index" >{{category.label}}</el-checkbox-button>
+                  </el-checkbox-group>
+                </el-col>
+              </el-row>
+              <el-row>
+                <el-col>
+                  <el-input placeholder="请输入查询信息" v-model="queryInfo" size="small" style="width: 240px;"></el-input>
+                  <el-button size="small" type="primary" icon="el-icon-search" @click="queryPackageInfo">搜索</el-button>
+                </el-col>
+              </el-row>
+            </el-col>
+            <el-col :span="4">
+              <div style="display: flex;width: 100%;justify-content: flex-end;">
+                <el-button type="primary" @click="addCustomCourse">添加课程</el-button>
               </div>
-            </div>
-            <div v-show="courseShowStatus==2" class="el-box" v-for="(item,index) in courseInfo" :key="index">
-              <div style="cursor: pointer;">
-                <div style="border-radius: 10%;box-shadow: 5px 5px 5px #eee;border: none;">
-                  <img
-                    :src="item.img"
-                    alt
-                    class="cover"
-                    :current-id="item.id"
-                    @click="intoEditCourse(item)"
-                    style="border-top-left-radius: 10%;border-top-right-radius: 10%"
-                  >
-                  <el-tooltip class="item" effect="dark" :content="item.title" placement="top">
-                    <div class="el-txt">{{item.title}}</div>
-                  </el-tooltip>
-                  <div style="display: flex;justify-content: space-between">
-                    <div class="el-txt-box">
-                      <el-link :underline="false" @click="intoEditCourse(item)">
-                      <p><i class="el-icon-document"></i>{{item.lesson}}</p>
-                      </el-link>
-                    </div>
-                    <div style="padding-top: 13px;margin-right: 16px;">
-                      <el-tooltip class="item" effect="dark" content="查看课程" placement="top">
-                        <el-button type="primary" plain icon="el-icon-view" size="small" style="margin:0;padding:5px;" @click="seeCustomPackage(item)"></el-button>
-                      </el-tooltip>
-                      <el-tooltip class="item" effect="dark" content="编辑课程" placement="top">
-                        <el-button type="primary" plain icon="el-icon-edit" size="small" style="margin:0;padding:5px;" @click="editCustomPackage(item)"></el-button>
-                      </el-tooltip>
-                      <el-tooltip class="item" effect="dark" content="删除课时" placement="top">
-                        <el-button type="danger" plain icon="el-icon-delete" size="small" style="margin:0;padding:5px;" @click="isDelCustomPackage(item)"></el-button>
-                      </el-tooltip>
+            </el-col>
+          </el-row>
+          <el-divider></el-divider>
+          <el-row :gutter="20" style="margin-top: 20px;">
+            <el-col>
+              <div v-show="courseShowStatus==0" style="height: 200px"></div>
+              <div v-show="courseShowStatus==1">
+                <div class="nodata">
+                  <img style="width:300px;" src="../../../../static/images/base/nodata.png" alt>
+                </div>
+              </div>
+              <div v-show="courseShowStatus==2" class="el-box" v-for="(item,index) in courseInfo" :key="index">
+                <div style="cursor: pointer;">
+                  <div style="border-radius: 10%;box-shadow: 5px 5px 5px #eee;border: none;">
+                    <img
+                      :src="item.img"
+                      alt
+                      class="cover"
+                      :current-id="item.id"
+                      @click="intoEditCourse(item)"
+                      style="border-top-left-radius: 10%;border-top-right-radius: 10%"
+                    >
+                    <el-tooltip class="item" effect="dark" :content="item.title" placement="top">
+                      <div class="el-txt">{{item.title}}</div>
+                    </el-tooltip>
+                    <div style="display: flex;justify-content: space-between">
+                      <div class="el-txt-box">
+                        <el-link :underline="false" @click="intoEditCourse(item)">
+                          <p><i class="el-icon-document"></i>{{item.lesson}}</p>
+                        </el-link>
+                      </div>
+                      <div style="padding-top: 13px;margin-right: 16px;">
+                        <el-tooltip class="item" effect="dark" content="查看课程" placement="top">
+                          <el-button type="primary" plain icon="el-icon-view" size="small" style="margin:0;padding:5px;" @click="seeCustomPackage(item)"></el-button>
+                        </el-tooltip>
+                        <el-tooltip class="item" effect="dark" content="编辑课程" placement="top">
+                          <el-button type="primary" plain icon="el-icon-edit" size="small" style="margin:0;padding:5px;" @click="editCustomPackage(item)"></el-button>
+                        </el-tooltip>
+                        <el-tooltip class="item" effect="dark" content="删除课时" placement="top">
+                          <el-button type="danger" plain icon="el-icon-delete" size="small" style="margin:0;padding:5px;" @click="isDelCustomPackage(item)"></el-button>
+                        </el-tooltip>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
-          </el-col>
-        </el-row>
-      </el-card>
+            </el-col>
+          </el-row>
+        </el-card>
+      </div>
+      <!-- 面包屑 -->
       <el-dialog title="提示" :visible.sync="isDelCustomShow" width="20%">
         <el-row>
           <el-col :span="4">
@@ -104,12 +109,17 @@
   import promptUtil from "../../../utils/promptUtil";
   import storageUtil from "../../../utils/storageUtil";
   import stringUtil from "../../../utils/stringUtil";
-  import childHeader from '../../component/childHeader'
+  import childHeader from '../../component/childHeader';
+  import noAuthContent from "../../component/noAuthContent";
   export default {
     name: "custom",
-    components:{"als-child-header": childHeader},
+    components:{
+        "als-child-header": childHeader,
+        "als-no-auth": noAuthContent,
+    },
     data(){
       return {
+        isAuth: false,
         routerConfig: [{name:'自定义课程',to:''}],
         filterInfo: [], // 过滤类型
         categoryGroup: [], // 类型数组
@@ -125,8 +135,14 @@
     mounted() {
       promptUtil.checkOverdue(this, storageUtil.readTeacherInfo().id) // true 表示已过期 false表示未过期
       PubSub.publish("currentMenuIndex", ROUTER_CUSTOM);
-      this.initPackageInfo()
-      this.initPackageCategory()
+      let menuItem = storageUtil.getMenu().find(item=> item.url=='custom')
+      if(menuItem && menuItem.if_in==1) { // 有权限
+          this.isAuth = true
+          this.initPackageInfo()
+          this.initPackageCategory()
+      }else{
+          this.isAuth = false
+      }
     },
     methods: {
       // 跳转添加自定义课程

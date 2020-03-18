@@ -12,7 +12,7 @@ window.baseURL=baseURL
 global.DEBUG = true
 
 axios.defaults.baseURL = baseURL
-axios.defaults.timeout = 50000
+axios.defaults.timeout = 10000
 
 //添加请求拦截器
 axios.interceptors.request.use(function (config) {
@@ -21,10 +21,6 @@ axios.interceptors.request.use(function (config) {
   if (token) { // 字符串中包含 token_userid   当userid为0时表示登陆失败，跳转至login
     config.headers['Authorization'] = token + "_" + (storageUtil.readTeacherInfo() ? storageUtil.readTeacherInfo().id : "0")
 
-  } else {
-    // if(config.url.indexOf('return_webconfig')<0){ // 屏蔽招商加盟接口
-    //   router.replace({path:'/login'})
-    // }
   }
   config.headers['Alslangs'] = storageUtil.getLang()
   return config;
@@ -529,6 +525,11 @@ const getTaskType = params => {
 //获取添加D打印电子贴纸后的信息
 const getTaskTypeInformation = params => {
   return axios.post(`task/find_task2`, params).then(res => res.data)
+}
+//====================================直播点=======================================
+// 获取直播点详情
+const getLivePointDetail = params => {
+  return axios.get(`live_school/live_count_report`, {params}).then(res => res.data)
 }
 //====================================直播统计=======================================
 //获取直播课概况信息
@@ -1540,6 +1541,7 @@ export {
   getLiveList,
   disableLive,
   delTableListLiveInformation,
+  getLivePointDetail,
   getLiveStatisticsInformation,
   getLiveStudentTableInformation,
   getLiveTeacherTableInformation,

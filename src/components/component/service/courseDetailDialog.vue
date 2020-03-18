@@ -2,10 +2,43 @@
   <el-dialog
     :visible.sync="dialogVisible"
     width="660px"
-    destroy-on-close
     >
     <div slot="title" class="dialog-header">课程详情</div>
+    <el-dialog
+      width="660px"
+      :visible.sync="innerVisible"
+      append-to-body>
+      <div slot="title" class="dialog-header">试看课程</div>
+      <div style="margin-top: -20px;border-top: 1px solid #EBEEF5;padding-top:5px;height:445px">
+        <el-tabs v-model="innerDialog.activeName">
+          <el-tab-pane label="课件" name="1">
+            <div style="height:400px;overflow-y:auto;overflow-x:hidden">
+              <div class="loadingPPtBox">
+                <img src="../../../../static/images/base/loading.gif" alt="" id="loadingPPt"></div>
+              <iframe id="trialIframe" :src="innerDialog.courseWare.url"
+                      style="border:1px solid #aabbcc;width:620px;height:390px"
+                      allowfullscreen="true" mozallowfullscreen="true" webkitallowfullscreen="true"/>
+            </div>
+          </el-tab-pane>
+          <el-tab-pane label="教案" name="2">
+            <div style="height:400px;overflow-y:auto;overflow-x:hidden">
+              <pdf v-for="i in numPages" :key="i" :src="innerDialog.lesson.url" :page="i"/>
+            </div>
+          </el-tab-pane>
+          <el-tab-pane label="视频" name="3">
+            <div style="height:400px;display:flex;justify-content:center;flex-direction:column;">
+              <div id="video" style="width:100%;height:100%;margin: 0 auto;"/>
+              <el-steps :active="innerDialog.stepActive" align-center style="margin-top:20px">
+                <el-step :title="item.title" v-for="(item,index) in innerDialog.videos" :key="index"
+                         @click.native="handleClickStep(index)" style="cursor: pointer;"></el-step>
+              </el-steps>
+            </div>
+          </el-tab-pane>
+        </el-tabs>
+      </div>
+    </el-dialog>
     <div>
+      <div class="base-btn btn-advice" style="position:absolute;right:20px;bottom:20px;width:132px" @click="innerVisible=true">试看</div>
       <div class="flex-row-wrapper" style="margin-top: -20px;border-top: 1px solid #EBEEF5;padding-top: 20px">
         <img class="course-cover" :src="detail.imgUrl"/>
         <div class="flex-column-wrapper">
@@ -23,7 +56,7 @@
             <el-popover
               placement="bottom"
               width="150"
-              trigger="hover">
+              trigger="click">
               <div>
                 <img :src='detail.callUs.img' alt="" style="width: 150px">
                 <p style="text-align: center">{{detail.callUs.tel}} </p>
@@ -60,22 +93,106 @@
 </template>
 
 <script>
+    import $ from 'jquery'
+    import pdf from "vue-pdf"
+    import '../../../../static/ckplayer/ckplayer/ckplayer'
     export default {
         name: "courseDetailDialog",
+        components:{'pdf': pdf},
         data(){
             return{
                 dialogVisible: false,
+                innerVisible:false,
+                videoObject: null,
+                numPages: 1,
+                innerDialog:{
+                    stepActive: 1,
+                    activeName:'1',
+                    courseWare: {label:'第1课 认识coocoo 课件',url:'https://ow365.cn/?i=18640&n=5&ssl=1&n=5&furl=https://alseduline.oss-cn-shenzhen.aliyuncs.com/uploads/report/files/20191218/ALS_80015766645858311823059.pptx'},
+                    lesson:{label:'第1课 认识coocoo小车 教案',url:'https://alseduline.oss-cn-shenzhen.aliyuncs.com/uploads/report/files/20191129/奥聪和CooCoo的地球保卫战1-认识CooCoo1.pdf'},
+                    videos:[
+                        {
+                            title: "第1部分 故事导入",
+                            video: "https://alseduline.oss-cn-shenzhen.aliyuncs.com/uploads/report/videos/ALS15765777115207701815119.mp4",
+                            image: "https://alseduline.oss-cn-shenzhen.aliyuncs.com/uploads/report/images/ALS15765785117657091828319.jpg"
+                        }]
+                },
                 detail: {callUs:{img:'',tel:''}}
             }
+        },
+        mounted(){
+            $('#trialIframe').hide();
+        },
+        updated(){
+            $("#loadingPPt").show();
+            var $dom = document.getElementById("trialIframe");
+            if ($dom) {
+                if ($dom.attachEvent) {
+                    $dom.attachEvent("onload", function () {
+                        $("#loadingPPt").hide();
+                        $(".loadingPPtBox").hide();
+                        $('#trialIframe').show();
+                    });
+                } else {
+                    $dom.onload = function () {
+                        $("#loadingPPt").hide();
+                        $(".loadingPPtBox").hide();
+                        $('#trialIframe').show();
+                    };
+                }
+            }
+            this.currentPlayer(this.innerDialog.stepActive)
+            $("#video").css({"width":"100%","height":"100%"})
+        },
+        mounted(){
         },
         methods: {
             show(detail){
                 this.detail = detail
                 this.dialogVisible = true
+                this.pdfTask(this.innerDialog.lesson.url)
             },
             handleClick(){
                 this.$emit('targetCourse', {status:true, price: this.detail.price*1, detail: this.detail})
                 this.dialogVisible = false
+            },
+            pdfTask(pdfUrl){
+                if (pdfUrl && pdfUrl != "") {
+                    const that = this
+                    const loadingTask = pdf.createLoadingTask(pdfUrl)
+                    loadingTask.then(pdf => {
+                        that.numPages = pdf.numPages
+                    }).catch((err) => {
+                        console.error('pdf加载失败')
+                    })
+                }
+            },
+            handleClickStep(val) {
+                this.innerDialog.stepActive = val + 1
+                this.currentPlayer(this.innerDialog.stepActive)
+            },
+            currentPlayer(index) {
+                try {
+                    window.videoplayerObj != null ? window.videoplayerObj.videoPause() : window.videoplayerObj;
+                } catch (e) {}
+                if (this.innerDialog.videos.length != 0) {
+                    this.videoObject = {
+                        container: "#video", //容器的ID或className
+                        variable: "player", //播放函数名称
+                        loop: false, //播放结束是否循环播放
+                        flashplayer: false,
+                        poster: this.innerDialog.videos[index - 1].image, //封面图片
+                        drag: "start", //拖动的属性
+                        seek: 0, //默认跳转的时间
+                        loaded: "loadedHandler",//监听播放器加载成功
+                        video: [[this.innerDialog.videos[index - 1].video, "video/mp4"]]
+                    };
+                }
+                try {
+                    // 切换页面后停止播放
+                    window.videoplayerObj = new window.ckplayer(this.videoObject);
+                    window.videoplayerObj != null ? window.videoplayerObj.videoPause() : window.videoplayerObj;
+                } catch (e) {}
             }
         }
     }
@@ -159,6 +276,10 @@
     color: #23b8ff;
     cursor: pointer;
   }
+  .btn-advice:hover{
+    color: #31A4FA;
+    background-color: #F2F6FC;
+  }
   .detail-item{
     color:#333;
     font-size: 16px;
@@ -173,5 +294,13 @@
   .detail-item-value{
     width:530px;
     padding-left:10px;
+  }
+  .loadingPPtBox{
+    width:620px;
+    height:390px;
+  }
+  .loadingPPtBox img {
+    width: 101%;
+    height: 101%;
   }
 </style>

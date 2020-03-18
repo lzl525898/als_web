@@ -252,6 +252,7 @@
         if (res.code == SUCCESS_CODE) {
           if (res.data && res.data != '[]') {
             this.getMenuArray = res.data
+            storageUtil.saveMenu(res.data)
             vuexUtil.setSystemMenuState(this, res.data)
             // 显示今日课程
             this.$store.dispatch("setTodayScheduleStatus", vuexUtil.checkMenuExist(this, 'calendar').exist)
@@ -305,103 +306,103 @@
       },
       //初始化列表数据
       //下拉菜单  退出
-      handleCommand(command) {
-        if (command === "logout") {
-          this.logout();
-        } else if (command === "persoinfo") {
-          const loading = promptUtil.loading(this);
-          //获取个人信息
-          if (storageUtil.readTeacherInfo().role_id == 2) {
-            // 学生
-            getStudentInfoById(
-              qs.stringify({
-                school_id: storageUtil.readTeacherInfo().school_id,
-                student_id: storageUtil.readTeacherInfo().id
-              })
-            )
-              .then(res => {
-                if (res.code == SUCCESS_CODE) {
-                  this.gridData = res.data;
-                  if (this.gridData.classes == "") {
-                    this.gridData.classes = {className: "", classOwn: []};
-                  }
-                  this.dialogFormVisible = true;
-                } else {
-                  promptUtil.error(this, this.$t(`message.system_error_network`));
-                }
-                loading.close();
-              })
-              .catch(err => {
-                loading.close();
-                promptUtil.timeout(this, err);
-              });
-          } else {
-            // 教师
-            getTeacherInfoById(
-              qs.stringify({
-                school_id: storageUtil.readTeacherInfo().school_id,
-                teacher_id: storageUtil.readTeacherInfo().id
-              })
-            )
-              .then(res => {
-                if (res.code == SUCCESS_CODE) {
-                  if (res.data && res.data != '[]') {
-                    this.gridData = res.data;
-                    if (this.gridData.classes == "") {
-                      this.gridData.classes = {className: "", classOwn: []};
-                    }
-                  } else {
-                    promptUtil.wait(this);
-                  }
-                  this.dialogFormVisible = true;
-                } else {
-                  promptUtil.wait(this);
-                }
-                loading.close();
-              })
-              .catch(err => {
-                loading.close();
-                promptUtil.timeout(this, err);
-              });
-          }
-        } else {
-          // 教师
-          getTeacherInfoById(
-            qs.stringify({
-              school_id: storageUtil.readTeacherInfo().school_id,
-              teacher_id: storageUtil.readTeacherInfo().id
-            })
-          )
-            .then(res => {
-              if (res.code == SUCCESS_CODE) {
-                if (res.data && res.data != '[]') {
-                  this.gridData = res.data;
-                  if (this.gridData.classes == "") {
-                    this.gridData.classes = {className: "", classOwn: []};
-                  }
-                } else {
-                  promptUtil.wait(this);
-                }
-                this.dialogFormVisible = true;
-              } else {
-                promptUtil.wait(this);
-              }
-              loading.close();
-            })
-            .catch(err => {
-              loading.close();
-              promptUtil.timeout(this, err);
-            });
-        }
-      },
-      //table切换
-      handleClick(tab, event) {
-        if (tab.name == "second") {
-          this.currentSelectTabName = tab.name;
-          this.$refs.ruleForm.resetFields();
-          // this.ruleForm.currentmp=this.gridData.phone
-        }
-      },
+      // handleCommand(command) {
+      //   if (command === "logout") {
+      //     this.logout();
+      //   } else if (command === "persoinfo") {
+      //     const loading = promptUtil.loading(this);
+      //     //获取个人信息
+      //     if (storageUtil.readTeacherInfo().role_id == 2) {
+      //       // 学生
+      //       getStudentInfoById(
+      //         qs.stringify({
+      //           school_id: storageUtil.readTeacherInfo().school_id,
+      //           student_id: storageUtil.readTeacherInfo().id
+      //         })
+      //       )
+      //         .then(res => {
+      //           if (res.code == SUCCESS_CODE) {
+      //             this.gridData = res.data;
+      //             if (this.gridData.classes == "") {
+      //               this.gridData.classes = {className: "", classOwn: []};
+      //             }
+      //             this.dialogFormVisible = true;
+      //           } else {
+      //             promptUtil.error(this, this.$t(`message.system_error_network`));
+      //           }
+      //           loading.close();
+      //         })
+      //         .catch(err => {
+      //           loading.close();
+      //           promptUtil.timeout(this, err);
+      //         });
+      //     } else {
+      //       // 教师
+      //       getTeacherInfoById(
+      //         qs.stringify({
+      //           school_id: storageUtil.readTeacherInfo().school_id,
+      //           teacher_id: storageUtil.readTeacherInfo().id
+      //         })
+      //       )
+      //         .then(res => {
+      //           if (res.code == SUCCESS_CODE) {
+      //             if (res.data && res.data != '[]') {
+      //               this.gridData = res.data;
+      //               if (this.gridData.classes == "") {
+      //                 this.gridData.classes = {className: "", classOwn: []};
+      //               }
+      //             } else {
+      //               promptUtil.wait(this);
+      //             }
+      //             this.dialogFormVisible = true;
+      //           } else {
+      //             promptUtil.wait(this);
+      //           }
+      //           loading.close();
+      //         })
+      //         .catch(err => {
+      //           loading.close();
+      //           promptUtil.timeout(this, err);
+      //         });
+      //     }
+      //   } else {
+      //     // 教师
+      //     getTeacherInfoById(
+      //       qs.stringify({
+      //         school_id: storageUtil.readTeacherInfo().school_id,
+      //         teacher_id: storageUtil.readTeacherInfo().id
+      //       })
+      //     )
+      //       .then(res => {
+      //         if (res.code == SUCCESS_CODE) {
+      //           if (res.data && res.data != '[]') {
+      //             this.gridData = res.data;
+      //             if (this.gridData.classes == "") {
+      //               this.gridData.classes = {className: "", classOwn: []};
+      //             }
+      //           } else {
+      //             promptUtil.wait(this);
+      //           }
+      //           this.dialogFormVisible = true;
+      //         } else {
+      //           promptUtil.wait(this);
+      //         }
+      //         loading.close();
+      //       })
+      //       .catch(err => {
+      //         loading.close();
+      //         promptUtil.timeout(this, err);
+      //       });
+      //   }
+      // },
+      // //table切换
+      // handleClick(tab, event) {
+      //   if (tab.name == "second") {
+      //     this.currentSelectTabName = tab.name;
+      //     this.$refs.ruleForm.resetFields();
+      //     // this.ruleForm.currentmp=this.gridData.phone
+      //   }
+      // },
       loginHeader() {
         this.isCollapse = !this.isCollapse
         if (this.isCollapse) {

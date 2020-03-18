@@ -1,392 +1,397 @@
 <template>
   <div>
-    <!--   面包屑-->
-    <el-row>
-      <el-col :span="24">
-        <als-child-header :config="routerConfig"/>
-      </el-col>
-    </el-row>
-    <el-row>
-      <el-col :span="24">
-        <el-tabs v-model="currentSelectTab" @tab-click="handleClick" type="card">
-          <el-tab-pane label="机构信息" name="first">
-            <!--            地图开始-->
-            <div id='container'></div>
-            <div id="myPageTop">
-              <table>
-                <tr>
-                  <td>
-                    <label>请输入关键字：</label>
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <input id="tipinput"/>
-                  </td>
-                </tr>
-              </table>
-            </div>
-            <div class="info" v-show="info">
-              <h4 id='status'></h4>
-              <hr>
-              <p id='result'></p>
-              <hr>
-              <p>由于众多浏览器已不再支持非安全域的定位请求，为保位成功率和精度，请升级您的站点到HTTPS。</p>
-            </div>
-            <!--            地图结束-->
-            <div class="el-formBox el-formBox_top">
-              <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
-                <el-form-item label="机构地址：" prop="adress">
-                  <el-input v-model="ruleForm.adress" placeholder="请输入机构地址"></el-input>
-                </el-form-item>
-                <el-form-item label="联系电话：" prop="phone">
-                  <el-input v-model="ruleForm.phone" placeholder="请输入联系电话"></el-input>
-                </el-form-item>
-                <el-form-item label="微信：" prop="wechat">
-                  <el-input v-model="ruleForm.wechat" placeholder="请输入微信号"></el-input>
-                </el-form-item>
-                <el-form-item label="QQ：" prop="qq">
-                  <el-input v-model="ruleForm.qq" placeholder="请输入QQ号"></el-input>
-                </el-form-item>
-                <el-form-item label="微博：" prop="weibo">
-                  <el-input v-model="ruleForm.weibo" placeholder="请输入微博"></el-input>
-                </el-form-item>
-                <el-form-item label="机构宣传：">
-                  <el-upload
-                    :headers="headers"
-                    :action="uploadPictureAction"
-                    list-type="picture-card"
-                    :limit="9"
-                    :on-remove="handlePictureRemove"
-                    :on-preview="handlePictureCardPreview"
-                    :before-upload="handlePictureBeforeUpload"
-                    :on-success="handleSuccessUploadImage"
-                    :on-error="handleErrorUpload"
-                    :on-progress="handleRrogress"
-                    :file-list="ruleForm.pictureList"
-                  >
-                    <div slot="trigger">
-                      <span style="color:#888888">添加图片</span>
-                    </div>
-                    <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过2MB，最多9张</div>
-                  </el-upload>
-                  <el-dialog :visible.sync="dialogImageVisibleOrigin" size="tiny">
-                    <img width="100%" :src="dialogImageUrl" alt="">
-                  </el-dialog>
-                </el-form-item>
-                <el-form-item>
-                  <el-button type="primary" @click="saveAgencyInfo" :disabled="saveAgencyInfoDisabled">保存</el-button>
-                  <!--<el-button type="primary" @click="editAgencyInfo" v-if="editAgencyInfoBtn">编辑</el-button>-->
-                </el-form-item>
-              </el-form>
-            </div>
-            <el-row>
-              <el-col :span="24"></el-col>
-            </el-row>
-          </el-tab-pane>
-          <el-tab-pane label="课程展示" name="second">
-            <div class="el-formBox">
-              <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
-                <el-form-item label="课程名称：" prop="name">
-                  <el-input v-model="ruleForm.name" placeholder="请输入课程名称"></el-input>
-                </el-form-item>
-                <el-form-item label="课程介绍：" prop="courseDetail">
-                  <el-input
-                    type="textarea"
-                    :rows="4"
-                    placeholder="请输入课程介绍"
-                    v-model="ruleForm.courseDetail">
-                  </el-input>
-                </el-form-item>
-                <el-form-item label="标签：" prop="courseTag">
-                  <el-input placeholder="请输入标签，例如：图形化编程、编程代码" v-model="ruleForm.courseTag">
-                  </el-input>
-                </el-form-item>
-                <el-form-item label="课程等级：" prop="courseLevel">
-                  <el-radio v-model="ruleForm.courseLevel" label="初级课">初级课</el-radio>
-                  <el-radio v-model="ruleForm.courseLevel" label="中级课">中级课</el-radio>
-                  <el-radio v-model="ruleForm.courseLevel" label="高级课">高级课</el-radio>
-                </el-form-item>
-                <el-form-item label="难易度：" prop="facilityalue">
-                  <el-rate v-model="ruleForm.facilityalue" style="margin-top: 10px"></el-rate>
-                </el-form-item>
-                <el-form-item label="课程封面：" prop="courseImg">
-                  <el-upload
-                    :action="uploadPictureAction"
-                    list-type="picture-card"
-                    :limit="1"
-                    :on-remove="handlePictureRemove"
-                    :on-preview="handlePictureCardPreview"
-                    :before-upload="handlePictureBeforeUpload"
-                    :on-success="handleSuccessUploadImage"
-                    :on-error="handleErrorUpload"
-                    :on-progress="handleRrogress"
-                    ref="delClassUpload"
-                  >
-                    <div slot="trigger">
-                      <span style="color:#888888">添加图片</span>
-                    </div>
-                    <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过2MB，最多1张</div>
-                  </el-upload>
-                  <el-dialog :visible.sync="dialogImageVisibleClass" size="tiny">
-                    <img width="100%" :src="dialogImageUrl" alt="">
-                  </el-dialog>
-                </el-form-item>
-                <el-form-item>
-                  <el-button type="primary" @click="saveCourseInfor('ruleForm')" :disabled="saveCourseInforDisabled">
-                    保存
-                  </el-button>
-                </el-form-item>
-              </el-form>
-            </div>
-            <el-row>
-              <el-col :span="24">
-                <div class="line"></div>
-              </el-col>
-            </el-row>
-            <el-row>
-
-              <el-table
-                :data="tableData"
-                border
-                style="width: 100%"
-                :header-row-style="{'color':'#409EFF'}">
-                <el-table-column
-                  align="center"
-                  props="id"
-                  type="index"
-                  label="序号"
-                  width="60"
-                >
-                </el-table-column>
-                <el-table-column
-                  prop="name"
-                  label="课程名称"
-                  align="center">
-                </el-table-column>
-                <el-table-column
-                  prop="detail"
-                  label="课程介绍"
-                  align="center">
-                </el-table-column>
-                <el-table-column
-                  prop="tag"
-                  label="课程标签"
-                  align="center">
-                </el-table-column>
-                <el-table-column
-                  prop="courseLevel"
-                  label="课程等级"
-                  align="center">
-                </el-table-column>
-                <el-table-column
-                  prop="facilityalue"
-                  label="难易度"
-                  align="center">
-                </el-table-column>
-                <el-table-column label="课程封面" width="100" align="center">
-                  <template slot-scope="scope">
-                    <div v-if="scope.row.avtar==''">未上传</div>
-                    <div v-else>
-                      <img :src="scope.row.avtar" width="40" height="40" class="head_pic"/>
-                    </div>
-                  </template>
-                </el-table-column>
-
-                <el-table-column label="操作" align="center">
-                  <template slot-scope="scope">
-                    <el-button
-                      size="mini"
-                      type="danger"
-                      @click="showCourseInfor(scope.$index, scope.row)">删除
+    <div v-show="!isAuth">
+      <als-no-auth/>
+    </div>
+    <div v-show="isAuth">
+      <!--   面包屑-->
+      <el-row>
+        <el-col :span="24">
+          <als-child-header :config="routerConfig"/>
+        </el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="24">
+          <el-tabs v-model="currentSelectTab" @tab-click="handleClick" type="card">
+            <el-tab-pane label="机构信息" name="first">
+              <!--            地图开始-->
+              <div id='container'></div>
+              <div id="myPageTop">
+                <table>
+                  <tr>
+                    <td>
+                      <label>请输入关键字：</label>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <input id="tipinput"/>
+                    </td>
+                  </tr>
+                </table>
+              </div>
+              <div class="info" v-show="info">
+                <h4 id='status'></h4>
+                <hr>
+                <p id='result'></p>
+                <hr>
+                <p>由于众多浏览器已不再支持非安全域的定位请求，为保位成功率和精度，请升级您的站点到HTTPS。</p>
+              </div>
+              <!--            地图结束-->
+              <div class="el-formBox el-formBox_top">
+                <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
+                  <el-form-item label="机构地址：" prop="adress">
+                    <el-input v-model="ruleForm.adress" placeholder="请输入机构地址"></el-input>
+                  </el-form-item>
+                  <el-form-item label="联系电话：" prop="phone">
+                    <el-input v-model="ruleForm.phone" placeholder="请输入联系电话"></el-input>
+                  </el-form-item>
+                  <el-form-item label="微信：" prop="wechat">
+                    <el-input v-model="ruleForm.wechat" placeholder="请输入微信号"></el-input>
+                  </el-form-item>
+                  <el-form-item label="QQ：" prop="qq">
+                    <el-input v-model="ruleForm.qq" placeholder="请输入QQ号"></el-input>
+                  </el-form-item>
+                  <el-form-item label="微博：" prop="weibo">
+                    <el-input v-model="ruleForm.weibo" placeholder="请输入微博"></el-input>
+                  </el-form-item>
+                  <el-form-item label="机构宣传：">
+                    <el-upload
+                      :headers="headers"
+                      :action="uploadPictureAction"
+                      list-type="picture-card"
+                      :limit="9"
+                      :on-remove="handlePictureRemove"
+                      :on-preview="handlePictureCardPreview"
+                      :before-upload="handlePictureBeforeUpload"
+                      :on-success="handleSuccessUploadImage"
+                      :on-error="handleErrorUpload"
+                      :on-progress="handleRrogress"
+                      :file-list="ruleForm.pictureList"
+                    >
+                      <div slot="trigger">
+                        <span style="color:#888888">添加图片</span>
+                      </div>
+                      <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过2MB，最多9张</div>
+                    </el-upload>
+                    <el-dialog :visible.sync="dialogImageVisibleOrigin" size="tiny">
+                      <img width="100%" :src="dialogImageUrl" alt="">
+                    </el-dialog>
+                  </el-form-item>
+                  <el-form-item>
+                    <el-button type="primary" @click="saveAgencyInfo" :disabled="saveAgencyInfoDisabled">保存</el-button>
+                    <!--<el-button type="primary" @click="editAgencyInfo" v-if="editAgencyInfoBtn">编辑</el-button>-->
+                  </el-form-item>
+                </el-form>
+              </div>
+              <el-row>
+                <el-col :span="24"></el-col>
+              </el-row>
+            </el-tab-pane>
+            <el-tab-pane label="课程展示" name="second">
+              <div class="el-formBox">
+                <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
+                  <el-form-item label="课程名称：" prop="name">
+                    <el-input v-model="ruleForm.name" placeholder="请输入课程名称"></el-input>
+                  </el-form-item>
+                  <el-form-item label="课程介绍：" prop="courseDetail">
+                    <el-input
+                      type="textarea"
+                      :rows="4"
+                      placeholder="请输入课程介绍"
+                      v-model="ruleForm.courseDetail">
+                    </el-input>
+                  </el-form-item>
+                  <el-form-item label="标签：" prop="courseTag">
+                    <el-input placeholder="请输入标签，例如：图形化编程、编程代码" v-model="ruleForm.courseTag">
+                    </el-input>
+                  </el-form-item>
+                  <el-form-item label="课程等级：" prop="courseLevel">
+                    <el-radio v-model="ruleForm.courseLevel" label="初级课">初级课</el-radio>
+                    <el-radio v-model="ruleForm.courseLevel" label="中级课">中级课</el-radio>
+                    <el-radio v-model="ruleForm.courseLevel" label="高级课">高级课</el-radio>
+                  </el-form-item>
+                  <el-form-item label="难易度：" prop="facilityalue">
+                    <el-rate v-model="ruleForm.facilityalue" style="margin-top: 10px"></el-rate>
+                  </el-form-item>
+                  <el-form-item label="课程封面：" prop="courseImg">
+                    <el-upload
+                      :action="uploadPictureAction"
+                      list-type="picture-card"
+                      :limit="1"
+                      :on-remove="handlePictureRemove"
+                      :on-preview="handlePictureCardPreview"
+                      :before-upload="handlePictureBeforeUpload"
+                      :on-success="handleSuccessUploadImage"
+                      :on-error="handleErrorUpload"
+                      :on-progress="handleRrogress"
+                      ref="delClassUpload"
+                    >
+                      <div slot="trigger">
+                        <span style="color:#888888">添加图片</span>
+                      </div>
+                      <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过2MB，最多1张</div>
+                    </el-upload>
+                    <el-dialog :visible.sync="dialogImageVisibleClass" size="tiny">
+                      <img width="100%" :src="dialogImageUrl" alt="">
+                    </el-dialog>
+                  </el-form-item>
+                  <el-form-item>
+                    <el-button type="primary" @click="saveCourseInfor('ruleForm')" :disabled="saveCourseInforDisabled">
+                      保存
                     </el-button>
-                  </template>
-                </el-table-column>
-              </el-table>
-            </el-row>
-          </el-tab-pane>
-          <el-tab-pane label="名师风采" name="third">
-            <div class="el-formBox">
-              <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
-                <el-form-item label="教师名称：" prop="teacherName">
-                  <el-input v-model="ruleForm.teacherName" placeholder="请输入教师名称"></el-input>
-                </el-form-item>
-                <el-form-item label="性别：" prop="sex">
-                  <el-radio v-model="ruleForm.sex" label="1">男</el-radio>
-                  <el-radio v-model="ruleForm.sex" label="2">女</el-radio>
-                </el-form-item>
-                <el-form-item label="教师标签：" prop="teacherDetail">
-                  <el-input
-                    type="textarea"
-                    :rows="4"
-                    placeholder="请输入教师标签，如金牌讲师"
-                    v-model="ruleForm.teacherDetail">
-                  </el-input>
-                </el-form-item>
-                <el-form-item label="教师简介：" prop="teacherIntroduction">
-                  <el-input
-                    type="textarea"
-                    :rows="4"
-                    placeholder="请输入教师简介"
-                    v-model="ruleForm.teacherIntroduction">
-                  </el-input>
-                </el-form-item>
-                <el-form-item label="教师等级：" prop="level">
-                  <el-radio v-model="ruleForm.level" label="初级教师">初级教师</el-radio>
-                  <el-radio v-model="ruleForm.level" label="中级教师">中级教师</el-radio>
-                  <el-radio v-model="ruleForm.level" label="高级教师">高级教师</el-radio>
-                </el-form-item>
-                <el-form-item label="教师头像：" prop="teacherImg">
-                  <el-upload
-                    :action="uploadPictureAction"
-                    list-type="picture-card"
-                    :limit="1"
-                    :on-remove="handlePictureRemove"
-                    :on-preview="handlePictureCardPreview"
-                    :before-upload="handlePictureBeforeUpload"
-                    :on-success="handleSuccessUploadImage"
-                    :on-error="handleErrorUpload"
-                    :on-progress="handleRrogress"
-                    ref="delTeacherUpload"
+                  </el-form-item>
+                </el-form>
+              </div>
+              <el-row>
+                <el-col :span="24">
+                  <div class="line"></div>
+                </el-col>
+              </el-row>
+              <el-row>
+
+                <el-table
+                  :data="tableData"
+                  border
+                  style="width: 100%"
+                  :header-row-style="{'color':'#409EFF'}">
+                  <el-table-column
+                    align="center"
+                    props="id"
+                    type="index"
+                    label="序号"
+                    width="60"
                   >
-                    <div slot="trigger">
-                      <span style="color:#888888">添加图片</span>
-                    </div>
-                    <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过2MB，最多1张</div>
-                  </el-upload>
-                  <el-dialog :visible.sync="dialogImageVisibleTeacher" size="tiny">
-                    <img width="100%" :src="dialogImageUrl" alt="">
-                  </el-dialog>
-                </el-form-item>
+                  </el-table-column>
+                  <el-table-column
+                    prop="name"
+                    label="课程名称"
+                    align="center">
+                  </el-table-column>
+                  <el-table-column
+                    prop="detail"
+                    label="课程介绍"
+                    align="center">
+                  </el-table-column>
+                  <el-table-column
+                    prop="tag"
+                    label="课程标签"
+                    align="center">
+                  </el-table-column>
+                  <el-table-column
+                    prop="courseLevel"
+                    label="课程等级"
+                    align="center">
+                  </el-table-column>
+                  <el-table-column
+                    prop="facilityalue"
+                    label="难易度"
+                    align="center">
+                  </el-table-column>
+                  <el-table-column label="课程封面" width="100" align="center">
+                    <template slot-scope="scope">
+                      <div v-if="scope.row.avtar==''">未上传</div>
+                      <div v-else>
+                        <img :src="scope.row.avtar" width="40" height="40" class="head_pic"/>
+                      </div>
+                    </template>
+                  </el-table-column>
 
-                <el-form-item>
-                  <el-button type="primary" @click="saveTeacherInfo('ruleForm')" :disabled="saveTeacherInfoDisabled">保存
-                  </el-button>
-                </el-form-item>
-              </el-form>
-            </div>
-            <el-row>
-              <el-col :span="24">
-                <div class="line"></div>
-              </el-col>
-            </el-row>
-            <el-row>
+                  <el-table-column label="操作" align="center">
+                    <template slot-scope="scope">
+                      <el-button
+                        size="mini"
+                        type="danger"
+                        @click="showCourseInfor(scope.$index, scope.row)">删除
+                      </el-button>
+                    </template>
+                  </el-table-column>
+                </el-table>
+              </el-row>
+            </el-tab-pane>
+            <el-tab-pane label="名师风采" name="third">
+              <div class="el-formBox">
+                <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
+                  <el-form-item label="教师名称：" prop="teacherName">
+                    <el-input v-model="ruleForm.teacherName" placeholder="请输入教师名称"></el-input>
+                  </el-form-item>
+                  <el-form-item label="性别：" prop="sex">
+                    <el-radio v-model="ruleForm.sex" label="1">男</el-radio>
+                    <el-radio v-model="ruleForm.sex" label="2">女</el-radio>
+                  </el-form-item>
+                  <el-form-item label="教师标签：" prop="teacherDetail">
+                    <el-input
+                      type="textarea"
+                      :rows="4"
+                      placeholder="请输入教师标签，如金牌讲师"
+                      v-model="ruleForm.teacherDetail">
+                    </el-input>
+                  </el-form-item>
+                  <el-form-item label="教师简介：" prop="teacherIntroduction">
+                    <el-input
+                      type="textarea"
+                      :rows="4"
+                      placeholder="请输入教师简介"
+                      v-model="ruleForm.teacherIntroduction">
+                    </el-input>
+                  </el-form-item>
+                  <el-form-item label="教师等级：" prop="level">
+                    <el-radio v-model="ruleForm.level" label="初级教师">初级教师</el-radio>
+                    <el-radio v-model="ruleForm.level" label="中级教师">中级教师</el-radio>
+                    <el-radio v-model="ruleForm.level" label="高级教师">高级教师</el-radio>
+                  </el-form-item>
+                  <el-form-item label="教师头像：" prop="teacherImg">
+                    <el-upload
+                      :action="uploadPictureAction"
+                      list-type="picture-card"
+                      :limit="1"
+                      :on-remove="handlePictureRemove"
+                      :on-preview="handlePictureCardPreview"
+                      :before-upload="handlePictureBeforeUpload"
+                      :on-success="handleSuccessUploadImage"
+                      :on-error="handleErrorUpload"
+                      :on-progress="handleRrogress"
+                      ref="delTeacherUpload"
+                    >
+                      <div slot="trigger">
+                        <span style="color:#888888">添加图片</span>
+                      </div>
+                      <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过2MB，最多1张</div>
+                    </el-upload>
+                    <el-dialog :visible.sync="dialogImageVisibleTeacher" size="tiny">
+                      <img width="100%" :src="dialogImageUrl" alt="">
+                    </el-dialog>
+                  </el-form-item>
 
-              <el-table
-                :data="teacherTableData"
-                border
-                style="width: 100%"
-                :header-row-style="{'color':'#409EFF'}">
-                <el-table-column
-                  align="center"
-                  props="id"
-                  type="index"
-                  label="序号"
-                  width="60"
-                >
-                </el-table-column>
-                <el-table-column
-                  prop="name"
-                  label="教师名称"
-                  align="center">
-                </el-table-column>
-                <el-table-column
-                  prop="sex"
-                  label="性别"
-                  align="center">
-                </el-table-column>
-                <el-table-column
-                  prop="detail"
-                  label="教师标签"
-                  align="center">
-                </el-table-column>
-                <el-table-column
-                  prop="teacherIntroduction"
-                  label="教师简介"
-                  align="center">
-                </el-table-column>
-                <el-table-column
-                  prop="level"
-                  label="教师等级"
-                  align="center">
-                </el-table-column>
-                <el-table-column label="教师头像" width="100" align="center">
-                  <template slot-scope="scope">
-                    <div v-if="scope.row.avtar==''">未上传</div>
-                    <div v-else>
-                      <img :src="scope.row.avtar" width="40" height="40" class="head_pic"/>
-                    </div>
-                  </template>
-                </el-table-column>
-                <el-table-column label="操作" align="center">
-                  <template slot-scope="scope">
-                    <el-button
-                      size="mini"
-                      type="danger"
-                      @click="showTeacherInfor(scope.$index, scope.row)">删除
+                  <el-form-item>
+                    <el-button type="primary" @click="saveTeacherInfo('ruleForm')" :disabled="saveTeacherInfoDisabled">保存
                     </el-button>
-                  </template>
-                </el-table-column>
-              </el-table>
-            </el-row>
-          </el-tab-pane>
-          <el-tab-pane label="关于我们" name="four">
-            <div class="el-formBox">
-              <el-form :model="aboutUsRuleForm" :rules="aboutUsRules" ref="aboutUsRuleForm" label-width="100px"
-                       class="demo-ruleForm">
-                <el-form-item label="机构名称：" prop="aboutSchoolName">
-                  <el-input v-model="aboutUsRuleForm.aboutSchoolName" placeholder="请输入机构名称"></el-input>
-                </el-form-item>
-                <el-form-item label="关于我们：" prop="schoolDescribed">
-                  <el-input
-                    type="textarea"
-                    :rows="4"
-                    placeholder="请输入信息"
-                    v-model="aboutUsRuleForm.schoolDescribed">
-                  </el-input>
-                </el-form-item>
-                <el-form-item label="机构logo：">
-                  <el-upload
-                    :action="uploadPictureAction"
-                    list-type="picture-card"
-                    :limit="1"
-                    :on-remove="handlePictureRemove"
-                    :on-preview="handlePictureCardPreview"
-                    :before-upload="handlePictureBeforeUpload"
-                    :on-success="handleSuccessUploadImage"
-                    :on-error="handleErrorUpload"
-                    :on-progress="handleRrogress"
-                    :file-list="aboutUsRuleForm.aboutUsPictureList"
+                  </el-form-item>
+                </el-form>
+              </div>
+              <el-row>
+                <el-col :span="24">
+                  <div class="line"></div>
+                </el-col>
+              </el-row>
+              <el-row>
+
+                <el-table
+                  :data="teacherTableData"
+                  border
+                  style="width: 100%"
+                  :header-row-style="{'color':'#409EFF'}">
+                  <el-table-column
+                    align="center"
+                    props="id"
+                    type="index"
+                    label="序号"
+                    width="60"
                   >
-                    <div slot="trigger">
-                      <span style="color:#888888">添加图片</span>
+                  </el-table-column>
+                  <el-table-column
+                    prop="name"
+                    label="教师名称"
+                    align="center">
+                  </el-table-column>
+                  <el-table-column
+                    prop="sex"
+                    label="性别"
+                    align="center">
+                  </el-table-column>
+                  <el-table-column
+                    prop="detail"
+                    label="教师标签"
+                    align="center">
+                  </el-table-column>
+                  <el-table-column
+                    prop="teacherIntroduction"
+                    label="教师简介"
+                    align="center">
+                  </el-table-column>
+                  <el-table-column
+                    prop="level"
+                    label="教师等级"
+                    align="center">
+                  </el-table-column>
+                  <el-table-column label="教师头像" width="100" align="center">
+                    <template slot-scope="scope">
+                      <div v-if="scope.row.avtar==''">未上传</div>
+                      <div v-else>
+                        <img :src="scope.row.avtar" width="40" height="40" class="head_pic"/>
+                      </div>
+                    </template>
+                  </el-table-column>
+                  <el-table-column label="操作" align="center">
+                    <template slot-scope="scope">
+                      <el-button
+                        size="mini"
+                        type="danger"
+                        @click="showTeacherInfor(scope.$index, scope.row)">删除
+                      </el-button>
+                    </template>
+                  </el-table-column>
+                </el-table>
+              </el-row>
+            </el-tab-pane>
+            <el-tab-pane label="关于我们" name="four">
+              <div class="el-formBox">
+                <el-form :model="aboutUsRuleForm" :rules="aboutUsRules" ref="aboutUsRuleForm" label-width="100px"
+                         class="demo-ruleForm">
+                  <el-form-item label="机构名称：" prop="aboutSchoolName">
+                    <el-input v-model="aboutUsRuleForm.aboutSchoolName" placeholder="请输入机构名称"></el-input>
+                  </el-form-item>
+                  <el-form-item label="关于我们：" prop="schoolDescribed">
+                    <el-input
+                      type="textarea"
+                      :rows="4"
+                      placeholder="请输入信息"
+                      v-model="aboutUsRuleForm.schoolDescribed">
+                    </el-input>
+                  </el-form-item>
+                  <el-form-item label="机构logo：">
+                    <el-upload
+                      :action="uploadPictureAction"
+                      list-type="picture-card"
+                      :limit="1"
+                      :on-remove="handlePictureRemove"
+                      :on-preview="handlePictureCardPreview"
+                      :before-upload="handlePictureBeforeUpload"
+                      :on-success="handleSuccessUploadImage"
+                      :on-error="handleErrorUpload"
+                      :on-progress="handleRrogress"
+                      :file-list="aboutUsRuleForm.aboutUsPictureList"
+                    >
+                      <div slot="trigger">
+                        <span style="color:#888888">添加图片</span>
+                      </div>
+                      <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过2MB，最多1张</div>
+                    </el-upload>
+                    <el-dialog :visible.sync="dialogImageVisibleAboutUs" size="tiny">
+                      <img width="100%" :src="dialogImageUrl" alt="">
+                    </el-dialog>
+                  </el-form-item>
+                  <el-form-item label="编辑器logo:">
+                    <div style="padding-top: 13px">
+                      <el-link :underline="false" type="primary" style="margin-top: -30px;"
+                               @click="avatarDialogVisible=true">上传logo
+                      </el-link>
                     </div>
-                    <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过2MB，最多1张</div>
-                  </el-upload>
-                  <el-dialog :visible.sync="dialogImageVisibleAboutUs" size="tiny">
-                    <img width="100%" :src="dialogImageUrl" alt="">
-                  </el-dialog>
-                </el-form-item>
-                <el-form-item label="编辑器logo:">
-                  <div style="padding-top: 13px">
-                    <el-link :underline="false" type="primary" style="margin-top: -30px;"
-                             @click="avatarDialogVisible=true">上传logo
-                    </el-link>
-                  </div>
-                  <el-avatar :src="currentAvatarImg"></el-avatar>
-                </el-form-item>
-                <el-form-item>
-                  <el-button type="primary" @click="saveAboutUsInfo(ruleForm)" v-if="saveAboutUsInfoBtn"
-                             :disabled="saveAboutUsInfoDisabled">保存
-                  </el-button>
-                  <!--                  <el-button type="primary" @click="editAboutUsInfo" v-if="editAboutUsInfoBtn">编辑</el-button>-->
-                </el-form-item>
-              </el-form>
-            </div>
-          </el-tab-pane>
-        </el-tabs>
-      </el-col>
-    </el-row>
+                    <el-avatar :src="currentAvatarImg"></el-avatar>
+                  </el-form-item>
+                  <el-form-item>
+                    <el-button type="primary" @click="saveAboutUsInfo(ruleForm)" v-if="saveAboutUsInfoBtn"
+                               :disabled="saveAboutUsInfoDisabled">保存
+                    </el-button>
+                    <!--                  <el-button type="primary" @click="editAboutUsInfo" v-if="editAboutUsInfoBtn">编辑</el-button>-->
+                  </el-form-item>
+                </el-form>
+              </div>
+            </el-tab-pane>
+          </el-tabs>
+        </el-col>
+      </el-row>
+    </div>
     <el-dialog title="提示" :visible.sync="delDialogVisible" width="20%">
       <el-row>
         <el-col :span="4">
@@ -468,6 +473,7 @@
   import PubSub from "pubsub-js"
   import {VueCropper} from 'vue-cropper';
   import childHeader from '../component/childHeader'
+  import noAuthContent from "../component/noAuthContent"
   import promptUtil from "../../utils/promptUtil";
   import storageUtil from "../../utils/storageUtil";
   import '../../api/restfulapi';
@@ -488,10 +494,12 @@
   export default {
     components: {
       "VueCropper": VueCropper,
-      "als-child-header": childHeader
+      "als-child-header": childHeader,
+      "als-no-auth":noAuthContent
     },
     data() {
       return {
+        isAuth:false,
         routerConfig: [{name: '机构信息', to: ''}],
         saveAgencyInfoDisabled: false,//图片未上传成功disabled保存机构信息按钮
         saveCourseInforDisabled: false,//图片未上传成功disabled保存课程按钮
@@ -649,90 +657,96 @@
     mounted() {
       promptUtil.checkOverdue(this, storageUtil.readTeacherInfo().id) // true 表示已过期 false表示未过期
       PubSub.publish("currentMenuIndex", "/eduinfo")
-      if (!this.map || this.map == null) {
-        this.map = new AMap.Map('container', {
-          resizeEnable: true
-        });
-      }
-      const loading = promptUtil.loading(this)
-      getOrganUpdate(qs.stringify({
-        school_id: storageUtil.readTeacherInfo().school_id,
-      })).then(res => {
-        if (res.code == SUCCESS_CODE) {
-          if (res.data == '[]') {
-            // 根据当前地址定位
-            this.position()
-            this.searchPosition()
-            return
+      let menuItem = storageUtil.getMenu().find(item=> item.url=='eduinfo')
+      if(menuItem && menuItem.if_in==1){ // 有权限
+          this.isAuth = true
+          if (!this.map || this.map == null) {
+              this.map = new AMap.Map('container', {
+                  resizeEnable: true
+              });
           }
-          //关于我们赋值
-          this.aboutUsRuleForm.aboutSchoolName = res.data.school_name
-          this.aboutUsRuleForm.schoolDescribed = res.data.intro
-          if (res.data.logo && res.data.logo.length != 0) {
-            this.aboutUsRuleForm.aboutUsPictureList = res.data.logo
-            this.originLogoUrl.push(res.data.logo[0].url)
-          }
-          this.ruleForm.adress = res.data.address
-          this.ruleForm.phone = res.data.tel
-          this.ruleForm.wechat = res.data.wxnum
-          this.ruleForm.qq = res.data.qqnum
-          this.ruleForm.weibo = res.data.weibo
-          this.currentAvatarImg = res.data.logo_editor
-          this.ruleForm.pictureList = res.data.pics && res.data.pics != "" ? res.data.pics : [] //返回机构信息图片地址
-          this.ruleForm.classPictureList = res.data.class.pic //返回课程信息图片地址
-          for (var i = 0; i < res.data.pics.length; i++) {
-            this.originImgUrlfArray.push(res.data.pics[i].url);
-          }
-          // 从服务器取回的数据课程信息res.data.class赋值给this.tableData
-          if (res.data.class && res.data.class != "") {
-            for (var i = 0; i < res.data.class.length; i++) {
-              const obj = {
-                id: res.data.class[i].id,
-                name: res.data.class[i].class_name,
-                detail: res.data.class[i].intro,
-                avtar: res.data.class[i].pic,
-                tag: res.data.class[i].bq,
-                courseLevel: res.data.class[i].level,
-                facilityalue: res.data.class[i].easy,
+          const loading = promptUtil.loading(this)
+          getOrganUpdate(qs.stringify({
+              school_id: storageUtil.readTeacherInfo().school_id,
+          })).then(res => {
+              if (res.code == SUCCESS_CODE) {
+                  if (res.data == '[]') {
+                      // 根据当前地址定位
+                      this.position()
+                      this.searchPosition()
+                      return
+                  }
+                  //关于我们赋值
+                  this.aboutUsRuleForm.aboutSchoolName = res.data.school_name
+                  this.aboutUsRuleForm.schoolDescribed = res.data.intro
+                  if (res.data.logo && res.data.logo.length != 0) {
+                      this.aboutUsRuleForm.aboutUsPictureList = res.data.logo
+                      this.originLogoUrl.push(res.data.logo[0].url)
+                  }
+                  this.ruleForm.adress = res.data.address
+                  this.ruleForm.phone = res.data.tel
+                  this.ruleForm.wechat = res.data.wxnum
+                  this.ruleForm.qq = res.data.qqnum
+                  this.ruleForm.weibo = res.data.weibo
+                  this.currentAvatarImg = res.data.logo_editor
+                  this.ruleForm.pictureList = res.data.pics && res.data.pics != "" ? res.data.pics : [] //返回机构信息图片地址
+                  this.ruleForm.classPictureList = res.data.class.pic //返回课程信息图片地址
+                  for (var i = 0; i < res.data.pics.length; i++) {
+                      this.originImgUrlfArray.push(res.data.pics[i].url);
+                  }
+                  // 从服务器取回的数据课程信息res.data.class赋值给this.tableData
+                  if (res.data.class && res.data.class != "") {
+                      for (var i = 0; i < res.data.class.length; i++) {
+                          const obj = {
+                              id: res.data.class[i].id,
+                              name: res.data.class[i].class_name,
+                              detail: res.data.class[i].intro,
+                              avtar: res.data.class[i].pic,
+                              tag: res.data.class[i].bq,
+                              courseLevel: res.data.class[i].level,
+                              facilityalue: res.data.class[i].easy,
 
+                          }
+                          this.tableData.push(obj)
+                          this.classImgUrlfArray.push(res.data.class[i].pic);
+                      }
+                  }
+                  // 从服务器取回的数据教师信息res.data.teacher赋值给this.tableTeacherData
+                  if (res.data.teacher && res.data.teacher != "") {
+                      for (var i = 0; i < res.data.teacher.length; i++) {
+                          const obj = {
+                              id: res.data.teacher[i].id,
+                              name: res.data.teacher[i].real_name,
+                              detail: res.data.teacher[i].intro,
+                              avtar: res.data.teacher[i].pic,
+                              teacherIntroduction: res.data.teacher[i].des,
+                              sex: res.data.teacher[i].sex == 1 ? '男' : '女',
+                              level: res.data.teacher[i].level
+                          }
+                          this.teacherTableData.push(obj)
+                          this.teacherAvatarUrl.push(res.data.teacher[i].pic)
+                      }
+                  }
+                  if (res.data.latitude && res.data.latitude != ""
+                      && res.data.longitude && res.data.longitude != "") { // 需要地图按返回经纬度进行初始化
+                      this.lng = res.data.latitude
+                      this.lat = res.data.longitude
+                      this.preciseSearch(res)
+                      this.searchPosition()
+                  } else {
+                      this.searchPosition()
+                  }
+              } else {
+                  promptUtil.wait(this)
               }
-              this.tableData.push(obj)
-              this.classImgUrlfArray.push(res.data.class[i].pic);
-            }
-          }
-          // 从服务器取回的数据教师信息res.data.teacher赋值给this.tableTeacherData
-          if (res.data.teacher && res.data.teacher != "") {
-            for (var i = 0; i < res.data.teacher.length; i++) {
-              const obj = {
-                id: res.data.teacher[i].id,
-                name: res.data.teacher[i].real_name,
-                detail: res.data.teacher[i].intro,
-                avtar: res.data.teacher[i].pic,
-                teacherIntroduction: res.data.teacher[i].des,
-                sex: res.data.teacher[i].sex == 1 ? '男' : '女',
-                level: res.data.teacher[i].level
-              }
-              this.teacherTableData.push(obj)
-              this.teacherAvatarUrl.push(res.data.teacher[i].pic)
-            }
-          }
-          if (res.data.latitude && res.data.latitude != ""
-            && res.data.longitude && res.data.longitude != "") { // 需要地图按返回经纬度进行初始化
-            this.lng = res.data.latitude
-            this.lat = res.data.longitude
-            this.preciseSearch(res)
-            this.searchPosition()
-          } else {
-            this.searchPosition()
-          }
-        } else {
-          promptUtil.wait(this)
-        }
-        loading.close()
-      }).catch(error => {
-        promptUtil.LOG("getOrganUpdate-err", error)
-        loading.close()
-      })
+              loading.close()
+          }).catch(error => {
+              promptUtil.LOG("getOrganUpdate-err", error)
+              loading.close()
+          })
+      }else{
+          this.isAuth = false
+      }
     },
     computed: {
       headers() {

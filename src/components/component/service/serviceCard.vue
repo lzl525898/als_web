@@ -230,6 +230,7 @@
   .service-card-button-professional{
     color: #0bbeae;
     border: 1px solid #0bbeae;
+    cursor: pointer;
   }
   .service-card-button-professional:hover{
     border: none;
@@ -243,6 +244,7 @@
   .service-card-button-ultimate{
     color: #b78463;
     border: 1px solid #b78463;
+    cursor: pointer;
   }
   .service-card-button-ultimate:hover{
     border: none;

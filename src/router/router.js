@@ -88,6 +88,7 @@ global.ROUTER_SUB_SERVICE = '/personalService/serviceBuy' // 服务订购
 global.ROUTER_COURSE_BUY = '/personalService/courseBuy' // 课程开通
 global.ROUTER_BUY_STEP = '/personalService/buyStep' // 开通确认
 global.ROUTER_SERVICE_RECORD = '/personalService/order' // 订购记录
+global.ROUTER_LIVE_POINT = '/personalService/liveBuy' // 直播点数购买
 
 
 

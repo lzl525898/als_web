@@ -103,7 +103,8 @@
           <div class="containerRef">
             <div class="courseBox">
               <div class="courseImg">
-                <img :src=item.img alt="">
+                <img v-if="index==2" :src=item.img alt="" style="width:76%">
+                <img v-else :src=item.img alt="">
               </div>
               <div class="courseDesc" style="margin-left: 30px;">
                 <p><span class="pBorderLeft"></span>{{item.title}}</p>
@@ -119,7 +120,7 @@
                 <p><span class="pBorderLeft"></span>{{item.title}}</p>
                 <span class="pBorderLeftSpan">{{item.con}}</span>
               </div>
-              <div class="courseImg" style="margin-left: 30px">
+              <div class="courseImg" style="float:right">
                 <img :src=item.img alt="">
               </div>
             </div>
@@ -280,8 +281,11 @@
         },
         methods: {
             applayBtn() {
-                this.dialogVisible = true
-                this.resetData()
+                // 新逻辑
+                this.$router.push({path: '/register'})
+                // 旧逻辑
+                // this.dialogVisible = true
+                // this.resetData()
             },
             handleClose(done) {
                 done();
@@ -745,7 +749,6 @@
 
   .course img {
     width: 100%;
-    height: 100%;
   }
 
   .courseDesc {

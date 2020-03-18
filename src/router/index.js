@@ -93,6 +93,7 @@ const subscribeService = resolve => require(['@/components/home/subscribeService
 const courseBuy = resolve => require(['@/components/home/courseBuy'],resolve)
 const buyStep = resolve => require(['@/components/home/confirmOrder'], resolve)
 const serviceOrder = resolve => require(['@/components/home/serviceOrder'], resolve)
+const liveOrder = resolve => require(['@/components/home/livePoints'],resolve)
 
 Vue.use(Router)
 
@@ -425,6 +426,11 @@ export default new Router({
           name: 'serviceOrder',
           meta: { requireAuth: true },
           component: serviceOrder
+        },{
+          path: ROUTER_LIVE_POINT, // 直播点订购
+          name: 'liveOrder',
+          meta: { requireAuth: true },
+          component: liveOrder
         },{
           path: ROUTER_FEEDBACK_ADD, // 问题反馈
           name: 'addFeedback',

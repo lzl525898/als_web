@@ -1,28 +1,32 @@
 <template>
     <div>
-      <!-- 面包屑 -->
-      <el-row style="margin-bottom: 20px">
-        <el-col :span="24">
-          <als-child-header :config="routerConfig"/>
-        </el-col>
-      </el-row>
-      <div style="border-radius: 4px;padding: 5px 10px;margin-bottom: 30px;width: 92%;">
-        <div style="display: flex;justify-content: space-between;align-items: center;" >
-          <h2>学生许可</h2>
-          <!--<el-tooltip class="item" effect="dark" :content='isAdmin?"管理者：可通过右侧按钮完成许可码的验证与分配":"老师：请通过下方列表中的按钮完成相应操作"' placement="left">
-            <p style="margin-right: 20px;"><span class="el-icon-question"></span>如何应用许可</p>
-          </el-tooltip>-->
-          <el-switch v-show="userRole == 1" @change="switchChange" v-model="isAdmin" active-text="校长" inactive-text="老师"></el-switch>
-        </div>
-        <p>每个学生需要一个许可，以便在登录后访问相关课程。</p>
-        <p v-if="isAdmin">校长获取验证许可码后，可将其分配给相应教师</p>
-        <p v-else>当教师第一次将许可应用给学生时，我们将自动应用许可证</p>
+      <div v-if="!isAuth">
+        <als-no-auth/>
       </div>
-      <div style="display: flex;justify-content: space-between">
-        <el-card class="box-card" shadow="always" style="width: 48%;">
-          <div id="pieChart" style="height:300px;width:100%;margin-top:10px;"></div>
-        </el-card>
-        <el-card v-show="isAdmin" class="box-card" shadow="always" style="width: 48%;">
+      <div v-if="isAuth">
+        <!-- 面包屑 -->
+        <el-row style="margin-bottom: 20px">
+          <el-col :span="24">
+            <als-child-header :config="routerConfig"/>
+          </el-col>
+        </el-row>
+        <div style="border-radius: 4px;padding: 5px 10px;margin-bottom: 30px;width: 92%;">
+          <div style="display: flex;justify-content: space-between;align-items: center;" >
+            <h2>学生许可</h2>
+            <!--<el-tooltip class="item" effect="dark" :content='isAdmin?"管理者：可通过右侧按钮完成许可码的验证与分配":"老师：请通过下方列表中的按钮完成相应操作"' placement="left">
+              <p style="margin-right: 20px;"><span class="el-icon-question"></span>如何应用许可</p>
+            </el-tooltip>-->
+            <el-switch v-show="userRole == 1" @change="switchChange" v-model="isAdmin" active-text="校长" inactive-text="老师"></el-switch>
+          </div>
+          <p>每个学生需要一个许可，以便在登录后访问相关课程。</p>
+          <p v-if="isAdmin">校长获取验证许可码后，可将其分配给相应教师</p>
+          <p v-else>当教师第一次将许可应用给学生时，我们将自动应用许可证</p>
+        </div>
+        <div style="display: flex;justify-content: space-between">
+          <el-card class="box-card" shadow="always" style="width: 48%;">
+            <div id="pieChart" style="height:300px;width:100%;margin-top:10px;"></div>
+          </el-card>
+          <el-card v-show="isAdmin" class="box-card" shadow="always" style="width: 48%;">
             <div style="font-size: 18px;text-align: center;height: 200px;">
               <template>
                 <countTo style="font-size: 75px;" :startVal='startVal' :endVal='endVal' :duration='3000'></countTo>
@@ -33,110 +37,111 @@
               <el-button type="primary" @click="testCode">验证许可码</el-button>
               <el-button type="primary" @click="allocate">分配许可码</el-button>
             </div>
-        </el-card>
+          </el-card>
+        </div>
+        <el-row style="margin: 20px 0;">
+          <span style="font-weight: bold;font-size:18px;line-height: 44px">许可详情</span>
+        </el-row>
+        <el-tabs v-show="isAdmin" v-model="activeTab" type="card" @tab-click="handleClick">
+          <el-tab-pane label="已分配许可" name="allocated">
+            <!-- 列表 -->
+            <el-table ref="multipleTable" :data="dataAllocated" tooltip-effect="dark" border :header-row-style="{'color':'#409EFF'}" style="width: 100%">
+              <el-table-column label="序号" type="index" :index="indexMethod" align="center" width="60">
+              </el-table-column>
+              <el-table-column prop="code" label="许可码" align="center">
+              </el-table-column>
+              <el-table-column prop="teacher_name" align="center" label="许可教师">
+              </el-table-column>
+              <el-table-column align="center" label="状态">
+                <template slot-scope="scope"><span :style="{color: scope.row.start_time > 0 ? 'red':''}" style="font-weight: bold">{{scope.row.start_time > 0?"已激活":"未激活"}}</span></template>
+              </el-table-column>
+            </el-table>
+            <el-row type="flex" justify="center" style="margin-top: 20px;" v-show="pageShow1">
+              <el-pagination background @current-change="handleCurrentChange" :current-page="currentPage1" :page-size="pageSize"
+                             layout="total, prev, pager, next, jumper" :total="permitList1"
+              ></el-pagination>
+            </el-row>
+          </el-tab-pane>
+          <el-tab-pane label="未分配许可" name="notAllocated">
+            <el-table ref="multipleTable" :data="dataNotAllocated" tooltip-effect="dark" border :header-row-style="{'color':'#409EFF'}" style="width: 100%">
+              <el-table-column label="序号"  type="index" :index="indexMethod" align="center" width="60">
+              </el-table-column>
+              <el-table-column prop="code" label="许可码" align="center">
+              </el-table-column>
+              <el-table-column label="创建时间" align="center">
+                <template slot-scope="scope">{{moment(parseInt(scope.row.create_time)*1000).format('YYYY-MM-DD HH:mm:ss')}}</template>
+              </el-table-column>
+              <el-table-column align="center" label="状态">
+                <template slot-scope="scope"><span style="font-weight: bold">未分配</span></template>
+              </el-table-column>
+            </el-table>
+            <el-row type="flex" justify="center" style="margin-top: 20px;" v-show="pageShow2">
+              <el-pagination background @current-change="handleCurrentChange" :current-page="currentPage2" :page-size="pageSize"
+                             layout="total, prev, pager, next, jumper" :total="permitList2"
+              ></el-pagination>
+            </el-row>
+          </el-tab-pane>
+        </el-tabs>
+        <el-tabs v-show="!isAdmin" v-model="activeTab" type="card" @tab-click="handleClick">
+          <el-tab-pane label="已使用许可" name="used">
+            <!-- 列表 -->
+            <el-table ref="multipleTable" :data="dataActived" tooltip-effect="dark" border :header-row-style="{'color':'#409EFF'}" style="width: 100%">
+              <el-table-column label="序号"  type="index" :index="indexMethod" align="center" width="60">
+              </el-table-column>
+              <el-table-column prop="code" label="许可码" align="center">
+              </el-table-column>
+              <el-table-column prop="student_name" align="center" label="许可学生">
+              </el-table-column>
+              <el-table-column align="center" label="起始时间">
+                <template slot-scope="scope">{{scope.row.start_time > 0 ? moment(parseInt(scope.row.start_time)*1000).format('YYYY-MM-DD HH:mm:ss'):""}}</template>
+              </el-table-column>
+              <el-table-column align="center" label="结束时间">
+                <template slot-scope="scope">{{scope.row.end_time > 0 ? moment(parseInt(scope.row.end_time)*1000).format('YYYY-MM-DD HH:mm:ss'):""}}</template>
+              </el-table-column>
+              <el-table-column align="center" label="操作" width="400">
+                <template slot-scope="scope">
+                  <el-button size="mini" type="primary" @click.native="cancelPermit({index: scope.$index, row:scope.row})">取消许可
+                  </el-button>
+                </template>
+              </el-table-column>
+            </el-table>
+            <el-row type="flex" justify="center" style="margin-top: 20px;" v-show="pageShow3">
+              <el-pagination background @current-change="handleCurrentChange" :current-page="currentPage3" :page-size="pageSize"
+                             layout="total, prev, pager, next, jumper" :total="permitList3"
+              ></el-pagination>
+            </el-row>
+          </el-tab-pane>
+          <el-tab-pane label="未使用许可" name="notUsed">
+            <!-- 列表 -->
+            <el-table ref="multipleTable" :data="dataNotActived" tooltip-effect="dark" border :header-row-style="{'color':'#409EFF'}" style="width: 100%">
+              <el-table-column label="序号"  type="index" :index="indexMethod" align="center" width="60">
+              </el-table-column>
+              <el-table-column prop="code" label="许可码" align="center">
+              </el-table-column>
+              <el-table-column align="center" label="状态">
+                <template slot-scope="scope"><span :style="{color: scope.row.start_time > 0 ? 'red':''}" style="font-weight: bold">{{scope.row.start_time > 0?"已激活":"未激活"}}</span></template>
+              </el-table-column>
+              <el-table-column  align="center" label="起始时间">
+                <template slot-scope="scope">{{scope.row.start_time >0 ? moment(parseInt(scope.row.start_time)*1000).format('YYYY-MM-DD HH:mm:ss'):""}}</template>
+              </el-table-column>
+              <el-table-column align="center" label="结束时间">
+                <template slot-scope="scope">{{scope.row.end_time >0 ? moment(parseInt(scope.row.end_time)*1000).format('YYYY-MM-DD HH:mm:ss'):""}}</template>
+              </el-table-column>
+              <el-table-column align="center" label="操作" width="400">
+                <template slot-scope="scope">
+                  <el-button size="mini" type="primary" @click.native="handlePermit({index: scope.$index, row:scope.row})">使用许可
+                  </el-button>
+                </template>
+              </el-table-column>
+            </el-table>
+            <el-row type="flex" justify="center" style="margin-top: 20px;" v-show="pageShow4"><!--pageShow-->
+              <el-pagination background @current-change="handleCurrentChange" :current-page="currentPage3" :page-size="pageSize"
+                             layout="total, prev, pager, next, jumper" :total="permitList4"
+              ></el-pagination>
+            </el-row>
+          </el-tab-pane>
+        </el-tabs>
       </div>
-      <el-row style="margin: 20px 0;">
-        <span style="font-weight: bold;font-size:18px;line-height: 44px">许可详情</span>
-      </el-row>
-      <el-tabs v-show="isAdmin" v-model="activeTab" type="card" @tab-click="handleClick">
-        <el-tab-pane label="已分配许可" name="allocated">
-          <!-- 列表 -->
-          <el-table ref="multipleTable" :data="dataAllocated" tooltip-effect="dark" border :header-row-style="{'color':'#409EFF'}" style="width: 100%">
-            <el-table-column label="序号" type="index" :index="indexMethod" align="center" width="60">
-            </el-table-column>
-            <el-table-column prop="code" label="许可码" align="center">
-            </el-table-column>
-            <el-table-column prop="teacher_name" align="center" label="许可教师">
-            </el-table-column>
-            <el-table-column align="center" label="状态">
-              <template slot-scope="scope"><span :style="{color: scope.row.start_time > 0 ? 'red':''}" style="font-weight: bold">{{scope.row.start_time > 0?"已激活":"未激活"}}</span></template>
-            </el-table-column>
-          </el-table>
-          <el-row type="flex" justify="center" style="margin-top: 20px;" v-show="pageShow1">
-            <el-pagination background @current-change="handleCurrentChange" :current-page="currentPage1" :page-size="pageSize"
-                           layout="total, prev, pager, next, jumper" :total="permitList1"
-            ></el-pagination>
-          </el-row>
-        </el-tab-pane>
-        <el-tab-pane label="未分配许可" name="notAllocated">
-          <el-table ref="multipleTable" :data="dataNotAllocated" tooltip-effect="dark" border :header-row-style="{'color':'#409EFF'}" style="width: 100%">
-            <el-table-column label="序号"  type="index" :index="indexMethod" align="center" width="60">
-            </el-table-column>
-            <el-table-column prop="code" label="许可码" align="center">
-            </el-table-column>
-            <el-table-column label="创建时间" align="center">
-              <template slot-scope="scope">{{moment(parseInt(scope.row.create_time)*1000).format('YYYY-MM-DD HH:mm:ss')}}</template>
-            </el-table-column>
-            <el-table-column align="center" label="状态">
-              <template slot-scope="scope"><span style="font-weight: bold">未分配</span></template>
-            </el-table-column>
-          </el-table>
-          <el-row type="flex" justify="center" style="margin-top: 20px;" v-show="pageShow2">
-            <el-pagination background @current-change="handleCurrentChange" :current-page="currentPage2" :page-size="pageSize"
-                           layout="total, prev, pager, next, jumper" :total="permitList2"
-            ></el-pagination>
-          </el-row>
-        </el-tab-pane>
-      </el-tabs>
-      <el-tabs v-show="!isAdmin" v-model="activeTab" type="card" @tab-click="handleClick">
-        <el-tab-pane label="已使用许可" name="used">
-          <!-- 列表 -->
-          <el-table ref="multipleTable" :data="dataActived" tooltip-effect="dark" border :header-row-style="{'color':'#409EFF'}" style="width: 100%">
-            <el-table-column label="序号"  type="index" :index="indexMethod" align="center" width="60">
-            </el-table-column>
-            <el-table-column prop="code" label="许可码" align="center">
-            </el-table-column>
-            <el-table-column prop="student_name" align="center" label="许可学生">
-            </el-table-column>
-            <el-table-column align="center" label="起始时间">
-              <template slot-scope="scope">{{scope.row.start_time > 0 ? moment(parseInt(scope.row.start_time)*1000).format('YYYY-MM-DD HH:mm:ss'):""}}</template>
-            </el-table-column>
-            <el-table-column align="center" label="结束时间">
-              <template slot-scope="scope">{{scope.row.end_time > 0 ? moment(parseInt(scope.row.end_time)*1000).format('YYYY-MM-DD HH:mm:ss'):""}}</template>
-            </el-table-column>
-            <el-table-column align="center" label="操作" width="400">
-              <template slot-scope="scope">
-                <el-button size="mini" type="primary" @click.native="cancelPermit({index: scope.$index, row:scope.row})">取消许可
-                </el-button>
-              </template>
-            </el-table-column>
-          </el-table>
-          <el-row type="flex" justify="center" style="margin-top: 20px;" v-show="pageShow3">
-            <el-pagination background @current-change="handleCurrentChange" :current-page="currentPage3" :page-size="pageSize"
-                           layout="total, prev, pager, next, jumper" :total="permitList3"
-            ></el-pagination>
-          </el-row>
-        </el-tab-pane>
-        <el-tab-pane label="未使用许可" name="notUsed">
-          <!-- 列表 -->
-          <el-table ref="multipleTable" :data="dataNotActived" tooltip-effect="dark" border :header-row-style="{'color':'#409EFF'}" style="width: 100%">
-            <el-table-column label="序号"  type="index" :index="indexMethod" align="center" width="60">
-            </el-table-column>
-            <el-table-column prop="code" label="许可码" align="center">
-            </el-table-column>
-            <el-table-column align="center" label="状态">
-              <template slot-scope="scope"><span :style="{color: scope.row.start_time > 0 ? 'red':''}" style="font-weight: bold">{{scope.row.start_time > 0?"已激活":"未激活"}}</span></template>
-            </el-table-column>
-            <el-table-column  align="center" label="起始时间">
-              <template slot-scope="scope">{{scope.row.start_time >0 ? moment(parseInt(scope.row.start_time)*1000).format('YYYY-MM-DD HH:mm:ss'):""}}</template>
-            </el-table-column>
-            <el-table-column align="center" label="结束时间">
-              <template slot-scope="scope">{{scope.row.end_time >0 ? moment(parseInt(scope.row.end_time)*1000).format('YYYY-MM-DD HH:mm:ss'):""}}</template>
-            </el-table-column>
-            <el-table-column align="center" label="操作" width="400">
-              <template slot-scope="scope">
-                <el-button size="mini" type="primary" @click.native="handlePermit({index: scope.$index, row:scope.row})">使用许可
-                </el-button>
-              </template>
-            </el-table-column>
-          </el-table>
-          <el-row type="flex" justify="center" style="margin-top: 20px;" v-show="pageShow4"><!--pageShow-->
-            <el-pagination background @current-change="handleCurrentChange" :current-page="currentPage3" :page-size="pageSize"
-                           layout="total, prev, pager, next, jumper" :total="permitList4"
-            ></el-pagination>
-          </el-row>
-        </el-tab-pane>
-      </el-tabs>
       <!--使用与取消许可弹框-->
       <el-dialog title="许可" :visible.sync="dialogVisible" width="25%">
         <el-row style="font-size: 18px;" v-if="isCancel">是否取消对学生：<span style="font-weight: bold">{{selectedRow.row.student_name}}</span>的许可?</el-row>
@@ -210,10 +215,16 @@
       permitStudents
     }from "@/api/api.js";
     import childHeader from '../../component/childHeader'
+    import noAuthContent from '../../component/noAuthContent'
     export default {
-      components: { "countTo":countTo,"als-child-header": childHeader },
+      components: {
+          "countTo":countTo,
+          "als-child-header": childHeader,
+          "als-no-auth": noAuthContent
+      },
       data(){
         return{
+          isAuth: false,
           routerConfig: [{name:'许可分配',to:''}],
           isAdmin:false,//用于切换管理员与教师的开关
           baseInfo:[],
@@ -264,11 +275,17 @@
       mounted(){
         promptUtil.checkOverdue(this, storageUtil.readTeacherInfo().id) // true 表示已过期 false表示未过期
         PubSub.publish("currentMenuIndex", "/permission");
-        this.baseInfo = storageUtil.readTeacherInfo();
-        this.userRole = storageUtil.readUserRole();
-        this.isAdmin = this.userRole == 1?true:false;
-        this.activeTab = this.isAdmin? "allocated":"used";
-        this.initDataMethod();
+        let menuItem = storageUtil.getMenu().find(item=> item.url=='permission')
+        if(menuItem && menuItem.if_in==1){ // 有权限
+            this.isAuth = true
+            this.baseInfo = storageUtil.readTeacherInfo();
+            this.userRole = storageUtil.readUserRole();
+            this.isAdmin = this.userRole == 1?true:false;
+            this.activeTab = this.isAdmin? "allocated":"used";
+            this.initDataMethod();
+        }else{
+            this.isAuth = false
+        }
       },
       methods:{
         initDataMethod: function(){
