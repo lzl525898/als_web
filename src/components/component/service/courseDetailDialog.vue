@@ -11,7 +11,7 @@
       <div slot="title" class="dialog-header">试看课程</div>
       <div style="margin-top: -20px;border-top: 1px solid #EBEEF5;padding-top:5px;height:445px">
         <el-tabs v-model="innerDialog.activeName">
-          <el-tab-pane label="课件" name="1">
+          <el-tab-pane label="课件" name="1" v-if="innerDialog.courseWare.label&&innerDialog.courseWare.label!=''">
             <div style="height:400px;overflow-y:auto;overflow-x:hidden">
               <div class="loadingPPtBox">
                 <img src="../../../../static/images/base/loading.gif" alt="" id="loadingPPt"></div>
@@ -20,12 +20,12 @@
                       allowfullscreen="true" mozallowfullscreen="true" webkitallowfullscreen="true"/>
             </div>
           </el-tab-pane>
-          <el-tab-pane label="教案" name="2">
+          <el-tab-pane label="教案" name="2" v-if="innerDialog.lesson.label&&innerDialog.lesson.label!=''">
             <div style="height:400px;overflow-y:auto;overflow-x:hidden">
               <pdf v-for="i in numPages" :key="i" :src="innerDialog.lesson.url" :page="i"/>
             </div>
           </el-tab-pane>
-          <el-tab-pane label="视频" name="3">
+          <el-tab-pane label="视频" name="3" v-if="innerDialog.videos[0].label&&innerDialog.videos[0].label!=''">
             <div style="height:400px;display:flex;justify-content:center;flex-direction:column;">
               <div id="video" style="width:100%;height:100%;margin: 0 auto;"/>
               <el-steps :active="innerDialog.stepActive" align-center style="margin-top:20px">
@@ -38,7 +38,7 @@
       </div>
     </el-dialog>
     <div>
-      <div class="base-btn btn-advice" style="position:absolute;right:20px;bottom:20px;width:132px" @click="innerVisible=true">试看</div>
+      <div class="base-btn btn-advice" style="position:absolute;right:20px;bottom:20px;width:132px" @click="handleClickTrip">试看</div>
       <div class="flex-row-wrapper" style="margin-top: -20px;border-top: 1px solid #EBEEF5;padding-top: 20px">
         <img class="course-cover" :src="detail.imgUrl"/>
         <div class="flex-column-wrapper">
@@ -69,23 +69,31 @@
       <div style="margin-top: 20px">
         <div class="detail-item" style="align-items:baseline">
           <div class="detail-item-label">课程简介:</div>
-          <div class="detail-item-value">{{detail.desc}}</div>
+          <el-tooltip effect="dark" :content="detail.desc" placement="top-start">
+            <div class="detail-item-value">{{detail.desc}}</div>
+          </el-tooltip>
         </div>
         <div class="detail-item" style="align-items:baseline">
           <div class="detail-item-label">所需教具:</div>
-          <div class="detail-item-value">{{detail.training}}</div>
+          <el-tooltip effect="dark" :content="detail.training" placement="top-start">
+            <div class="detail-item-value">{{detail.training}}</div>
+          </el-tooltip>
         </div>
         <div class="detail-item">
           <div class="detail-item-label">难度等级:</div>
-          <div class="detail-item-value">{{detail.level}}</div>
+          <el-tooltip effect="dark" :content="detail.level" placement="top-start">
+            <div class="detail-item-value">{{detail.level}}</div>
+          </el-tooltip>
         </div>
         <div class="detail-item">
           <div class="detail-item-label">学龄段:</div>
-          <div class="detail-item-value">{{detail.ageStage}}</div>
+          <el-tooltip effect="dark" :content="detail.ageStage" placement="top-start">
+            <div class="detail-item-value">{{detail.ageStage}}</div>
+          </el-tooltip>
         </div>
         <div class="detail-item">
           <div class="detail-item-label">课时:</div>
-          <div class="detail-item-value">{{detail.classes}}课时</div>
+          <div class="detail-item-value">{{detail.classes}}</div>
         </div>
       </div>
     </div>
@@ -96,6 +104,9 @@
     import $ from 'jquery'
     import pdf from "vue-pdf"
     import '../../../../static/ckplayer/ckplayer/ckplayer'
+    import {qs,getTrialClassDetail} from '../../../api/api'
+    import '../../../api/restfulapi'
+    import promptUtil from "../../../utils/promptUtil";
     export default {
         name: "courseDetailDialog",
         components:{'pdf': pdf},
@@ -108,13 +119,13 @@
                 innerDialog:{
                     stepActive: 1,
                     activeName:'1',
-                    courseWare: {label:'第1课 认识coocoo 课件',url:'https://ow365.cn/?i=18640&n=5&ssl=1&n=5&furl=https://alseduline.oss-cn-shenzhen.aliyuncs.com/uploads/report/files/20191218/ALS_80015766645858311823059.pptx'},
-                    lesson:{label:'第1课 认识coocoo小车 教案',url:'https://alseduline.oss-cn-shenzhen.aliyuncs.com/uploads/report/files/20191129/奥聪和CooCoo的地球保卫战1-认识CooCoo1.pdf'},
+                    courseWare: {label:'',url:''},
+                    lesson:{label:'',url:''},
                     videos:[
                         {
-                            title: "第1部分 故事导入",
-                            video: "https://alseduline.oss-cn-shenzhen.aliyuncs.com/uploads/report/videos/ALS15765777115207701815119.mp4",
-                            image: "https://alseduline.oss-cn-shenzhen.aliyuncs.com/uploads/report/images/ALS15765785117657091828319.jpg"
+                            title: "",
+                            video: "",
+                            image: ""
                         }]
                 },
                 detail: {callUs:{img:'',tel:''}}
@@ -152,6 +163,29 @@
                 this.dialogVisible = true
                 this.pdfTask(this.innerDialog.lesson.url)
             },
+            handleClickTrip(){
+                getTrialClassDetail(qs.stringify({
+                    course_id:this.detail.id
+                })).then(res=>{
+                    if(res.code==SUCCESS_CODE){
+                        if(res.data.courseWare.label&&res.data.courseWare.label!=''){
+                            this.innerDialog.courseWare = res.data.courseWare
+                        }
+                        if(res.data.lesson.label&&res.data.lesson.label!=''){
+                            this.innerDialog.lesson = res.data.lesson
+                        }
+                        if(res.data.videos&&res.data.videos[0]&&res.data.videos[0].title){
+                            this.innerDialog.videos = res.data.videos
+                        }
+                        this.innerVisible=true
+                    }else{
+                        promptUtil.warning(this,'无试看内容')
+                        this.innerVisible=false
+                    }
+                }).catch(err=>{
+                    this.innerVisible=false
+                })
+            },
             handleClick(){
                 this.$emit('targetCourse', {status:true, price: this.detail.price*1, detail: this.detail})
                 this.dialogVisible = false
@@ -184,7 +218,6 @@
                         poster: this.innerDialog.videos[index - 1].image, //封面图片
                         drag: "start", //拖动的属性
                         seek: 0, //默认跳转的时间
-                        loaded: "loadedHandler",//监听播放器加载成功
                         video: [[this.innerDialog.videos[index - 1].video, "video/mp4"]]
                     };
                 }
@@ -293,6 +326,9 @@
   }
   .detail-item-value{
     width:530px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
     padding-left:10px;
   }
   .loadingPPtBox{

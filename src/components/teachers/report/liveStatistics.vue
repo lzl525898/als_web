@@ -144,161 +144,200 @@
     </el-card>
     <div class="header-title">直播课详情</div>
     <el-card class="box-card" shadow="always">
-      <div class="live-class-info-wrapper">
-        <el-radio-group v-model="filter.tableType">
-          <el-radio-button label="1">学生</el-radio-button>
-          <el-radio-button label="2">教师</el-radio-button>
-        </el-radio-group>
-
+      <div style="display: flex;align-items:center;padding-bottom:18px;">
+        <span style="font-size:14px;margin-left:30px">授课教师</span>
+        <el-select v-model="filters.teacher" style="margin-left:10px;width:160px" size="small">
+          <el-option v-for="item in filters.teachers" :key="item.value" :label="item.label" :value="item.value"/>
+        </el-select>
+        <span style="font-size:14px;margin-left:30px">上课时间</span>
+        <el-date-picker
+          v-model="filters.date" type="daterange"
+          :picker-options="pickerOptions"
+          range-separator=""
+          start-placeholder="选择时间范围" style="width:240px;margin-left:10px;" size="small">
+        </el-date-picker>
+        <div style="flex:1;display:flex;justify-content:flex-end">
+          <el-button type="primary" icon="el-icon-search" size="small" @click="handleClickLiveQuery" :loading="searchLoading">查询</el-button>
+        </div>
       </div>
-      <el-divider></el-divider>
-      <div class="live-info-filter-wrapper">
-        <el-date-picker v-model="filter.studentTableDate" v-show="filter.tableType==1" :clearable="false"
-                        @change="handleChangeRecordStudentPicker"
-                        type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期"
-                        size="small"></el-date-picker>
-        <el-date-picker v-model="filter.teacherTableDate" v-show="filter.tableType==2" :clearable="false"
-                        @change="handleChangeRecordTeacherPicker"
-                        type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期"
-                        size="small"></el-date-picker>
-        <el-select
-          v-show="filter.tableType==2"
-          v-model="filter.teacherArray"
-          size="small" multiple collapse-tags style="margin-left: 20px;"
-          clearable
-          placeholder="请选择教师">
-          <el-option
-            v-for="item in filter.teacherPackage"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value">
-            <div style="display: flex;align-items: center">
-              <div :style="'width:16px;height:16px;border-radius:16px;background-color:'+item.color"></div>
-              <div style="margin-left: 40px">{{ item.label }}</div>
+      <el-table :data="liveTableData" :header-cell-style="{'color':'#353535','fontSize':'16px','background':'#eef1f6'}">
+        <el-table-column label="课程信息">
+          <template slot-scope="scope">
+            <div style="display:flex;padding:10px 0 0 10px;">
+              <div class="image-cover-wrapper">
+                <img :src="scope.row.cover" class="image-cover"/>
+              </div>
+              <div style="flex:1;margin-top:8px">
+                <el-tooltip class="item" effect="dark" :content="scope.row.name" placement="right">
+                  <div style="overflow: hidden;text-overflow:ellipsis;white-space: nowrap;width:250px">
+                    <span style="font-weight:600">{{scope.row.name}}</span>
+                  </div>
+                </el-tooltip>
+                <div style="font-size:12px">课程类型: <span>{{scope.row.type}}</span></div>
+                <div style="font-size:12px">授课教师: <span>{{scope.row.teacher}}</span></div>
+              </div>
             </div>
-          </el-option>
-        </el-select>
-        <el-select
-          v-show="filter.tableType==1"
-          v-model="filter.studentArray"
-          clearable
-          size="small" multiple collapse-tags style="margin-left: 20px;"
-          @change="changeStudent"
-          placeholder="请选择学生">
-          <el-option
-            v-for="item in filter.studentPackage"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value">
-          </el-option>
-        </el-select>
-        <el-select
-          v-show="filter.tableType==1"
-          v-model="filter.classroomArray"
-          size="small" multiple collapse-tags style="margin-left: 20px;"
-          clearable
-          placeholder="请选择班级">
-          <el-option
-            v-for="item in filter.classroomPackage"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value">
-          </el-option>
-        </el-select>
-      </div>
-      <el-divider></el-divider>
-      <div style="display:flex;margin-top:-10px;margin-bottom:12px;">
-        <div style="flex:1">
-          <el-button plain size="small" @click="exportRecordResult">导出当前结果</el-button>
-        </div>
-        <div style="flex:1;display:flex;justify-content:flex-end;">
-          <el-button type="primary" plain size="small" @click="handleClickQuery">查询</el-button>
-        </div>
-      </div>
-      <div v-show="filter.tableType==1">
-        <el-table :data="tableData.studentTableData" border style="width: 100%" @expand-change="expandChangeClick">
-          <el-table-column type="expand" style="margin:0;padding:0">
-            <template slot-scope="props">
-              <el-form style="margin: 0;padding:0">
-                <el-table :data="props.row.tableData" border style="width: 100%">
-                  <el-table-column prop="date" align="center" label="上课时间"></el-table-column>
-                  <el-table-column prop="name" align="center" label="直播课名称"></el-table-column>
-                  <el-table-column  align="center" label="进出教室时间">
-                  <template slot-scope="scope">
-                    <div v-for="item in scope.row.intoDate">
-                      <div>{{item}}</div>
-                    </div>
-                  </template>
-                  </el-table-column>
-                  <el-table-column prop="beginClass" align="center" label="应上课次" width="120"></el-table-column>
-                  <el-table-column prop="realClass" align="center" label="实上课次" width="120"></el-table-column>
-                </el-table>
-              </el-form>
-            </template>
-          </el-table-column>
-          <el-table-column prop="student" align="left" label="学员"></el-table-column>
-          <el-table-column prop="classNumber" align="center" label="应上课次" width="120"></el-table-column>
-          <el-table-column prop="actualNumber" align="center" label="实上课次" width="120"></el-table-column>
-        </el-table>
-        <!--    分页-->
-          <als-pagination :size="8" @tableData="changeStudentTableData($event)" @currentPage="changeStudentPage($event)"
-                            ref="alsPageination" style="margin-top:20px"/>
-      </div>
-      <div v-show="filter.tableType==2">
-        <el-table :data="tableData.teacherTableData" border style="width: 100%" @expand-change="expandChangeClick">
-          <el-table-column type="expand" style="margin:0;padding:0">
-            <template slot-scope="props">
-              <el-form style="margin: 0;padding:0">
-                <el-table :data="props.row.tableData" border style="width: 100%">
-                  <el-table-column prop="date" align="center" label="上课时间"></el-table-column>
-                  <el-table-column prop="name" align="center" label="直播课名称"></el-table-column>
-                  <el-table-column  align="center" label="学员信息">
-                    <template slot-scope="scope">
-                      <div v-for="item in scope.row.studentInfo">
-                        <el-tooltip class="item" effect="light" placement="top-start">
-                          <div slot="content" style="margin-top: -8px">
-                            <p><i class="el-icon-user-solid"></i><img :src=item.avatar alt="" style="width:20px;height: 20px;margin-left:10px;margin-top:5px;border-radius: 50%"></p>
-                            <p v-if="item.phone!=''"><i class="el-icon-phone"></i><span style="margin-left: 10px">{{item.phone}}</span>  </p>
-                            <p><i class="el-icon-s-cooperation"></i><span style="margin-left: 10px">{{item.class_name}}</span></p>
-                            <p><i class="el-icon-s-claim"></i><span style="margin-left: 10px">{{item.type_str}}</span></p>
-                          </div>
-<!--                        type 1 以上课 绿色   未上课 0 蓝色   待上课 2 红色>-->
-                          <div style="float: left;margin-left: 2px">
-                          <div v-if="item.type==1">
-                            <el-tag style="cursor: pointer" type="success" size="mini">{{item.name}}</el-tag>
-                          </div>
-                          <div v-if="item.type==0">
-                            <el-tag style="cursor: pointer" size="mini">{{item.name}}</el-tag>
-                          </div>
-                          <div v-if="item.type==2">
-                            <el-tag style="cursor: pointer" type="danger" size="mini">{{item.name}}</el-tag>
-                          </div>
-                          </div>
-                        </el-tooltip>
-                      </div>
-                    </template>
-                  </el-table-column>
-                  <el-table-column prop="intoDate" align="center" label="进出教室时间">
-                    <template slot-scope="scope">
-                      <div v-for="item in scope.row.intoDate">
-                        <div>{{item}}</div>
-                      </div>
-                    </template>
-                  </el-table-column>
-                  <el-table-column prop="classNum" align="center" label="学员人次" width="120"></el-table-column>
-                  <el-table-column prop="realNum" align="center" label="实上课次" width="120"></el-table-column>
-                </el-table>
-              </el-form>
-            </template>
-          </el-table-column>
-          <el-table-column prop="teacher" align="left" label="讲师"></el-table-column>
-          <el-table-column prop="classNumber" align="center" label="学员人次" width="120"></el-table-column>
-          <el-table-column prop="actualNumber" align="center"  label="实上课次" width="120"></el-table-column>
-        </el-table>
-        <!--    分页-->
-        <als-pagination :size="8" @tableData="changeTeacherTableData($event)" @currentPage="changeTeacherPage($event)"
-                        ref="alsTeacherPageination"  style="margin-top:20px"/>
-      </div>
+          </template>
+        </el-table-column>
+        <el-table-column prop="date" label="开课时间" align="center"></el-table-column>
+        <el-table-column prop="status" label="状态" align="center"></el-table-column>
+      </el-table>
+      <als-pagination :size="20"  @tableData="changeTableData" style="margin-top:20px" ref="liveListPagination"/>
+<!--      <div class="live-class-info-wrapper">-->
+<!--        <el-radio-group v-model="filter.tableType">-->
+<!--          <el-radio-button label="1">学生</el-radio-button>-->
+<!--          <el-radio-button label="2">教师</el-radio-button>-->
+<!--        </el-radio-group>-->
+
+<!--      </div>-->
+<!--      <el-divider></el-divider>-->
+<!--      <div class="live-info-filter-wrapper">-->
+<!--        <el-date-picker v-model="filter.studentTableDate" v-show="filter.tableType==1" :clearable="false"-->
+<!--                        @change="handleChangeRecordStudentPicker"-->
+<!--                        type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期"-->
+<!--                        size="small"></el-date-picker>-->
+<!--        <el-date-picker v-model="filter.teacherTableDate" v-show="filter.tableType==2" :clearable="false"-->
+<!--                        @change="handleChangeRecordTeacherPicker"-->
+<!--                        type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期"-->
+<!--                        size="small"></el-date-picker>-->
+<!--        <el-select-->
+<!--          v-show="filter.tableType==2"-->
+<!--          v-model="filter.teacherArray"-->
+<!--          size="small" multiple collapse-tags style="margin-left: 20px;"-->
+<!--          clearable-->
+<!--          placeholder="请选择教师">-->
+<!--          <el-option-->
+<!--            v-for="item in filter.teacherPackage"-->
+<!--            :key="item.value"-->
+<!--            :label="item.label"-->
+<!--            :value="item.value">-->
+<!--            <div style="display: flex;align-items: center">-->
+<!--              <div :style="'width:16px;height:16px;border-radius:16px;background-color:'+item.color"></div>-->
+<!--              <div style="margin-left: 40px">{{ item.label }}</div>-->
+<!--            </div>-->
+<!--          </el-option>-->
+<!--        </el-select>-->
+<!--        <el-select-->
+<!--          v-show="filter.tableType==1"-->
+<!--          v-model="filter.studentArray"-->
+<!--          clearable-->
+<!--          size="small" multiple collapse-tags style="margin-left: 20px;"-->
+<!--          @change="changeStudent"-->
+<!--          placeholder="请选择学生">-->
+<!--          <el-option-->
+<!--            v-for="item in filter.studentPackage"-->
+<!--            :key="item.value"-->
+<!--            :label="item.label"-->
+<!--            :value="item.value">-->
+<!--          </el-option>-->
+<!--        </el-select>-->
+<!--        <el-select-->
+<!--          v-show="filter.tableType==1"-->
+<!--          v-model="filter.classroomArray"-->
+<!--          size="small" multiple collapse-tags style="margin-left: 20px;"-->
+<!--          clearable-->
+<!--          placeholder="请选择班级">-->
+<!--          <el-option-->
+<!--            v-for="item in filter.classroomPackage"-->
+<!--            :key="item.value"-->
+<!--            :label="item.label"-->
+<!--            :value="item.value">-->
+<!--          </el-option>-->
+<!--        </el-select>-->
+<!--      </div>-->
+<!--      <el-divider></el-divider>-->
+<!--      <div style="display:flex;margin-top:-10px;margin-bottom:12px;">-->
+<!--        <div style="flex:1">-->
+<!--          <el-button plain size="small" @click="exportRecordResult">导出当前结果</el-button>-->
+<!--        </div>-->
+<!--        <div style="flex:1;display:flex;justify-content:flex-end;">-->
+<!--          <el-button type="primary" plain size="small" @click="handleClickQuery">查询</el-button>-->
+<!--        </div>-->
+<!--      </div>-->
+<!--      <div v-show="filter.tableType==1">-->
+<!--        <el-table :data="tableData.studentTableData" border style="width: 100%" @expand-change="expandChangeClick">-->
+<!--          <el-table-column type="expand" style="margin:0;padding:0">-->
+<!--            <template slot-scope="props">-->
+<!--              <el-form style="margin: 0;padding:0">-->
+<!--                <el-table :data="props.row.tableData" border style="width: 100%">-->
+<!--                  <el-table-column prop="date" align="center" label="上课时间"></el-table-column>-->
+<!--                  <el-table-column prop="name" align="center" label="直播课名称"></el-table-column>-->
+<!--                  <el-table-column  align="center" label="进出教室时间">-->
+<!--                  <template slot-scope="scope">-->
+<!--                    <div v-for="item in scope.row.intoDate">-->
+<!--                      <div>{{item}}</div>-->
+<!--                    </div>-->
+<!--                  </template>-->
+<!--                  </el-table-column>-->
+<!--                  <el-table-column prop="beginClass" align="center" label="应上课次" width="120"></el-table-column>-->
+<!--                  <el-table-column prop="realClass" align="center" label="实上课次" width="120"></el-table-column>-->
+<!--                </el-table>-->
+<!--              </el-form>-->
+<!--            </template>-->
+<!--          </el-table-column>-->
+<!--          <el-table-column prop="student" align="left" label="学员"></el-table-column>-->
+<!--          <el-table-column prop="classNumber" align="center" label="应上课次" width="120"></el-table-column>-->
+<!--          <el-table-column prop="actualNumber" align="center" label="实上课次" width="120"></el-table-column>-->
+<!--        </el-table>-->
+<!--        &lt;!&ndash;    分页&ndash;&gt;-->
+<!--          <als-pagination :size="8" @tableData="changeStudentTableData($event)" @currentPage="changeStudentPage($event)"-->
+<!--                            ref="alsPageination" style="margin-top:20px"/>-->
+<!--      </div>-->
+<!--      <div v-show="filter.tableType==2">-->
+<!--        <el-table :data="tableData.teacherTableData" border style="width: 100%" @expand-change="expandChangeClick">-->
+<!--          <el-table-column type="expand" style="margin:0;padding:0">-->
+<!--            <template slot-scope="props">-->
+<!--              <el-form style="margin: 0;padding:0">-->
+<!--                <el-table :data="props.row.tableData" border style="width: 100%">-->
+<!--                  <el-table-column prop="date" align="center" label="上课时间"></el-table-column>-->
+<!--                  <el-table-column prop="name" align="center" label="直播课名称"></el-table-column>-->
+<!--                  <el-table-column  align="center" label="学员信息">-->
+<!--                    <template slot-scope="scope">-->
+<!--                      <div v-for="item in scope.row.studentInfo">-->
+<!--                        <el-tooltip class="item" effect="light" placement="top-start">-->
+<!--                          <div slot="content" style="margin-top: -8px">-->
+<!--                            <p><i class="el-icon-user-solid"></i><img :src=item.avatar alt="" style="width:20px;height: 20px;margin-left:10px;margin-top:5px;border-radius: 50%"></p>-->
+<!--                            <p v-if="item.phone!=''"><i class="el-icon-phone"></i><span style="margin-left: 10px">{{item.phone}}</span>  </p>-->
+<!--                            <p><i class="el-icon-s-cooperation"></i><span style="margin-left: 10px">{{item.class_name}}</span></p>-->
+<!--                            <p><i class="el-icon-s-claim"></i><span style="margin-left: 10px">{{item.type_str}}</span></p>-->
+<!--                          </div>-->
+<!--&lt;!&ndash;                        type 1 以上课 绿色   未上课 0 蓝色   待上课 2 红色>&ndash;&gt;-->
+<!--                          <div style="float: left;margin-left: 2px">-->
+<!--                          <div v-if="item.type==1">-->
+<!--                            <el-tag style="cursor: pointer" type="success" size="mini">{{item.name}}</el-tag>-->
+<!--                          </div>-->
+<!--                          <div v-if="item.type==0">-->
+<!--                            <el-tag style="cursor: pointer" size="mini">{{item.name}}</el-tag>-->
+<!--                          </div>-->
+<!--                          <div v-if="item.type==2">-->
+<!--                            <el-tag style="cursor: pointer" type="danger" size="mini">{{item.name}}</el-tag>-->
+<!--                          </div>-->
+<!--                          </div>-->
+<!--                        </el-tooltip>-->
+<!--                      </div>-->
+<!--                    </template>-->
+<!--                  </el-table-column>-->
+<!--                  <el-table-column prop="intoDate" align="center" label="进出教室时间">-->
+<!--                    <template slot-scope="scope">-->
+<!--                      <div v-for="item in scope.row.intoDate">-->
+<!--                        <div>{{item}}</div>-->
+<!--                      </div>-->
+<!--                    </template>-->
+<!--                  </el-table-column>-->
+<!--                  <el-table-column prop="classNum" align="center" label="学员人次" width="120"></el-table-column>-->
+<!--                  <el-table-column prop="realNum" align="center" label="实上课次" width="120"></el-table-column>-->
+<!--                </el-table>-->
+<!--              </el-form>-->
+<!--            </template>-->
+<!--          </el-table-column>-->
+<!--          <el-table-column prop="teacher" align="left" label="讲师"></el-table-column>-->
+<!--          <el-table-column prop="classNumber" align="center" label="学员人次" width="120"></el-table-column>-->
+<!--          <el-table-column prop="actualNumber" align="center"  label="实上课次" width="120"></el-table-column>-->
+<!--        </el-table>-->
+<!--        &lt;!&ndash;    分页&ndash;&gt;-->
+<!--        <als-pagination :size="8" @tableData="changeTeacherTableData($event)" @currentPage="changeTeacherPage($event)"-->
+<!--                        ref="alsTeacherPageination"  style="margin-top:20px"/>-->
+<!--      </div>-->
     </el-card>
   </div>
 </template>
@@ -317,8 +356,10 @@ import storageUtil from "../../../utils/storageUtil";
 import pagination from "../../commons/pagination/pagination";
 import {
   qs,
+  getTeacherList,
   getAllHourFilterData,
   getIntoAddClassData,
+  getLiveCourseList,
   getLiveStatisticsInformation,
   getLiveStudentTableInformation,
   getLiveTeacherTableInformation,
@@ -344,6 +385,28 @@ export default {
         allPeopleNum: { endVal: null, url: "" },
         liveAllNum: { endVal: null, url: "" }
       },
+      searchLoading:false,
+      pickerOptions:{
+          shortcuts:[{
+              text: '全部时间',
+              onClick(picker) {
+                  picker.$emit('pick','');
+              }
+          },{
+              text: '当月时间',
+              onClick(picker) {
+                  picker.$emit('pick', [moment().startOf('month'), moment().endOf('month')]);
+              }
+          },{
+              text: '今年至今',
+              onClick(picker) {
+                  picker.$emit('pick', [moment().startOf('year'), new Date()]);
+              }
+          }]
+      },
+      liveServerData:[],
+      liveTableData:[],
+      filters:{teacher:0,date:'', teachers:[]},
       filter: {
         dateFrame: [],
         currentDays: 0,
@@ -407,13 +470,70 @@ export default {
     this.charts.stack = echarts.init(
       document.getElementById("stackStatistics")
     );
+    this.getTeacherList();
+    this.getLiveCourses();
     this.genStackStatisticsChart();
     this.getLiveSurvey();
-    this.getLiveStudentTable();
-    this.getLiveTeacherTable();
+    // this.getLiveStudentTable();
+    // this.getLiveTeacherTable();
     this.getLiveEcharts(this.currentStartDay, this.currentEndtDay);
   },
   methods: {
+      handleClickLiveQuery(){
+          this.searchLoading = true
+          this.getLiveCourses()
+      },
+      getLiveCourses(){
+          let startTime = ''
+          let endTime = ''
+          if(this.filters.date && this.filters.date!=''){
+              try{
+                  startTime = moment(this.filters.date[0]).format("YYYY-MM-DD hh:mm:ss")
+                  endTime = moment(this.filters.date[1]).format("YYYY-MM-DD hh:mm:ss")
+              }catch (e) {
+                  startTime = ''
+                  endTime = ''
+              }
+          }
+          getLiveCourseList(qs.stringify({
+              school_id:storageUtil.readTeacherInfo().school_id,
+              starttime:startTime,
+              endtime:endTime,
+              teacher_id:this.filters.teacher
+          })).then(res=>{
+              if(res.code==SUCCESS_CODE){
+                  if(res.data && res.data!='[]'){
+                      this.liveServerData = res.data
+                  }
+              }
+              this.searchLoading = false
+              this.$refs.liveListPagination.setCurrentPage(1)
+              this.$refs.liveListPagination.setServerData(this.liveServerData)
+          }).catch(err=>{
+              this.searchLoading = false
+              promptUtil.LOG('getLiveCourses-err',err)
+          })
+      },
+      changeTableData(data){
+          this.liveTableData = data
+      },
+      getTeacherList(){
+          getTeacherList(qs.stringify({
+              school_id: storageUtil.readTeacherInfo().school_id
+          })).then(res=>{
+              if(res.code==SUCCESS_CODE){
+                  if(res.data!='[]'){
+                      this.filters.teachers = [{value:0,label:'全部'}]
+                      res.data.map(item=>{
+                          const teacher = {value:item.id*1,label:item.nick}
+                          this.filters.teachers.push(teacher)
+                      })
+                  }
+              }
+          }).catch(err=>{
+              promptUtil.LOG('getTeacherList-err', err)
+          })
+      },
     //获取直播课概况数据
     getLiveSurvey() {
       getLiveStatisticsInformation(
@@ -902,5 +1022,20 @@ export default {
 .el-card.is-hover-shadow:focus,
 .el-card.is-hover-shadow:hover {
   box-shadow: 0 5px 12px 0 #00a2ff30;
+}
+.image-cover-wrapper {
+  position: relative;
+  cursor: pointer;
+  margin-right: 20px;
+}
+.image-cover {
+  width: 105px;
+  height: 84px;
+  border-radius: 5px;
+  object-fit: cover;
+  transition: all 0.2s ease-out 0.1s;
+}
+.image-cover:hover {
+  transform: scale(1.05);
 }
 </style>

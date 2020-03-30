@@ -1,56 +1,23 @@
 <template>
     <div>
-      <div class="order-record-wrapper"><span style="cursor: pointer;" @click="handleClickIntoRecord">订购记录</span></div>
+      <div class="order-record-wrapper">
+        <span style="cursor: pointer;" @click="handleClickIntoRecord">订购记录</span>
+      </div>
       <div class="service-card-container">
-        <div class="service-card-wrapper">
+        <div class="service-card-wrapper" v-for="(item,index) in content" :key="index">
           <el-card body-style="padding:0;margin:0;height:450px" shadow="always">
-            <div class="service-card-title base-color">{{content.base.title}}</div>
+            <div v-if="index%3==0" class="service-card-title base-color">{{item.title}}</div>
+            <div v-if="index%3==1" class="service-card-title professional-color">{{item.title}}</div>
+            <div v-if="index%3==2" class="service-card-title ultimate-color">{{item.title}}</div>
             <div class="service-card-intro">
-              {{content.base.intro}}
+              {{item.intro}}
             </div>
             <div class="service-card-summary">
-              {{content.base.summary}}
+              {{item.summary}}
             </div>
-<!--            <div class="service-card-price">-->
-<!--              <span class="service-card-price-symbol">￥</span>-->
-<!--              <span class="service-card-price-value price-value-base">4800</span>-->
-<!--              <span class="service-card-price-unit">/年</span>-->
-<!--            </div>-->
-            <div class="service-card-button service-card-button-base" @click="handleClickIntoCourse">{{btnLabel}}</div>
-          </el-card>
-        </div>
-        <div class="service-card-wrapper">
-          <el-card body-style="padding:0;margin:0;height:450px" shadow="always">
-            <div class="service-card-title professional-color">{{content.professional.title}}</div>
-            <div class="service-card-intro">
-              {{content.professional.intro}}
-            </div>
-            <div class="service-card-summary">
-              {{content.professional.summary}}
-            </div>
-<!--            <div class="service-card-price">-->
-<!--              <span class="service-card-price-symbol">￥</span>-->
-<!--              <span class="service-card-price-value price-value-professional">7999</span>-->
-<!--              <span class="service-card-price-unit">/年</span>-->
-<!--            </div>-->
-            <div class="service-card-button service-card-button-professional" @click="handleClickIntoCourse">{{btnLabel}}</div>
-          </el-card>
-        </div>
-        <div class="service-card-wrapper">
-          <el-card body-style="padding:0;margin:0;height:450px" shadow="always">
-            <div class="service-card-title ultimate-color">{{content.ultimate.title}}</div>
-            <div class="service-card-intro">
-              {{content.ultimate.intro}}
-            </div>
-            <div class="service-card-summary">
-              {{content.ultimate.summary}}
-            </div>
-<!--            <div class="service-card-price">-->
-<!--              <span class="service-card-price-symbol">￥</span>-->
-<!--              <span class="service-card-price-value price-value-ultimate">19999</span>-->
-<!--              <span class="service-card-price-unit">/年</span>-->
-<!--            </div>-->
-            <div class="service-card-button service-card-button-ultimate" @click="handleClickIntoCourse">{{btnLabel}}</div>
+            <div v-if="index%3==0" class="service-card-button service-card-button-base" @click="handleClickIntoCourse">{{btnLabel}}</div>
+            <div v-if="index%3==1" class="service-card-button service-card-button-professional" @click="handleClickIntoCourse">{{btnLabel}}</div>
+            <div v-if="index%3==2" class="service-card-button service-card-button-ultimate" @click="handleClickIntoCourse">{{btnLabel}}</div>
           </el-card>
         </div>
       </div>
@@ -63,9 +30,9 @@
         name: "serviceCard",
         props: {
             content:{
-                type: Object,
+                type: Array,
                 default: function(){
-                    return {base:{title:'',intro:'',summary:''},professional:{title:'',intro:'',summary:''},ultimate:{title:'',intro:'',summary:''}}
+                    return []
                 }
             }
         },
@@ -76,7 +43,12 @@
         },
         methods: {
             handleClickIntoCourse(){
-                this.$router.push({path:ROUTER_COURSE_BUY})
+                this.$message({
+                    center: true,
+                    message: '近期开放，敬请期待...',
+                    type: 'warning'
+                });
+                // this.$router.push({path:ROUTER_COURSE_BUY})
             },
             handleClickIntoRecord(){
                 this.$router.push({path:ROUTER_SERVICE_RECORD})

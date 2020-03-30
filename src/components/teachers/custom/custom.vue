@@ -10,28 +10,20 @@
           </el-col>
         </el-row>
         <el-card shadow="always">
-          <el-row>
-            <el-col :span="20">
-              <el-row type="flex" align="small" v-for="type in filterInfo" :key="type.id">
-                <el-col>
-                  <el-checkbox-group v-model="categoryGroup" size="small" @change="categoryGroupChange">
-                    <el-checkbox-button v-for="(category,index) in type.category" :label="category.id" :key="index" >{{category.label}}</el-checkbox-button>
-                  </el-checkbox-group>
-                </el-col>
-              </el-row>
-              <el-row>
-                <el-col>
-                  <el-input placeholder="请输入查询信息" v-model="queryInfo" size="small" style="width: 240px;"></el-input>
-                  <el-button size="small" type="primary" icon="el-icon-search" @click="queryPackageInfo">搜索</el-button>
-                </el-col>
-              </el-row>
-            </el-col>
-            <el-col :span="4">
-              <div style="display: flex;width: 100%;justify-content: flex-end;">
-                <el-button type="primary" @click="addCustomCourse">添加课程</el-button>
-              </div>
-            </el-col>
-          </el-row>
+          <div style="display:flex;align-items:center;margin-top:4px">
+            <div style="display:flex;flex:1;align-items:center">
+              <el-checkbox-group v-model="categoryGroup" size="small" @change="categoryGroupChange" v-for="type in filterInfo" :key="type.id">
+                <el-checkbox-button v-for="(category,index) in type.category" :label="category.id" :key="index" >{{category.label}}</el-checkbox-button>
+              </el-checkbox-group>
+            </div>
+            <div style="display:flex;flex:1;align-items:center;justify-content:flex-end">
+              <el-button type="primary" @click="handleClickIntoSpace" size="small">存储空间</el-button>
+              <el-button type="primary" @click="addCustomCourse" size="small" style="margin-left:10px">添加课程</el-button>
+              <el-input placeholder="请输入查询信息" v-model="queryInfo" size="small" style="margin-left:10px;width:240px;">
+                <el-button slot="append" icon="el-icon-search" @click="queryPackageInfo"></el-button>
+              </el-input>
+            </div>
+          </div>
           <el-divider></el-divider>
           <el-row :gutter="20" style="margin-top: 20px;">
             <el-col>
@@ -99,6 +91,7 @@
 </template>
 
 <script>
+  const moment = require("moment");
   import '../../../api/restfulapi'
   import {
     qs,
@@ -106,6 +99,7 @@
     getCustomCategorySelf,
     filterCustomByWordsSelf,
   } from "../../../api/api";
+  import '../../../router/router'
   import promptUtil from "../../../utils/promptUtil";
   import storageUtil from "../../../utils/storageUtil";
   import stringUtil from "../../../utils/stringUtil";
@@ -145,6 +139,9 @@
       }
     },
     methods: {
+      handleClickIntoSpace(){
+          this.$router.push({path:ROUTER_STORAGE_SPACE})
+      },
       // 跳转添加自定义课程
       addCustomCourse(){
         this.$router.push({path: ROUTER_CUSTOM_ADD})

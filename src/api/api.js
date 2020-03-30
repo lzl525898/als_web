@@ -44,6 +44,36 @@ axios.interceptors.response.use(function (response) {
   return Promise.reject(error);
 });
 const baseUrl = baseURL
+//======================================订购记录=====================================
+//获取订单过滤信息
+const getOrderFilters = params => {
+  return axios.post('courses/get_state', params).then(res => res.data)
+}
+//获取订单信息列表
+const getOrderList = params => {
+  return axios.post('courses/buy_order_list', params).then(res => res.data)
+}
+//删除订单
+const delOrderItem = params => {
+  return axios.post('courses/buy_order_del', params).then(res => res.data)
+}
+//订单详情
+const orderItemDetail = params => {
+  return axios.post('courses/order_info', params).then(res => res.data)
+}
+//======================================课程开通=====================================
+// 课程开通创建订单
+const createCourseOrder = params => {
+  return axios.post('courses/buy_order', params).then(res => res.data)
+}
+// 通过id获取试看课程课时信息
+const getTrialClassDetail = params => {
+  return axios.post('courses/try_course', params).then(res => res.data)
+}
+// 获取购买、未购买课程信息
+const getBuyCourseList = params => {
+  return axios.post('courses/buy_course', params).then(res => res.data)
+}
 //====================================奥松云课堂前台====================================
 // 获取地址信息
 const getAreaInfoWithIndex = params => {
@@ -98,6 +128,9 @@ const worksTipoffs = params => {
   return axios.post('scratch/tip_offs', params).then(res => res.data)
 }
 //======================================viewIndex=======================================
+const getViewIndexInformationGet = params => {
+  return axios.get('Page/index', params).then(res => res.data)
+}
 // 获取静态页首页产品中心与课程信息
 const getViewIndexInformation = params => {
   return axios.post('Page/index', params).then(res => res.data)
@@ -532,6 +565,10 @@ const getLivePointDetail = params => {
   return axios.get(`live_school/live_count_report`, {params}).then(res => res.data)
 }
 //====================================直播统计=======================================
+// 获取直播课列表
+const getLiveCourseList = params => {
+  return axios.post(`live_school/live_course_show`, params).then(res => res.data)
+}
 //获取直播课概况信息
 const getLiveStatisticsInformation = params => {
   return axios.post(`live_school/callback_report`, params).then(res => res.data)
@@ -660,6 +697,8 @@ const queryResourceByKeys = params => {
 const uploadLocal = baseURL + "/index/upload_local"
 //上传文件接口地址
 const uploadFileUrl = baseURL + "/index/upload"
+// 上传文件接口-存储空间控制
+const uploadFileFlow = baseURL + "/index/upload_self"
 
 //上传头像接口地址
 const uploadAvatarUrl = baseURL + "/index/upload_header"
@@ -1180,6 +1219,10 @@ const updateExam = params => {
 }
 
 //=======================================流量统计=====================================
+// 流量是是否有剩余
+const checkFreeFlow = params => {
+  return axios.post(`school/flow_school`, params).then(res => res.data)
+}
 //统计流量
 const trafficStatistics = params => {
   return axios.post(`index/oss_note`, params).then(res => res.data)
@@ -1267,6 +1310,18 @@ const getVersionInfo = params => {
 const serviceFuncList = params => {
   return axios.get(`web/service_func_list`, params).then(res => res.data)
 }
+// 获取存储空间
+const getStorageSpaceDetail = params => {
+  return axios.post(`Courses_Self/space_school`, params).then(res => res.data)
+}
+// 删除存储空间中的数据（oss删除）
+const delOSSFile = params => {
+  return axios.post(`Courses_Self/oss_file_self_del`, params).then(res => res.data)
+}
+// 获取流量数据列表
+const getFlowDataDetail = params => {
+  return axios.post(`report/liuliang`, params).then(res => res.data)
+}
 
 export {
   qs,
@@ -1339,6 +1394,7 @@ export {
   getReportList,
   delReportById,
   uploadFileUrl,
+  uploadFileFlow,
   uploadLocal,
   uploadAvatarUrl,
   uploadBase64,
@@ -1497,6 +1553,7 @@ export {
   delExamByIds,
   getExamById,
   updateExam,
+  checkFreeFlow,
   trafficStatistics,
   getExamStudentList,
   getStudentExam,
@@ -1515,6 +1572,7 @@ export {
   getQuestionListFromExam,
   indexFlowStatistics,
   getViewIndexInformation,
+  getViewIndexInformationGet,
   getScratchCategory,
   getScratchWorksList,
   checkWorksExist,
@@ -1542,12 +1600,23 @@ export {
   disableLive,
   delTableListLiveInformation,
   getLivePointDetail,
+  getLiveCourseList,
   getLiveStatisticsInformation,
   getLiveStudentTableInformation,
   getLiveTeacherTableInformation,
   getLiveEchartsInformation,
   serviceFuncList,
   getVersionInfo,
+  getStorageSpaceDetail,
+  delOSSFile,
+  getFlowDataDetail,
+  getBuyCourseList,
+  getTrialClassDetail,
+  createCourseOrder,
+  getOrderFilters,
+  getOrderList,
+  delOrderItem,
+  orderItemDetail
 }
 
 

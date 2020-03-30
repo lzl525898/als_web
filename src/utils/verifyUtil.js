@@ -9,4 +9,11 @@ export default {
     }
     return true
   },
+  isOfficeSuffix(name) { // 检验是否office后缀
+    const targets = ['doc','docx','ppt','pptx','xls','xlsx']
+    let names = name.split('.')
+    let suffix = names[names.length-1]
+    let index = targets.findIndex(item=>item===suffix)
+    return index>=0 ? true : false
+  }
 }

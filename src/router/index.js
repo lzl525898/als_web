@@ -93,7 +93,11 @@ const subscribeService = resolve => require(['@/components/home/subscribeService
 const courseBuy = resolve => require(['@/components/home/courseBuy'],resolve)
 const buyStep = resolve => require(['@/components/home/confirmOrder'], resolve)
 const serviceOrder = resolve => require(['@/components/home/serviceOrder'], resolve)
+const serviceOrderDetail = resolve => require(['@/components/home/serviceOrderDetail'], resolve)
 const liveOrder = resolve => require(['@/components/home/livePoints'],resolve)
+const storageSpace = resolve => require(['@/components/home/storageSpace'],resolve)
+const flowAccess = resolve => require(['@/components/home/flowAccess'],resolve)
+const mobileIndex = resolve => require(['@/components/mobile/index'],resolve)
 
 Vue.use(Router)
 
@@ -427,10 +431,25 @@ export default new Router({
           meta: { requireAuth: true },
           component: serviceOrder
         },{
+          path: ROUTER_ORDER_DETAIL, // 订单详情
+          name: 'serviceOrderDetail',
+          meta: { requireAuth: true },
+          component: serviceOrderDetail
+        },{
           path: ROUTER_LIVE_POINT, // 直播点订购
           name: 'liveOrder',
           meta: { requireAuth: true },
           component: liveOrder
+        },{
+          path: ROUTER_STORAGE_SPACE, // 存储空间
+          name: 'storageSpace',
+          meta: { requireAuth: true},
+          component: storageSpace
+        },{
+          path: ROUTER_FLOW_ACCESS, // 流量数据
+          name: 'flowAccess',
+          meta: { requireAuth: true},
+          component: flowAccess
         },{
           path: ROUTER_FEEDBACK_ADD, // 问题反馈
           name: 'addFeedback',
@@ -513,7 +532,13 @@ export default new Router({
       path: '/home',
       name: 'viewIndex',
       meta: { requireAuth: false },
-      component: viewIndex
+      component: viewIndex,
+      children: [{
+        path: '/home/mobile/index',
+        name: 'mobileIndex',
+        meta: { requireAuth: false },
+        component: mobileIndex,
+      }]
     },{ // 作品中心
       path: ROUTER_INDEX_DISCOVER,
       name: 'discover',

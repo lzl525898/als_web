@@ -25,7 +25,7 @@
       @tab-click="handleClick"
       style="height:95%;margin-top: 20px;"
     >
-      <el-tab-pane label="课件" name="courseware">
+      <el-tab-pane label="课件" name="ppt">
         <el-row>
           <el-col :span="24">
             <div class="border_b">
@@ -43,7 +43,7 @@
                   webkitallowfullscreen="true"></iframe>
         </div>
       </el-tab-pane>
-      <el-tab-pane label="教案" name="plan" >
+      <el-tab-pane label="教案" name="pdf" >
         <als-loading v-show="isShowPdfLoading"></als-loading>
         <el-row>
           <el-col :span="24">
@@ -141,13 +141,14 @@
                     name: '自定义课程课时',
                     to: '/custom/see/' + this.$store.state.customCourseDetail.id
                 }, {name: '自定义课程课时详情', to: ''}],
-                baseOfficeUrl: 'https://ow365.cn/?i=18640&ssl=1&furl=',
-                activeName: 'courseware', //  plan  courseware  video
+                baseOfficeUrl: 'https://ow365.cn/?i=18640&n=5&ssl=1&n=5&furl=',
+                activeName: 'ppt', //  ppt  pdf video
                 customCourseId: 0, // 课程id
                 packageInfo: {course: '', software: '', introduce: ''},
                 plan: {pageNum: 1, pageTotalNum: 1, pageRotate: 0, curPageNum: 1, },
                 numPages: 1,
                 videoObject: {}, // 视频对象
+                pdfWebPath:'', // pdf 文件路径
                 ruleForm: {
                     id: '', // 课时id
                     name: '', // 课程名称
@@ -166,6 +167,7 @@
                 },
                 currentStatus:'',
                 isShowPdfLoading: true,
+                flowRecord:{ppt:'',pdf:''},
             }
         },
         mounted() {
@@ -198,12 +200,14 @@
                     if (res.code == SUCCESS_CODE) {
                         this.analysisEditDataFromServer(res.data)
                         if (res.data.ppt_url && res.data.ppt_url != "") {
-                            this.totalTrafficStatistics(es.data.ppt_url, '自定义课程ppt')
-
+                            if(this.flowRecord.ppt==''&& this.flowRecord.pdf==''){
+                                this.totalTrafficStatistics(res.data.ppt_url, '自定义课程课件', 'ppt')
+                            }
                         }
                         if (res.data.pdf_url && res.data.pdf_url != "") {
-                            this.totalTrafficStatistics(res.data.pdf_url, '自定义课程pdf')
-
+                            if(this.flowRecord.ppt==''&&this.flowRecord.pdf==''){
+                                this.totalTrafficStatistics(res.data.pdf_url, '自定义课程教案', 'pdf')
+                            }
                         }
                     }
                     loading.close()
@@ -219,6 +223,7 @@
                 this.ruleForm.sort = data.weight
                 this.ruleForm.planName = data.pdf_name
                 this.ruleForm.plan = data.pdf_url
+                this.pdfWebPath = data.pdf_url
                 // if( this.ruleForm.plan!=""){
                 //     this.pdfTask(this.ruleForm.plan)
                 // }
@@ -250,8 +255,21 @@
                 // };
             },
             handleClick(tab, event) {
-                if(tab.name=='plan'){
-                    this.pdfTask(this.ruleForm.plan)
+                let type = tab.name
+                switch(type){
+                    case 'ppt':
+                        if(this.flowRecord.ppt==''){
+                            this.totalTrafficStatistics(this.ruleForm.courseware, '自定义课程课件', type)
+                        }
+                        break;
+                    case 'pdf':
+                        this.pdfTask(this.ruleForm.plan)
+                        if(this.flowRecord.pdf==''){
+                            this.totalTrafficStatistics(this.pdfWebPath, '自定义课程教案', type)
+                        }
+                        break;
+                    default:
+                        break;
                 }
                 //视频
                 // if (tab.index == 2 && this.playerObj == null) {
@@ -295,21 +313,35 @@
             pdfProgress(val){
                 this.currentStatus=val
             },
-            totalTrafficStatistics(file_url, text) {
-                trafficStatistics(qs.stringify({
-                    school_id: storageUtil.readTeacherInfo().school_id,
-                    user_id: storageUtil.readTeacherInfo().id,
-                    file_url: file_url,
-                    text: text,
-                })).then(res => {
-                    if (res.code == SUCCESS_CODE) {
-                    } else {
-
+            totalTrafficStatistics(file_url, text,type) {
+                if(file_url&&file_url!=''){
+                    let users = storageUtil.readTeacherInfo()
+                    let schoolId = users.school_id
+                    let userId = users.id
+                    switch(type){
+                        case 'pdf':
+                            this.flowRecord.pdf = type
+                            break;
+                        case 'ppt':
+                            file_url = this.baseOfficeUrl + file_url
+                            this.flowRecord.ppt = type
+                            break;
+                        default:
+                            break;
                     }
-
-                }).catch(err => {
-                    promptUtil.LOG('trafficStatistics-err', err)
-                })
+                    trafficStatistics(qs.stringify({
+                        school_id: schoolId,
+                        user_id: userId,
+                        file_url: file_url,
+                        text: text,
+                    })).then(res => {
+                        if (res.code == SUCCESS_CODE) {
+                        } else {
+                        }
+                    }).catch(err => {
+                        promptUtil.LOG('trafficStatistics-err', err)
+                    })
+                }
             }
         },
         watch:{

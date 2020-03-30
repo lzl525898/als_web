@@ -103,6 +103,7 @@
     qs,
     uploadLocal,
     uploadFileUrl,
+    uploadFileFlow,
     handleCustomItemSelf, // 添加、编辑课时
     getCourseItemById, // 根据id获取课时数据
   } from '../../../api/api'
@@ -111,6 +112,7 @@
   import storageUtil from "../../../utils/storageUtil";
   import staticUtil from "../../../utils/staticUtil";
   import childHeader from '../../component/childHeader'
+  import verifyUtil from "../../../utils/verifyUtil";
   export default {
     components:{"als-child-header": childHeader},
     data(){
@@ -122,7 +124,7 @@
         coursewareUploadStatus:0, // 0 未上传 1 上传中 2 完成上传
         planUploadStatus:0, // 0 未上传 1 上传中 2 完成上传
         customStore: {type:'',course:''},
-        uploadAction: uploadFileUrl,
+        uploadAction: uploadFileFlow,
         uploadLocal: uploadLocal,
         categoryArray: [],
         isAddLoading: false, // 创建loading状态
@@ -154,6 +156,7 @@
       }
     },
     mounted() {
+      this.uploadAction = this.uploadAction + "?school_id=" + storageUtil.readTeacherInfo().school_id + "&user_id=" + storageUtil.readTeacherInfo().id
       this.customStore = this.$store.state.customCourseHandle
       let routerPath = ''
       if(this.customStore.type && this.customStore.type=='add'){
@@ -293,8 +296,14 @@
         },1000)
       },
       handlePlanSuccess(res, file){
-        this.ruleForm.plan = file.response;
-        this.planUploadStatus = 2
+          if(res.code==0){ // 失败
+            promptUtil.warning(this, res.msg)
+              this.planUploadStatus = 0
+              this.ruleForm.planList = []
+          }else{
+              this.ruleForm.plan = file.response;
+              this.planUploadStatus = 2
+          }
       },
       beforePlanUpload(file) {
         const isPDF = file.type === "application/pdf";
@@ -321,11 +330,17 @@
         },1000)
       },
       handleCourseSuccess(res, file){
-        this.ruleForm.courseware = file.response;
-        this.coursewareUploadStatus = 2
+          if(res.code==0){ // 失败
+              this.ruleForm.coursewareList = []
+              this.coursewareUploadStatus = 0
+              promptUtil.warning(this, res.msg)
+          }else{
+              this.ruleForm.courseware = file.response;
+              this.coursewareUploadStatus = 2
+          }
       },
       beforeCourseUpload(file) {
-        const isPPT = (file.type.indexOf("office") >= 0) ? true : false;
+        const isPPT = verifyUtil.isOfficeSuffix(file.name);
         const isLt100M = file.size / 1024 / 1024 < 200;
         if (!isPPT) {
           this.$message.error('上传文件只能是office格式!');

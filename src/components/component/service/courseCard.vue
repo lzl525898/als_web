@@ -1,5 +1,5 @@
 <template>
-    <el-card body-style="width:100%;min-width:300px;padding:0;" class="course-card-wrapper" :id="'course_card_item_'+ detail.id">
+    <el-card body-style="width:100%;min-width:300px;padding:0;height:126px" class="course-card-wrapper" :id="'course_card_item_'+ detail.id">
       <div @click="handleClickSelect">
         <div class="selected-tool-content">
           <img class="course-card-wrapper-cover" :src="detail.imgUrl"/>

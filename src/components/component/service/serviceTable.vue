@@ -13,7 +13,6 @@
         </div>
       </div>
       <div style="border:1px solid #EBEEF5">
-        <!--学堂首页-->
         <el-table
           v-for="(version,vIndex) in versionDetail"
           :key="vIndex"
@@ -22,33 +21,15 @@
           style="width: 100%"
         >
           <el-table-column prop="name" :label="version.title"></el-table-column>
-          <el-table-column :label="vIndex==0?'基础版':''" align="center" width="220" show-overflow-tooltip>
+          <el-table-column :label="vIndex==0?versionList[index]:''" align="center" show-overflow-tooltip v-for="(type,index) in versionList" :key="index">
             <template slot-scope="scope">
               <div class="status-wrapper">
-                <div v-show="scope.row.base==1" class="available-item"/>
-                <div v-show="scope.row.base==2" class="un-available-item"/>
-                <div v-show="scope.row.base==3" class="wait-available-item"/>
-                <div v-show="scope.row.bMsg && scope.row.bMsg!=''" style="margin-top:10px"><span style="color:#333;font-weight:bold">{{scope.row.bMsg}}</span></div>
-              </div>
-            </template>
-          </el-table-column>
-          <el-table-column prop="professional" :label="vIndex==0?'专业版':''" align="center" width="220" show-overflow-tooltip>
-            <template slot-scope="scope">
-              <div class="status-wrapper">
-                <div v-show="scope.row.professional==1" class="available-item"/>
-                <div v-show="scope.row.professional==2" class="un-available-item"/>
-                <div v-show="scope.row.professional==3" class="wait-available-item"/>
-                <div v-show="scope.row.bMsg && scope.row.bMsg!=''" style="margin-top:10px"><span style="color:#333;font-weight:bold">{{scope.row.bMsg}}</span></div>
-              </div>
-            </template>
-          </el-table-column>
-          <el-table-column prop="ultimate" :label="vIndex==0?'旗舰版':''" align="center" width="220" show-overflow-tooltip>
-            <template slot-scope="scope">
-              <div class="status-wrapper">
-                <div v-show="scope.row.ultimate==1" class="available-item"/>
-                <div v-show="scope.row.ultimate==2" class="un-available-item"/>
-                <div v-show="scope.row.ultimate==3" class="wait-available-item"/>
-                <div v-show="scope.row.bMsg && scope.row.bMsg!=''" style="margin-top:10px"><span style="color:#333;font-weight:bold">{{scope.row.bMsg}}</span></div>
+                <div v-show="version.table[scope.$index].version[index]==1" class="available-item"/>
+                <div v-show="version.table[scope.$index].version[index]==2" class="un-available-item"/>
+                <div v-show="version.table[scope.$index].version[index]==3" class="wait-available-item"/>
+                <div v-show="version.table[scope.$index].msg[index] && version.table[scope.$index].msg[index]!=''" style="margin-top:10px">
+                  <span style="color:#333;font-weight:bold">{{version.table[scope.$index].msg[index]}}</span>
+                </div>
               </div>
             </template>
           </el-table-column>
@@ -61,10 +42,16 @@
     export default {
         name: "serviceTable",
         props:{
+            versionList: {
+                type: Array,
+                default: function(){
+                    return []
+                }
+            },
             versionDetail: {
                 type: Array,
                 default: function(){
-                    return [{title:'',table:[{name:'',base:1,professional:1,ultimate:1}]}]
+                    return []
                 }
             }
         },// 1 可用 2不可用 3待定

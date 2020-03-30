@@ -62,6 +62,7 @@
   import {
     qs,
     uploadFileUrl,
+    uploadFileFlow,
     addCustomSelf,
     findCustomSelfById
   } from '../../../api/api';
@@ -76,7 +77,7 @@
       return{
         routerConfig: [{name:'自定义课程',to:'/custom'},{name:'编辑自定义课程',to:''}],
         pictureUploadStatus: 0,
-        uploadAction: uploadFileUrl,
+        uploadAction: uploadFileFlow,
         categoryArray: [],
         isSaveLoading: false,
         isCloseCustomShow: false,
@@ -101,6 +102,7 @@
       }
     },
     mounted(){
+      this.uploadAction = this.uploadAction + "?school_id=" + storageUtil.readTeacherInfo().school_id + "&user_id=" + storageUtil.readTeacherInfo().id
       if(!this.$route.params.id){
         this.$router.push({path:ROUTER_CUSTOM})
         return
@@ -173,8 +175,13 @@
       },
       handlePictureSuccess(res, file) {
         // this.ruleForm.picture = file.response // oss地址
-        this.ruleForm.picture = file.response;
-        this.pictureUploadStatus = 2
+        if(res.code==0){ // 失败
+            promptUtil.warning(this, res.msg)
+            this.pictureUploadStatus = 0
+        }else{
+            this.ruleForm.picture = file.response;
+            this.pictureUploadStatus = 2
+        }
       },
       beforePictureUpload(file) {
         const isJPG = file.type === "image/png" || file.type === "image/jpeg";

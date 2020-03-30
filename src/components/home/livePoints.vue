@@ -7,6 +7,9 @@
     </el-row>
     <el-card>
       <div style="padding-bottom:16px">
+        <div style="background-color:#E5F3FF;font-size:12px;padding:10px 12px;display:flex;align-items:center;margin-bottom:18px;border-radius:5px">
+          <i class="el-icon-info" style="color:#409EFF;font-size:14px"/><span style="margin-left:10px;">仅统计当前 直播点 已合计数据，平均延迟 1-2 小时</span>
+        </div>
         <div style="display:flex">
           <el-select v-model="filters.teacher" placeholder="授课教师" size="small" style="width:180px">
             <el-option v-for="item in filters.teachers" :key="item.value" :label="item.label" :value="item.value"></el-option>
@@ -28,7 +31,7 @@
             width="200"
             trigger="hover"
             content="直播点数在进行大、小班课直播时进行消耗,消耗完后无法进行大、小班直播课直播">
-            <el-link :underline="false" slot="reference" style="margin-top:4px"><span style="color:#409EFF">什么是直播点数？</span></el-link>
+            <el-link :underline="false" slot="reference" style="margin-top:4px;margin-left:5px"><span style="color:#409EFF">什么是直播点数？</span></el-link>
           </el-popover>
           <div style="flex:1;display:flex;justify-content:flex-end">
             <el-popover
@@ -110,11 +113,9 @@
     import '../../router/router'
     import {qs,getSchoolDueInfo,getTeacherList,getLivePointDetail} from '../../api/api'
     import '../../api/restfulapi'
-    import TeacherMan from "../teachers/teacher/teacherMan";
     export default {
         name: "livePoints",
         components: {
-            TeacherMan,
             "als-child-header": childHeader,
             "als-pagination": alsPagination,
         },

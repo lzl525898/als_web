@@ -198,6 +198,7 @@
     import verifyUtil from '../../utils/verifyUtil';
     import '../../api/restfulapi';
     import userAgreementWrapper from '../component/userAgreementWrapper'
+    import staticUtil from "../../utils/staticUtil";
 
     export default {
         components: {'als-user-agreement-wrapper': userAgreementWrapper},
@@ -314,6 +315,9 @@
             }
         },
         mounted() {
+            if(staticUtil.isMobile()){
+                this.$router.replace({path:'/home'})
+            }
             let lang = storageUtil.getLang()
             this.currentSystemLang = lang
             this.$i18n.locale = lang;

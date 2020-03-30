@@ -144,6 +144,7 @@
     import $ from 'jquery';
     import {
         qs,
+        checkFreeFlow,
         getCoursesCategory,
         getCoursesPackageDetail,
         filterCoursesDetailByTag,
@@ -156,6 +157,8 @@
         components: {"als-child-header": childHeader},
         data() {
             return {
+                freeFlowStatus: false, // true 有流量  false 无流量
+                freeFlowMsg: '本月流量不足',
                 routerConfig: [{name: vuexUtils.checkMenuExist(this,'resources').target.name, to: '/resources'}, {name: '详细目录', to: ''}],
                 inputQueryInfo: "", // 搜索内容
                 pageSize: 10, // 分页页码大小
@@ -186,6 +189,16 @@
                 this.clientWidth = window.innerWidth || document.documentElement.clientWidth|| document.body.clientWidth
                 this.clientWidth = this.clientWidth -540
             }
+            checkFreeFlow(qs.stringify({school_id:storageUtil.readTeacherInfo().school_id})).then(res=>{
+                if(res.code==SUCCESS_CODE){
+                    this.freeFlowStatus = true
+                }else{
+                    this.freeFlowStatus = false
+                }
+                this.freeFlowMsg = res.msg
+            }).catch(err=>{
+                promptUtil.LOG('checkFreeFlow-err',err)
+            })
             promptUtil.checkOverdue(this, storageUtil.readTeacherInfo().id) // true 表示已过期 false表示未过期
             //  面包屑显示首页效果
             this.initLangData()
@@ -388,6 +401,14 @@
                 return "第"+(index + (this.currentPage - 1) * 10)+"课";
             },
             resourcesListShow(event) {
+              if(!this.freeFlowStatus){
+                  this.$notify({
+                      title: this.$t(`message.system_info`),
+                      message: this.freeFlowMsg,
+                      type: 'warning'
+                  });
+                  return
+              }
               if(event.if_in==1){
                 this.$router.push({path: "/resourcesListShow/" + event.id});
               }else{

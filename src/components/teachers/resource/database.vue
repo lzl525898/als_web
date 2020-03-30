@@ -1,181 +1,187 @@
 <script src="../../../api/api.js"></script>
 <template>
-  <div class="database">
-    <!-- 面包屑 -->
-    <el-row>
-      <el-col :span="24">
-        <als-child-header :config="routerConfig"/>
-      </el-col>
-    </el-row>
-    <el-card class="box-card">
-      <!-- 过滤 -->
-      <!--      <el-row type="flex" align="middle">-->
-      <!--        <el-col :span="2">全部</el-col>-->
-      <!--        <el-col :span="22">-->
-      <!--          <el-button round size="small" :autofocus="true" @click="onHandleAllResourceList">全部</el-button>-->
-      <!--        </el-col>-->
-      <!--      </el-row>-->
-      <el-row type="flex" align="middle" v-for="type in filterInfo" :key="type.id">
-        <!--        <el-col :span="2">{{type.type}}</el-col>-->
+  <div>
+    <div v-if="!isAuth">
+      <als-no-auth/>
+    </div>
+    <div v-if="isAuth" class="database">
+      <!-- 面包屑 -->
+      <el-row>
+        <el-col :span="24">
+          <als-child-header :config="routerConfig"/>
+        </el-col>
+      </el-row>
+      <el-card class="box-card">
+        <!-- 过滤 -->
+        <!--      <el-row type="flex" align="middle">-->
+        <!--        <el-col :span="2">全部</el-col>-->
         <!--        <el-col :span="22">-->
-        <!--          <el-button-->
-        <!--            round-->
-        <!--            size="small"-->
-        <!--            v-for="(category,index) in type.category"-->
-        <!--            :key="index"-->
-        <!--            @click="onFilterClick(category,index)"-->
-        <!--          >{{category.label}}</el-button>-->
+        <!--          <el-button round size="small" :autofocus="true" @click="onHandleAllResourceList">全部</el-button>-->
         <!--        </el-col>-->
-        <el-col :span="24">
-          <el-checkbox-group v-model="categoryGroup" size="small" @change="categoryGroupChange">
-            <el-checkbox-button v-for="(category,index) in type.category" :label="category.id" :key="index">
-              {{category.label}}
-            </el-checkbox-button>
-          </el-checkbox-group>
-        </el-col>
-      </el-row>
-      <!-- 查询 -->
-      <el-row :gutter="16">
-        <el-col :span="24">
-          <el-input
-            size="small"
-            style="width: 240px;"
-            placeholder="请输入查询信息"
-            v-model="inputQueryInfo"
-            clearable
-            @keydown.native.enter="queryClassInfo"
-          ></el-input>
-          <el-button size="small" type="primary" icon="el-icon-search" @click="queryClassInfo">搜索</el-button>
-        </el-col>
-      </el-row>
-    </el-card>
-    <div style="display: flex">
-      <div v-show="!showType" style="width: 200px;">
-
-<!--        <el-row style="margin-top: 10px;margin-left: 10px;">-->
-<!--          <el-button><i class="el-icon-download" size="small" @click="showBatchDownload">下载</i></el-button>-->
-<!--        </el-row>-->
-
-        <el-row style="margin-top: 10px;margin-left: 10px;">
-<!--          <el-button><i class="el-icon-download" size="small" @click="showBatchDownload">下载</i></el-button>-->
+        <!--      </el-row>-->
+        <el-row type="flex" align="middle" v-for="type in filterInfo" :key="type.id">
+          <!--        <el-col :span="2">{{type.type}}</el-col>-->
+          <!--        <el-col :span="22">-->
+          <!--          <el-button-->
+          <!--            round-->
+          <!--            size="small"-->
+          <!--            v-for="(category,index) in type.category"-->
+          <!--            :key="index"-->
+          <!--            @click="onFilterClick(category,index)"-->
+          <!--          >{{category.label}}</el-button>-->
+          <!--        </el-col>-->
+          <el-col :span="24">
+            <el-checkbox-group v-model="categoryGroup" size="small" @change="categoryGroupChange">
+              <el-checkbox-button v-for="(category,index) in type.category" :label="category.id" :key="index">
+                {{category.label}}
+              </el-checkbox-button>
+            </el-checkbox-group>
+          </el-col>
         </el-row>
+        <!-- 查询 -->
+        <el-row :gutter="16">
+          <el-col :span="24">
+            <el-input
+              size="small"
+              style="width: 240px;"
+              placeholder="请输入查询信息"
+              v-model="inputQueryInfo"
+              clearable
+              @keydown.native.enter="queryClassInfo"
+            ></el-input>
+            <el-button size="small" type="primary" icon="el-icon-search" @click="queryClassInfo">搜索</el-button>
+          </el-col>
+        </el-row>
+      </el-card>
+      <div style="display: flex">
+        <div v-show="!showType" style="width: 200px;">
 
+          <!--        <el-row style="margin-top: 10px;margin-left: 10px;">-->
+          <!--          <el-button><i class="el-icon-download" size="small" @click="showBatchDownload">下载</i></el-button>-->
+          <!--        </el-row>-->
+
+          <el-row style="margin-top: 10px;margin-left: 10px;">
+            <!--          <el-button><i class="el-icon-download" size="small" @click="showBatchDownload">下载</i></el-button>-->
+          </el-row>
+
+        </div>
+        <div style="flex:1;display:flex;justify-content:flex-end;height: 30px;margin-top: 20px;">
+          <a v-show="!showType" href="#" class="showType" @click="changeShowStyle">
+            <el-tooltip content="切换到缩略图模式" placement="top">
+              <i class="el-icon-tickets"></i>
+            </el-tooltip>
+          </a>
+          <a v-show="showType" href="#" class="showType" @click="changeShowStyle">
+            <el-tooltip content="切换到列表模式" placement="top">
+              <i class="el-icon-menu"></i>
+            </el-tooltip>
+          </a>
+        </div>
       </div>
-      <div style="flex:1;display:flex;justify-content:flex-end;height: 30px;margin-top: 20px;">
-        <a v-show="!showType" href="#" class="showType" @click="changeShowStyle">
-          <el-tooltip content="切换到缩略图模式" placement="top">
-            <i class="el-icon-tickets"></i>
-          </el-tooltip>
-        </a>
-        <a v-show="showType" href="#" class="showType" @click="changeShowStyle">
-          <el-tooltip content="切换到列表模式" placement="top">
-            <i class="el-icon-menu"></i>
-          </el-tooltip>
-        </a>
+      <!-- 下载课程包 -->
+      <div v-show="!showType">
+        <!--      ref="multipleTable"-->
+        <el-table
+          :data="tableData"
+          tooltip-effect="dark"
+          style="width: 100%"
+          @selection-change="handleSelectionChange">
+          <!--        <el-table-column type="selection" width="55"></el-table-column>-->
+          <el-table-column prop="title" label="文件名"></el-table-column>
+          <el-table-column prop="upload" label="上传时间" width="250"></el-table-column>
+          <el-table-column prop="img" label="文件类型" width="150" show-overflow-tooltip></el-table-column>
+          <el-table-column label="操作" width="120" show-overflow-tooltip>
+            <template slot-scope="scope">
+              <div @click="downloadTableData(scope.row)">
+                <el-link :underline="false" :href="scope.row.url" type="primary">下载</el-link>
+              </div>
+            </template>
+          </el-table-column>
+        </el-table>
+        <!-- 分页 -->
+        <el-row type="flex" justify="center" class="mt" style="margin-top: 30px;">
+          <el-pagination
+            background
+            @current-change="handleCurrentChange"
+            :current-page="currentPage"
+            :page-size="tablePageSize"
+            layout="total, prev, pager, next, jumper"
+            :total="databaseInfoList"
+          ></el-pagination>
+        </el-row>
       </div>
-    </div>
-    <!-- 下载课程包 -->
-    <div v-show="!showType">
-<!--      ref="multipleTable"-->
-      <el-table
-        :data="tableData"
-        tooltip-effect="dark"
-        style="width: 100%"
-        @selection-change="handleSelectionChange">
-<!--        <el-table-column type="selection" width="55"></el-table-column>-->
-        <el-table-column prop="title" label="文件名"></el-table-column>
-        <el-table-column prop="upload" label="上传时间" width="250"></el-table-column>
-        <el-table-column prop="img" label="文件类型" width="150" show-overflow-tooltip></el-table-column>
-        <el-table-column label="操作" width="120" show-overflow-tooltip>
-          <template slot-scope="scope">
-            <div @click="downloadTableData(scope.row)">
-              <el-link :underline="false" :href="scope.row.url" type="primary">下载</el-link>
-            </div>
-          </template>
-        </el-table-column>
-      </el-table>
-      <!-- 分页 -->
-      <el-row type="flex" justify="center" class="mt" style="margin-top: 30px;">
-        <el-pagination
-          background
-          @current-change="handleCurrentChange"
-          :current-page="currentPage"
-          :page-size="tablePageSize"
-          layout="total, prev, pager, next, jumper"
-          :total="databaseInfoList"
-        ></el-pagination>
-      </el-row>
-    </div>
-    <div v-show="showType">
-      <el-row>
-        <el-col>
-          <div class="grid-content bg-purple-light">
-            <div class="elbox" v-for="(item,index) in tableData" :key="index">
-              <el-card shadow="hover" :body-style="{ padding: '15px  15px',backgroundColor: '#e6e6e6'}">
-                <div style="height: 200px;width: 255px;">
-                  <div style="display: flex;margin-top: 5px">
-                    <el-tooltip class="item" effect="dark" :content="item.title" placement="top">
+      <div v-show="showType">
+        <el-row>
+          <el-col>
+            <div class="grid-content bg-purple-light">
+              <div class="elbox" v-for="(item,index) in tableData" :key="index">
+                <el-card shadow="hover" :body-style="{ padding: '15px  15px',backgroundColor: '#e6e6e6'}">
+                  <div style="height: 200px;width: 255px;">
+                    <div style="display: flex;margin-top: 5px">
+                      <el-tooltip class="item" effect="dark" :content="item.title" placement="top">
+                        <div
+                          style="height: 40px;width: 170px;color: #333333;font-weight: 600;font-size: 16px;white-space:nowrap; text-overflow:ellipsis;overflow: hidden">
+                          {{item.title}}
+                        </div>
+                      </el-tooltip>
                       <div
-                        style="height: 40px;width: 170px;color: #333333;font-weight: 600;font-size: 16px;white-space:nowrap; text-overflow:ellipsis;overflow: hidden">
-                        {{item.title}}
+                        style="width: 50px;border-left: 1px solid #fff;border-right: 1px solid #fff;height:20px;text-align: center">
+                        <span style="margin-left: 5px;">{{item.img}}</span>
                       </div>
-                    </el-tooltip>
-                    <div
-                      style="width: 50px;border-left: 1px solid #fff;border-right: 1px solid #fff;height:20px;text-align: center">
-                      <span style="margin-left: 5px;">{{item.img}}</span>
+                      <div style="margin-left:10px;">
+                        <el-link :underline="false" :href="item.url" target="_blank"><i class="el-icon-download"
+                                                                                        style="font-weight: 400;font-size: 22px;"
+                                                                                        @click="downloadData(item.url)"></i>
+                        </el-link>
+                      </div>
                     </div>
-                    <div style="margin-left:10px;">
-                      <el-link :underline="false" :href="item.url" target="_blank"><i class="el-icon-download"
-                                                                                      style="font-weight: 400;font-size: 22px;"
-                                                                                      @click="downloadData(item.url)"></i>
-                      </el-link>
-                    </div>
+                    <div style="border: 1px dashed #fff;margin-top:-14px;"></div>
+                    <el-link :underline="false" :href="item.openUrl" target="_blank">
+                      <div style="width: 255px; height: 165px;margin-top:5px;">
+                        <el-image
+                          style="width: 240px; height: 150px;margin-top:7px;margin-left:7px"
+                          :src="item.pic"
+                          fit="fill"></el-image>
+                      </div>
+                    </el-link>
                   </div>
-                  <div style="border: 1px dashed #fff;margin-top:-14px;"></div>
-                  <el-link :underline="false" :href="item.openUrl" target="_blank">
-                    <div style="width: 255px; height: 165px;margin-top:5px;">
-                      <el-image
-                        style="width: 240px; height: 150px;margin-top:7px;margin-left:7px"
-                        :src="item.pic"
-                        fit="fill"></el-image>
-                    </div>
-                  </el-link>
-                </div>
-              </el-card>
+                </el-card>
+              </div>
             </div>
-          </div>
-        </el-col>
-      </el-row>
-      <!-- 分页 -->
-      <el-row type="flex" justify="center" class="mt">
-        <el-pagination
-          background
-          @current-change="handleCurrentChange"
-          :current-page="currentPage"
-          :page-size="pageSize"
-          layout="total, prev, pager, next, jumper"
-          :total="databaseInfoList"
-        ></el-pagination>
-      </el-row>
-    </div>
-    <el-dialog title="提示" :visible.sync="fileDialogVisible" width="20%">
-      <el-row>
-        <el-col :span="4">
-          <i class="el-icon-question"></i>
-        </el-col>
-        <el-col :span="20">
-          <span>确定要批量下载选定文件吗？</span>
-        </el-col>
-      </el-row>
-      <span slot="footer" class="dialog-footer">
+          </el-col>
+        </el-row>
+        <!-- 分页 -->
+        <el-row type="flex" justify="center" class="mt">
+          <el-pagination
+            background
+            @current-change="handleCurrentChange"
+            :current-page="currentPage"
+            :page-size="pageSize"
+            layout="total, prev, pager, next, jumper"
+            :total="databaseInfoList"
+          ></el-pagination>
+        </el-row>
+      </div>
+      <el-dialog title="提示" :visible.sync="fileDialogVisible" width="20%">
+        <el-row>
+          <el-col :span="4">
+            <i class="el-icon-question"></i>
+          </el-col>
+          <el-col :span="20">
+            <span>确定要批量下载选定文件吗？</span>
+          </el-col>
+        </el-row>
+        <span slot="footer" class="dialog-footer">
         <el-button @click="fileDialogVisible = false">取 消</el-button>
         <el-button type="primary" @click="handleBatchDownload" :loading="isLoadingWithDownload">确 定</el-button>
       </span>
-    </el-dialog>
+      </el-dialog>
+    </div>
   </div>
 </template>
 <script>
     import PubSub from "pubsub-js";
+    import noAuthContent from '../../component/noAuthContent'
     import storageUtil from "../../../utils/storageUtil";
     import promptUtil from "../../../utils/promptUtil";
     import stringUtil from "../../../utils/stringUtil";
@@ -191,9 +197,10 @@
     import childHeader from '../../component/childHeader'
 
     export default {
-        components: {"als-child-header": childHeader},
+        components: {"als-child-header": childHeader,"als-no-auth": noAuthContent},
         data() {
             return {
+                isAuth: false,
                 routerConfig: [{name: '资料百科', to: ''}],
                 categoryGroup: [], // 类型数组
                 showType: true, // true 块展示 false 列表展示
@@ -213,11 +220,13 @@
         mounted() {
             promptUtil.checkOverdue(this, storageUtil.readTeacherInfo().id) // true 表示已过期 false表示未过期
             PubSub.publish("currentMenuIndex", "/database");
-            const loading = promptUtil.loading(this);
-            getCoursesCategory(
-                qs.stringify({school_id: storageUtil.readTeacherInfo().school_id, type: 2})
-            )
-                .then(res => {
+            let menuItem = storageUtil.getMenu().find(item=> item.url=='database')
+            if(menuItem && menuItem.if_in==1) { // 有权限
+                this.isAuth = true
+                const loading = promptUtil.loading(this);
+                getCoursesCategory(
+                    qs.stringify({school_id: storageUtil.readTeacherInfo().school_id, type: 2})
+                ).then(res => {
                     if (res.code == SUCCESS_CODE) {
                         this.filterInfo = [];
                         if (res.data != '[]') {
@@ -229,10 +238,13 @@
                         promptUtil.wait(this);
                     }
                 })
-                .catch(err => {
-                    loading.close();
-                    promptUtil.LOG("getResourceCategory-err", err);
-                });
+                    .catch(err => {
+                        loading.close();
+                        promptUtil.LOG("getResourceCategory-err", err);
+                    });
+            }else{
+                this.isAuth = false
+            }
             // this.tableData = this.queryFromServer;
         },
         methods: {

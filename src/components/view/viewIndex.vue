@@ -1,6 +1,10 @@
 <template>
   <div>
-    <div class="container">
+    <div v-if="isMobile">
+      <als-mobile-header/>
+      <als-mobile-container/>
+    </div>
+    <div class="container" v-if="!isMobile">
       <!--    nav-->
       <als-header/>
       <!--    banner-->
@@ -220,6 +224,8 @@
     import storageUtil from '../../utils/storageUtil'
     import alsHeader from '../../components/component/header'
     import alsFooter from '../../components/component/footer'
+    import alsMobileHeader from '../../components/component/mobile/mobileHeader'
+    import alsMobileContainer from '../../components/component/mobile/mobileContainer'
     import '../../api/restfulapi'
     import '../../../static/fonts/fonts.css'
     import {
@@ -229,9 +235,10 @@
     } from '../../api/api'
 
     export default {
-        components:{'als-header':alsHeader,'als-footer':alsFooter},
+        components:{'als-header':alsHeader,'als-footer':alsFooter,'als-mobile-header':alsMobileHeader,'als-mobile-container':alsMobileContainer},
         data() {
             return {
+                isMobile: false,
                 produceData: [],
                 coursesData: [],
                 form: {
@@ -260,7 +267,24 @@
                 dialogVisible: false,
             };
         },
+        created(){
+            let _this = this
+            window.onresize = ()=>{
+                //调用methods中的事件
+                let width = window.innerWidth || document.documentElement.clientWidth  || document.body.clientWidth
+                if(width<1217){
+                    _this.isMobile = true
+                }else{
+                    _this.isMobile = false
+                }
+            }
+        },
         mounted() {
+            if(staticUtil.isMobile()){ // 移动端
+                this.isMobile = true
+            }else {  // PC端
+                this.isMobile = false
+            }
             let lang = storageUtil.getLang()
             this.$i18n.locale = lang;
             storageUtil.setLang(lang)
@@ -278,6 +302,9 @@
             }).catch(err => {
                 promptUtil.LOG('getSystematicStatistics-err', err)
             })
+        },
+        destroyed(){
+            window.onresize = null;
         },
         methods: {
             applayBtn() {

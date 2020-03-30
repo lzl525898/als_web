@@ -1,69 +1,71 @@
 <template>
     <div>
-      <el-row style="margin-bottom:20px">
-        <el-col :span="24">
-          <als-child-header :config="routerConfig"/>
-        </el-col>
-      </el-row>
-      <el-card shadow="never" body-style="padding-bottom:0px">
-        <div slot="header" style="display:flex">
-          <div class="course-header-title"><span style="color:#E6A23C;">未开通</span></div>
-          <div class="course-header-filter-wrapper"><div style="color:#40a9ff;cursor: pointer;" @click="handleClickIntoRecord">订购记录</div></div>
-        </div>
-        <el-row style="padding-left: 30px;margin-top:10px;">
-          <el-col :span="8" v-for="unBuyItem in unBuy" :key="unBuyItem.id" style="margin-bottom:30px;">
-            <als-course-card :detail="unBuyItem" :deleteItem="currentDeleteId" :selectItem="currentSelectId"
-                             @handleCheck="statisticsTotal($event)"
-                             @handleDetail="handleShowDetail($event)"/>
+      <div v-if="initStatus">
+        <el-row style="margin-bottom:20px">
+          <el-col :span="24">
+            <als-child-header :config="routerConfig"/>
           </el-col>
         </el-row>
-      </el-card>
-      <el-card shadow="never" body-style="padding-bottom:0px">
-        <div slot="header" style="display:flex">
-          <div class="course-header-title"><span style="color:#67C23A">已开通</span></div>
-        </div>
-        <el-row style="padding-left: 30px;margin-top:10px;">
-          <el-col :span="8" v-for="buyItem in buy" :key="buyItem.id" style="margin-bottom:30px;">
-            <als-course-card :detail="buyItem" @handleCheck="statisticsTotal($event)" :deleteItem="currentDeleteId"/>
-          </el-col>
-        </el-row>
-      </el-card>
-      <div style="height:60px;"></div>
-      <div class="course-footer">
-        <el-row>
-          <el-col :span="8" :offset="14">
-            <el-popover
-              placement="top"
-              :offset="200"
-              width="560"
-              trigger="hover">
-              <div>
-                <div class="checked-item-header">已选课程</div>
-                <div class="checked-list-wrapper">
-                  <div class="checked-item">
-                    <div v-show="totalInfo.details.length==0" style="height:240px;line-height:240px;text-align:center;color:#888888">暂无数据</div>
-                    <div v-show="totalInfo.details.length!=0" class="checked-item-content" v-for="course in totalInfo.details" :key="course.id">
-                      <img :src="course.imgUrl" class="checked-item-img"/>
-                      <div class="checked-item-title">{{course.firstName}}</div>
-                      <div class="checked-item-price">￥{{course.price}}/年</div>
-                      <div class="checked-item-delete" @click="handleClickDeleteItem(course)"><i class="el-icon-delete"></i></div>
+        <el-card shadow="never" body-style="padding-bottom:0px">
+          <div slot="header" style="display:flex">
+            <div class="course-header-title"><span style="color:#E6A23C;">未开通</span></div>
+            <div class="course-header-filter-wrapper"><div style="color:#40a9ff;cursor: pointer;" @click="handleClickIntoRecord">订购记录</div></div>
+          </div>
+          <el-row style="padding-left: 30px;margin-top:10px;">
+            <el-col :span="8" v-for="unBuyItem in unBuy" :key="unBuyItem.id" style="margin-bottom:30px;">
+              <als-course-card :detail="unBuyItem" :deleteItem="currentDeleteId" :selectItem="currentSelectId"
+                               @handleCheck="statisticsTotal($event)"
+                               @handleDetail="handleShowDetail($event)"/>
+            </el-col>
+          </el-row>
+        </el-card>
+        <el-card shadow="never" body-style="padding-bottom:0px">
+          <div slot="header" style="display:flex">
+            <div class="course-header-title"><span style="color:#67C23A">已开通</span></div>
+          </div>
+          <el-row style="padding-left: 30px;margin-top:10px;">
+            <el-col :span="8" v-for="buyItem in buy" :key="buyItem.id" style="margin-bottom:30px;">
+              <als-course-card :detail="buyItem" @handleCheck="statisticsTotal($event)" :deleteItem="currentDeleteId"/>
+            </el-col>
+          </el-row>
+        </el-card>
+        <div style="height:60px;"></div>
+        <div class="course-footer">
+          <el-row>
+            <el-col :span="8" :offset="14">
+              <el-popover
+                placement="top"
+                :offset="200"
+                width="560"
+                trigger="hover">
+                <div>
+                  <div class="checked-item-header">已选课程</div>
+                  <div class="checked-list-wrapper">
+                    <div class="checked-item">
+                      <div v-show="totalInfo.details.length==0" style="height:240px;line-height:240px;text-align:center;color:#888888">暂无数据</div>
+                      <div v-show="totalInfo.details.length!=0" class="checked-item-content" v-for="course in totalInfo.details" :key="course.id">
+                        <img :src="course.imgUrl" class="checked-item-img"/>
+                        <div class="checked-item-title">{{course.firstName}}</div>
+                        <div class="checked-item-price">￥{{course.price}}/年</div>
+                        <div class="checked-item-delete" @click="handleClickDeleteItem(course)"><i class="el-icon-delete"></i></div>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-              <div style="height:60px;display:flex;align-items:center;cursor:pointer" slot="reference">
-                <div>已选课程:</div>
-                <div style="color:#FB6161;margin-left:3px;margin-right:3px">{{totalInfo.count}}</div>
-                <i class="el-icon-caret-top" style="color:#c1c4ca"/>
-                <div style="margin-left: 20px">合计:</div>
-                <div style="color:#FB6161">{{totalInfo.price}}<span style="margin-left:3px">元</span></div>
-              </div>
-            </el-popover>
-          </el-col>
-        </el-row>
+                <div style="height:60px;display:flex;align-items:center;cursor:pointer" slot="reference">
+                  <div>已选课程:</div>
+                  <div style="color:#FB6161;margin-left:3px;margin-right:3px">{{totalInfo.count}}</div>
+                  <i class="el-icon-caret-top" style="color:#c1c4ca"/>
+                  <div style="margin-left: 20px">合计:</div>
+                  <div style="color:#FB6161">{{totalInfo.price}}<span style="margin-left:3px">元</span></div>
+                </div>
+              </el-popover>
+            </el-col>
+          </el-row>
+        </div>
+        <el-button type="primary" :disabled="totalInfo.details.length==0" style="position: absolute;right:30px;bottom:10px;z-index: 100" @click="handleClickBuyStep">下一步</el-button>
+        <als-course-detail ref="selectCourseDetail" @targetCourse="addTargetCourse($event)"/>
       </div>
-      <el-button type="primary" :disabled="totalInfo.details.length==0" style="position: absolute;right:30px;bottom:10px;z-index: 100" @click="handleClickBuyStep">下一步</el-button>
-      <als-course-detail ref="selectCourseDetail" @targetCourse="addTargetCourse($event)"/>
     </div>
 </template>
 
@@ -75,7 +77,7 @@
     import courseCard from '../component/service/courseCard'
     import courseDetail from '../component/service/courseDetailDialog'
     import '../../router/router'
-    import {qs,getSchoolDueInfo} from '../../api/api'
+    import {qs,getSchoolDueInfo,getBuyCourseList} from '../../api/api'
     import '../../api/restfulapi'
     export default {
         components: {
@@ -95,70 +97,9 @@
                     details:[]
                 },
                 routerConfig: [{name:'',to:''}],
-                buy: [
-                    {id:11,imgUrl:'https://alseduline.oss-cn-shenzhen.aliyuncs.com/uploads/report/images/20191206/oss_宣导课.jpg',firstName:'百变奥聪的神奇之旅',secondName:'大颗粒积木搭建类课程 2',price:'2000',type:1,time:'2021-02-25 12:37:21'},
-                    {id:12,imgUrl:'https://alseduline.oss-cn-shenzhen.aliyuncs.com/uploads/report/images/20191206/oss_宣导课.jpg',firstName:'百变奥聪的神奇之旅',secondName:'大颗粒积木搭建类课程 2',price:'101300',type:1,time:'2021-02-25 12:37:21'},
-                    {id:13,imgUrl:'https://alseduline.oss-cn-shenzhen.aliyuncs.com/uploads/report/images/20191206/oss_宣导课.jpg',firstName:'百变奥聪的神奇之旅',secondName:'大颗粒积木搭建类课程 2',price:'10000',type:1,time:'2021-02-25 12:37:21'},
-                    {id:14,imgUrl:'https://alseduline.oss-cn-shenzhen.aliyuncs.com/uploads/report/images/20191206/oss_宣导课.jpg',firstName:'百变奥聪的神奇之旅',secondName:'大颗粒积木搭建类课程 2',price:'10000',type:1,time:'2021-02-25 12:37:21'},
-                ],
-                unBuy: [
-                    {
-                        id:1,
-                        imgUrl:'https://alseduline.oss-cn-shenzhen.aliyuncs.com/uploads/report/images/20191206/oss_宣导课.jpg',
-                        firstName:'百变奥聪的神奇之旅',
-                        secondName:'大颗粒积木搭建类课程 2',
-                        price:'10000',
-                        type:0,
-                        time:'2021-02-25 12:37:21',
-                        desc: '联系生活实际，锻炼动手能力、空间能力、表达能力',
-                        level: 'level 1',
-                        ageStage: '3-4+',
-                        training: '奥松大颗粒积木套件1',
-                        classes: 16,
-                    },
-                    {
-                        id:2,
-                        imgUrl:'https://alseduline.oss-cn-shenzhen.aliyuncs.com/uploads/report/images/20191206/oss_宣导课.jpg',
-                        firstName:'百变奥聪的神奇之旅',
-                        secondName:'大颗粒积木搭建类课程 2',
-                        price:'10000',
-                        type:0,
-                        time:'2021-02-25 12:37:21',
-                        desc: '联系生活实际，锻炼动手能力、空间能力、表达能力',
-                        level: 'level 1',
-                        ageStage: '3-4+',
-                        training: '奥松大颗粒积木套件1',
-                        classes: 16,
-                    },
-                    {
-                        id:3,
-                        imgUrl:'https://alseduline.oss-cn-shenzhen.aliyuncs.com/uploads/report/images/20191206/oss_宣导课.jpg',
-                        firstName:'百变奥聪的神奇之旅',
-                        secondName:'大颗粒积木搭建类课程 2',
-                        price:'10000',
-                        type:0,
-                        time:'2021-02-25 12:37:21',
-                        desc: '联系生活实际，锻炼动手能力、空间能力、表达能力',
-                        level: 'level 1',
-                        ageStage: '3-4+',
-                        training: '奥松大颗粒积木套件1',
-                        classes: 16,
-                    },
-                    {
-                        id:4,
-                        imgUrl:'https://alseduline.oss-cn-shenzhen.aliyuncs.com/uploads/report/images/20191206/oss_宣导课.jpg',
-                        firstName:'百变奥聪的神奇之旅',
-                        secondName:'大颗粒积木搭建类课程 2',
-                        price:'10000',
-                        type:0,
-                        time:'2021-02-25 12:37:21',
-                        desc: '联系生活实际，锻炼动手能力、空间能力、表达能力',
-                        level: 'level 1',
-                        ageStage: '3-4+',
-                        training: '奥松大颗粒积木套件1',
-                        classes: 16,
-                    }
-                ],
+                initStatus:false,
+                buy: [],
+                unBuy: [],
             }
         },
         mounted() {
@@ -169,6 +110,26 @@
         },
         methods: {
             initData(){
+                this.$store.dispatch('setCourseOrder',[])
+                const loading = promptUtil.loading(this)
+                getBuyCourseList(qs.stringify({
+                    school_id: storageUtil.readTeacherInfo().school_id
+                })).then(res=>{
+                    if(res.code==SUCCESS_CODE){
+                        if(res.data&&res.data.buy&&res.data.buy!='[]'){
+                            this.buy = res.data.buy
+                        }
+                        if(res.data&&res.data.unbuy&&res.data.unbuy!='[]'){
+                            this.unBuy = res.data.unbuy
+                        }
+                    }
+                    loading.close()
+                    this.initStatus = true
+                }).catch(err=>{
+                    promptUtil.LOG('getBuyCourseList-err',err)
+                    loading.close()
+                    this.initStatus = true
+                })
                 getSchoolDueInfo(qs.stringify({
                     school_id: storageUtil.readTeacherInfo().school_id,
                     user_id: storageUtil.readTeacherInfo().id
@@ -214,6 +175,13 @@
                 this.$refs.selectCourseDetail.show(detail)
             },
             handleClickBuyStep(){
+                const tmpArray = []
+                this.totalInfo.details.map(item=>{
+                    let {id,firstName,secondName,price} = item
+                    let obj = {id,firstName,secondName,price}
+                    tmpArray.push(obj)
+                })
+                this.$store.dispatch('setCourseOrder',tmpArray)
                 this.$router.push({path: ROUTER_BUY_STEP})
             },
             handleClickIntoRecord(){

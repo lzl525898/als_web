@@ -39,10 +39,20 @@ const state = { // 初始化状态
   }, // 是否需要刷新 true 需要清空数据 false 回显以前数据
   examInfo:{}, // 考试详情
   examId: 0, // 考试id
+  courseOrder: [], // 课程临时订单
+  orderDetail: {tableData:[],schoolName:'',totalPrice:'',status:0,orderId:''}, // 订单详情
 }
 
 // 包含多个更新state函数的对象
 const mutations = {
+  // 设置订单详情
+  SET_ORDER_DETAIL(state, detail) {
+    state.orderDetail = detail
+  },
+  // 设置课程临时订单
+  SET_COURSE_ORDER(state, courses) {
+    state.courseOrder = courses
+  },
   // 设置未阅读通知总数
   SET_MAIL_COUNT(state, count) {
     state.mailCount = count
@@ -136,6 +146,12 @@ const mutations = {
 
 // 包含多个对应事件回调函数
 const actions ={
+  setOrderDetail({commit, state}, detail) {
+    commit('SET_ORDER_DETAIL', detail)
+  },
+  setCourseOrder({commit, state}, courses) {
+    commit('SET_COURSE_ORDER', courses)
+  },
   setMailCount({commit, state}, count) {
     commit('SET_MAIL_COUNT', count)
   },

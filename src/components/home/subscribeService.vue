@@ -5,13 +5,13 @@
         <als-child-header :config="routerConfig"/>
       </el-col>
     </el-row>
-    <div v-show="!isShowContent"></div>
-    <el-card v-show="isShowContent">
+    <div v-if="!isShowContent"></div>
+    <el-card v-if="isShowContent">
       <div slot="header" class="service-header">
         <span>版本服务</span>
       </div>
       <als-service-card :content="content"/>
-      <als-service-table :versionDetail="versionDetail"/>
+      <als-service-table :versionDetail="versionDetail" :versionList="versionArray"/>
     </el-card>
   </div>
 </template>
@@ -38,8 +38,9 @@
             return {
                 isShowContent:false,
                 routerConfig: [{name:'',to:''}],
-                versionDetail: [{title:'',table:[{name:'',base:1,professional:1,ultimate:1}]}],
-                content: {base:{title:'',intro:'',summary:''},professional:{title:'',intro:'',summary:''},ultimate:{title:'',intro:'',summary:''}},
+                versionDetail: [{title:'',table:[{name:'',text:'',version:[],msg:[]}]}],
+                content: [],
+                versionArray: [],
             }
         },
         mounted() {
@@ -51,13 +52,14 @@
         methods: {
             initData(){
                 const loading = promptUtil.loading(this)
-                serviceFuncList().then(res=>{
+                getVersionInfo().then(res=>{
                     if(res.code==SUCCESS_CODE){
-                        this.versionDetail = res.data
+                        this.content = res.data
+                        this.content.map(item=>this.versionArray.push(item.title))
                     }
-                    getVersionInfo().then(res=>{
+                    serviceFuncList().then(res=>{
                         if(res.code==SUCCESS_CODE){
-                            this.content = res.data
+                            this.versionDetail = res.data
                         }
                         loading.close()
                         this.isShowContent = true

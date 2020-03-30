@@ -16,13 +16,13 @@
         <el-col :span="12">
           <el-card>
             <div style="height: 434px">
-              <p class="title">存储详情</p>
+              <p class="title">使用信息</p>
               <div style="width: 80%;margin: 0 auto;margin-top: 80px">
                 <div style="display: flex;justify-content: space-between">
                   <div>
                     <p style="font-size: 18px;font-weight: bold">已使用存储：{{statisticalData.used}}</p>
-                    <p style="font-size: 18px;font-weight: bold">月剩余访问次数：{{statisticalData.residualtimes}}次</p>
-                    <p style="font-size: 18px;font-weight: bold">剩余存储空间：{{statisticalData.surplusStorage}}G</p>
+                    <p style="font-size: 18px;font-weight: bold">剩余存储空间：{{statisticalData.surplusStorage}}</p>
+                    <p style="font-size: 18px;font-weight: bold">月剩余下行流量：{{statisticalData.freeFlow}}</p>
                     <span style="line-height: 40px;mzrgin-right: 10px;padding-top: 10px">如剩余访问次数与剩余存储量不足，请拨打电话{{statisticalData.tel}}或关注右侧公众号联系客服</span>
                   </div>
                   <div style="width: 280px;height: 100%">
@@ -37,11 +37,36 @@
           </el-card>
         </el-col>
       </el-row>
-      <!--      搜索-->
       <el-card style="margin-top: 20px;">
         <div style="display: flex;">
           <div class="v_line"></div>
-          <div class="v_line_text">数据范围</div>
+          <div class="v_line_text">存储数据</div>
+          <div style="flex:1;display:flex;justify-content:flex-end">
+            <el-button size="small" type="primary" @click="onClickGenStorageReport" :loading="isStorageLoading">生成报表</el-button>
+          </div>
+        </div>
+      </el-card>
+      <div v-show="storageShowTable">
+        <div style="background-color:#D4DFE5;height: 40px;display:flex;align-items:center;padding-left:20px;">
+          当前结果：共计可用云存储空间<span class="record-span-color">{{storageDetailData.totalSize}}</span>
+          <el-link type="primary" :underline="false" style="margin-top:1px;margin-left:5px;" @click="onClickStorageExport">
+            导出全部>>
+          </el-link>
+        </div>
+        <el-table :data="storageTableData" border style="width: 100%">
+          <el-table-column prop="name" label="用户名称"></el-table-column>
+          <el-table-column prop="time" label="上传时间"></el-table-column>
+          <el-table-column prop="path" label="操作路径"></el-table-column>
+          <el-table-column prop="suffix" label="文件类型"></el-table-column>
+          <el-table-column prop="size" label="文件大小"></el-table-column>
+        </el-table>
+        <als-pagination :size="20" @tableData="changeStorageTableData($event)" style="margin-top:20px" ref="storagePagination"/>
+      </div>
+      <!-- 流量数据 -->
+      <el-card style="margin-top: 20px;">
+        <div style="display: flex;">
+          <div class="v_line"></div>
+          <div class="v_line_text">流量数据</div>
         </div>
         <el-row style="margin-left: 20px;margin-top: 20px;">
           <div style="display:flex;align-items: center;">
@@ -64,21 +89,19 @@
         </el-row>
       </el-card>
       <!--      列表-->
-
       <div v-show="showTable">
         <div style="background-color:#D4DFE5;height: 40px;display:flex;align-items:center;padding-left:20px;">
-          当前结果：<span class="record-span-color">{{statisticalData.showCurrentTime}}</span>: 共计访问<span
-          class="record-span-color">{{flowTableArray.length}}</span>次
+          当前结果：<span class="record-span-color">{{statisticalData.showCurrentTime}}</span>
           : 共计浏览文件大小<span class="record-span-color">{{statisticalData.totalSize}}</span>MB
           <el-link type="primary" :underline="false" style="margin-top:1px;margin-left:5px;" @click="onClickExport">
             导出>>
           </el-link>
         </div>
         <el-table :data="tableData" border style="width: 100%">
-          <el-table-column prop="teacherName" label="教师名称" align="center"></el-table-column>
-          <el-table-column prop="time" label="时间" align="center"></el-table-column>
-          <el-table-column prop="file" label="操作文件" align="center"></el-table-column>
-          <el-table-column prop="size" label="文件大小" align="center"></el-table-column>
+          <el-table-column prop="teacherName" label="教师名称"></el-table-column>
+          <el-table-column prop="time" label="时间"></el-table-column>
+          <el-table-column prop="file" label="操作文件"></el-table-column>
+          <el-table-column prop="size" label="文件大小"></el-table-column>
         </el-table>
       </div>
     </div>
@@ -99,14 +122,14 @@
     const echarts = require("echarts");
     import PubSub from "pubsub-js"
     import '../../../router/router'
+    import alsPagination from '../../../components/commons/pagination/pagination'
     import {
         qs,
-        businessAnalysis,
-        eduReporterTeacher,
         exportExcel,
         flowStatistics,
         getSchoolDueInfo,
-        getFlowTableList
+        getFlowTableList,
+        getStorageSpaceDetail,
     } from '../../../api/api'
     import storageUtil from '../../../utils/storageUtil'
     import promptUtil from '../../../utils/promptUtil'
@@ -114,21 +137,34 @@
     import childHeader from '../../component/childHeader'
 
     export default {
-        components: {"als-child-header": childHeader},
-        name: "businessAnalysis",
+        components: {"als-child-header": childHeader,"als-pagination": alsPagination},
+        name: "flowStatistics",
         data() {
+            const currentMonth = timeUtil.getCurrMonthDays('/')
+            const lastMonth = timeUtil.getLastMonthDays('/')
+            const currentDay = timeUtil.getCurrDays('/')
+            const yesterday = timeUtil.getYesterday('/')
+            const currentWeek = timeUtil.getCurrWeekDays('/')
+            const lastWeek = timeUtil.getLastWeekDays('/')
+            const currYear = timeUtil.getCurrYearDays('/')
+            const lastYear = timeUtil.getLastYearDays('/')
             return {
-                routerConfig: [{name: '流量统计', to: ''}],
+                routerConfig: [{name: '数据统计', to: ''}],
                 flow: null,
+                isStorageLoading: false,
+                storageShowTable: false,
+                storageTableData:[],
+                storageServerData:[],
+                storageDetailData:{totalSize:''},
                 dataTag: [
-                    {type: "", label: '本月', date: timeUtil.getCurrMonthDays('/'), id: 0},
-                    {type: "info", label: '上月', date: timeUtil.getLastMonthDays('/'), id: 1},
-                    {type: "info", label: '今日', date: timeUtil.getCurrDays('/'), id: 2},
-                    {type: "info", label: '昨日', date: timeUtil.getYesterday('/'), id: 3},
-                    {type: "info", label: '本周', date: timeUtil.getCurrWeekDays('/'), id: 4},
-                    {type: "info", label: '上周', date: timeUtil.getLastWeekDays('/'), id: 5},
-                    {type: "info", label: '今年', date: timeUtil.getCurrYearDays('/'), id: 6},
-                    {type: "info", label: '去年', date: timeUtil.getLastYearDays('/'), id: 7}
+                    {type: "", label: '本月', date: currentMonth, id: 0},
+                    {type: "info", label: '上月', date: lastMonth, id: 1},
+                    {type: "info", label: '今日', date: currentDay, id: 2},
+                    {type: "info", label: '昨日', date: yesterday, id: 3},
+                    {type: "info", label: '本周', date: currentWeek, id: 4},
+                    {type: "info", label: '上周', date: lastWeek, id: 5},
+                    {type: "info", label: '今年', date: currYear, id: 6},
+                    {type: "info", label: '去年', date: lastYear, id: 7}
                 ],
                 currentDataTag: 0,
                 dataFrame: [],
@@ -144,6 +180,7 @@
                     residualtimes: '',
                     surplusStorage: '',
                     surplusPercentage: '',
+                    freeFlow:'',
                     tel: '',
                     img: '',
                     total: '',
@@ -168,6 +205,7 @@
             })).then(res => {
                 if (res.code == SUCCESS_CODE) {
                     if (res.data && res.data != '[]') {
+                        this.statisticalData.freeFlow = res.data.freeFlow
                         this.statisticalData.surplusPercentage = res.data.surplus_bai
                         this.statisticalData.used = res.data.use_str
                         this.statisticalData.residualtimes = res.data.surplus_cishu
@@ -205,6 +243,9 @@
 
         },
         methods: {
+            changeStorageTableData(data){
+                this.storageTableData = data
+            },
             //强制保留两位小数
             toDecimal2(x) {
                 var f = parseFloat(x);
@@ -224,24 +265,33 @@
                 return s;
             },
             onChangeDatePicker(date) {
-                this.dataTag[this.currentDataTag].type = "info"
+                if(this.currentDataTag  != -1){ // 没有选择任何一个
+                    this.dataTag[this.currentDataTag].type = "info"
+                }
                 this.currentDataTag = -1
                 this.dataFrame = date
             },
-            changeRecordType() {
-                this.dataTag = [
-                    {type: "", label: '本月', date: timeUtil.getCurrMonthDays('/'), id: 0},
-                    {type: "info", label: '上月', date: timeUtil.getLastMonthDays('/'), id: 1},
-                    {type: "info", label: '今日', date: timeUtil.getCurrDays('/'), id: 2},
-                    {type: "info", label: '昨日', date: timeUtil.getYesterday('/'), id: 3},
-                    {type: "info", label: '本周', date: timeUtil.getCurrWeekDays('/'), id: 4},
-                    {type: "info", label: '上周', date: timeUtil.getLastWeekDays('/'), id: 5},
-                    {type: "info", label: '今年', date: timeUtil.getCurrYearDays('/'), id: 6},
-                    {type: "info", label: '去年', date: timeUtil.getLastYearDays('/'), id: 7}
-                ]
-                this.currentPage = 1
-                this.currentDataTag = 0
-                this.reportFormType = 1
+            onClickGenStorageReport(){
+                this.isStorageLoading = true
+                this.storageShowTable = true
+                this.storageDetailData.totalSize = ''
+                getStorageSpaceDetail(qs.stringify({
+                    school_id:storageUtil.readTeacherInfo().school_id
+                })).then(res=>{
+                    if(res.code==SUCCESS_CODE){
+                        this.storageDetailData.totalSize = res.data.last_space
+                        if(res.data.data&&res.data.data!='[]'){
+                            this.storageServerData = res.data.data
+                        }
+                    }
+                    this.$refs.storagePagination.setCurrentPage(1)
+                    this.$refs.storagePagination.setServerData(this.storageServerData)
+                    this.isStorageLoading = false
+                }).catch(err=>{
+                    this.isStorageLoading = false
+                    this.storageShowTable = false
+                    promptUtil.LOG('getStorageSpaceDetail-err',err)
+                })
             },
             onClickGenReport() {
                 this.isLoading = true
@@ -284,7 +334,7 @@
                     }
                     this.isLoading = false
                 }).catch(err => {
-                    promptUtil.LOG('eduReporterTeacher-err', err)
+                    promptUtil.LOG('getFlowTableList-err', err)
                     this.isLoading = false
                 })
             },
@@ -295,6 +345,30 @@
                 this.dataFrame = ""
                 this.dataTag[id].type = ""
                 this.currentDataTag = id
+            },
+            onClickStorageExport(){
+                const targetParams = []
+                const params = {head: [], body: [], name: ''}
+                params.head = ['用户名称', '时间', '操作路径','文件类型', '文件大小']
+                params.name = storageUtil.readTeacherInfo().school_name+'—存储数据详情'
+                this.storageServerData.map(item=>{
+                    const tmpArr = []
+                    tmpArr.push(item.name)
+                    tmpArr.push(item.time)
+                    tmpArr.push(item.path)
+                    tmpArr.push(item.suffix)
+                    tmpArr.push(item.size)
+                    targetParams.push(tmpArr)
+                })
+                params.body = targetParams
+                exportExcel(qs.stringify({data: JSON.stringify(params)})).then(res => {
+                    if (res.code == SUCCESS_CODE) {
+                        promptUtil.success(this, '数据准备完毕,等待下载中')
+                        window.open(res.data, "_self")
+                    }
+                }).catch(err => {
+                    promptUtil.LOG('exportExcel-err', err)
+                })
             },
             //导出
             onClickExport() {

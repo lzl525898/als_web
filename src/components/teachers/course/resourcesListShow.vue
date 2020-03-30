@@ -12,7 +12,7 @@
       style="height:95%"
       class="elContainer"
     >
-      <el-tab-pane :label="$t(`message.course_ai_course_ware`)" name="first" v-if="pptUrl&&pptUrl!=''">
+      <el-tab-pane :label="$t(`message.course_ai_course_ware`)" name="ppt" v-if="pptUrl&&pptUrl!=''">
         <el-row>
           <el-col :span="24">
             <div class="border_b">
@@ -28,7 +28,7 @@
           <!-- <iframe id="iframe" src="https://show.zohopublic.com.cn/publish/gfdzn1a008a803acd4c68b0520dc80d63224a/params?toolbar=true&menu=false&loop=true" width="1193" height="707" style="border:1px solid #aabbcc;max-width: 100%;" allowfullscreen="true" mozallowfullscreen="true" webkitallowfullscreen="true"></iframe> -->
         </div>
       </el-tab-pane>
-      <el-tab-pane :label="$t(`message.course_ai_course_plan`)" name="second" v-if="pdfUrl&&pdfUrl!=''">
+      <el-tab-pane :label="$t(`message.course_ai_course_plan`)" name="pdf" v-if="pdfUrl&&pdfUrl!=''">
         <el-row>
           <el-col :span="24">
             <div class="border_b">
@@ -51,7 +51,7 @@
           </div>
         </div>
       </el-tab-pane>
-      <el-tab-pane :label="$t(`message.course_ai_course_video`)" name="third" v-if="stepsInformation&&stepsInformation.length!=0" >
+      <el-tab-pane :label="$t(`message.course_ai_course_video`)" name="video" v-if="stepsInformation&&stepsInformation.length!=0" >
         <el-row>
           <el-col :span="24">
             <div class="border_b">
@@ -111,6 +111,7 @@
             {name: '', to: '/resourcesList/' + this.$store.state.currentCoursePackageId}, {name: '', to: ''}],
         //pdf
         pdfName: "",
+        pdfWebPath:"",
         pdfUrl: "",
         copyPdfUrl: "",
         pageNum: 1,
@@ -130,7 +131,7 @@
         stepActive: 1,
         stepsInformation: [],
         //table切换
-        activeName: "first",
+        activeName: "ppt",
         videoObject: null,
         playerObj: null,
         initHeight: "",
@@ -143,6 +144,7 @@
         videoVisable: false,
         currentStatus: '',
         noDataUrl: '',
+        flowRecord:{ppt:'',pdf:'',video:[]},
         // isShowPdfLoading: true,
         // videoIndex: '',
         // videoArray: [],
@@ -200,22 +202,27 @@
             return
           }
           this.initDataFromServer(res.data);
+          this.pdfWebPath = res.data.lesson.url;
           this.pdfUrl = res.data.lesson.url;
           this.pdfTask(this.pdfUrl)
           if (res.data.courseware.url && res.data.courseware.url != "") {
-            this.totalTrafficStatistics(res.data.courseware.url, '人工智能课程ppt')
+              if(this.flowRecord.ppt==''&& this.flowRecord.pdf==''){
+                  this.totalTrafficStatistics(res.data.courseware.url, '人工智能课程课件', 'ppt')
+              }
           }
           if (res.data.lesson.url && res.data.lesson.url != "") {
-            this.totalTrafficStatistics(res.data.lesson.url, '人工智能课程pdf')
-            this.copyPdfUrl = res.data.lesson.url
+              if(this.flowRecord.ppt==''&&this.flowRecord.pdf==''){
+                  this.totalTrafficStatistics(res.data.lesson.url, '人工智能课程教案', 'pdf')
+              }
+              this.copyPdfUrl = res.data.lesson.url
           }
           if (res.data.lesson.url == "" && res.data.courseware.url == "" && res.data.videos.length == 0) {
             this.activeName = ''
             this.noDataUrl = '../../../../static/images/base/nodata.png'
           } else if (res.data.courseware.url == "" && res.data.lesson.url == "") {
-            this.activeName = 'third'
+            this.activeName = 'video'
           } else if (res.data.courseware.url == "" && res.data.videos.length == 0) {
-            this.activeName = 'second'
+            this.activeName = 'pdf'
           }
         } else {
           promptUtil.wait(this);
@@ -293,7 +300,7 @@
                 school_id: storageUtil.readTeacherInfo().school_id,
                 user_id: storageUtil.readTeacherInfo().id,
                 file_url: fileUrl,
-                text: "人工智能video",
+                text: "人工智能课程视频_"+window.videoIndex,
               })).then(res => {
                 if (res.code == SUCCESS_CODE) {
                 } else {
@@ -359,17 +366,31 @@
         window.videoIndex = 0;
       },
       handleClick(tab, event) {
-        //视频
-        if (this.playerObj == null) {
-          $("#video").css({"width":"60%","height":"100%"})
-            // index0表示教案1课件2视频
-             this.currentCkplayer(1)
-             this.playerObj = new window.ckplayer(this.videoObject);
-            // this.playerObj.addListener('play', playHandler);
-            // window.videoplayerObj = this.playerObj;
-        }
-
-         this.playerObj != null ? this.playerObj.videoPause() : this.playerObj; // 切换页面后停止播放
+          let type = tab.name
+          switch(type){
+              case 'ppt':
+                  if(this.flowRecord.ppt==''){
+                      this.totalTrafficStatistics(this.pptUrl, '人工智能课程课件', type)
+                  }
+                  break;
+              case 'pdf':
+                  if(this.flowRecord.pdf==''){
+                      this.totalTrafficStatistics(this.pdfWebPath, '人工智能课程教案', type)
+                  }
+                  break;
+              default:
+                  break;
+          }
+          //视频
+          if (this.playerObj == null) {
+            $("#video").css({"width":"60%","height":"100%"})
+              // index0表示教案1课件2视频
+               this.currentCkplayer(1)
+               this.playerObj = new window.ckplayer(this.videoObject);
+              // this.playerObj.addListener('play', playHandler);
+              // window.videoplayerObj = this.playerObj;
+          }
+          this.playerObj != null ? this.playerObj.videoPause() : this.playerObj; // 切换页面后停止播放
       },
 
       pdfTask(pdfUrl) {
@@ -394,21 +415,35 @@
         //     this.totalTrafficStatistics(this.pdfUrl, '人工智能课程pdf')
         // }
       },
-      totalTrafficStatistics(file_url, text) {
-        trafficStatistics(qs.stringify({
-          school_id: storageUtil.readTeacherInfo().school_id,
-          user_id: storageUtil.readTeacherInfo().id,
-          file_url: file_url,
-          text: text,
-        })).then(res => {
-          if (res.code == SUCCESS_CODE) {
-          } else {
-
+      totalTrafficStatistics(file_url, text, type) {
+          if(file_url&&file_url!=''){
+              let users = storageUtil.readTeacherInfo()
+              let schoolId = users.school_id
+              let userId = users.id
+              switch(type){
+                  case 'pdf':
+                      this.flowRecord.pdf = type
+                      break;
+                  case 'ppt':
+                      this.flowRecord.ppt = type
+                      break;
+                  default:
+                      this.flowRecord.video.push(type)
+                      break;
+              }
+              trafficStatistics(qs.stringify({
+                  school_id: schoolId,
+                  user_id: userId,
+                  file_url: file_url,
+                  text: text,
+              })).then(res => {
+                  if (res.code == SUCCESS_CODE) {
+                  } else {
+                  }
+              }).catch(err => {
+                  promptUtil.LOG('trafficStatistics-err', err)
+              })
           }
-
-        }).catch(err => {
-          promptUtil.LOG('trafficStatistics-err', err)
-        })
       }
     }
   };

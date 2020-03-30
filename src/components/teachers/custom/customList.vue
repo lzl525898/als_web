@@ -94,6 +94,7 @@
 <script>
   import {
     qs,
+    checkFreeFlow,
     intoCourseBaseInfo,
     delCourseItemById,
     handleCustomItemSelf
@@ -106,6 +107,8 @@
     components:{"als-child-header": childHeader},
     data() {
       return {
+        freeFlowStatus: false, // true 有流量  false 无流量
+        freeFlowMsg: '本月流量不足',
         routerConfig: [{name:'自定义课程',to:'/custom'},{name:'自定义课程课时',to:''}],
         customId: 0, // 自定义课程id
         targetObj: "", // 当前选中的item
@@ -121,8 +124,19 @@
       }
     },
     mounted() {
+
       if(this.$route.params.id&&this.$route.params.id!=0){
         promptUtil.checkOverdue(this, storageUtil.readTeacherInfo().id) // true 表示已过期 false表示未过期
+        checkFreeFlow(qs.stringify({school_id:storageUtil.readTeacherInfo().school_id})).then(res=>{
+            if(res.code==SUCCESS_CODE){
+                this.freeFlowStatus = true
+            }else{
+                this.freeFlowStatus = false
+            }
+            this.freeFlowMsg = res.msg
+        }).catch(err=>{
+            promptUtil.LOG('checkFreeFlow-err',err)
+        })
         this.initData()
       }else{
         this.$router.push({path: ROUTER_CUSTOM})
@@ -251,8 +265,16 @@
       //   this.$router.push({path: ROUTER_CUSTOM_ITEM_SEE + "/" + id})
       // },
       seeCourse(obj){
-        this.$store.dispatch("customCourseDetail", {id: this.customId, name: this.packageInfo.course})
-        this.$router.push({path: ROUTER_CUSTOM_ITEM_SEE + "/" + obj.row.id})
+          if(!this.freeFlowStatus){
+              this.$notify({
+                  title: this.$t(`message.system_info`),
+                  message: this.freeFlowMsg,
+                  type: 'warning'
+              });
+              return
+          }
+          this.$store.dispatch("customCourseDetail", {id: this.customId, name: this.packageInfo.course})
+          this.$router.push({path: ROUTER_CUSTOM_ITEM_SEE + "/" + obj.row.id})
       },
       editCourse(obj){
         this.$store.dispatch("customCourseInfo",{type:'edit', course: this.customId, item: obj.row.id})
