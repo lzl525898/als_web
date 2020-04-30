@@ -15,7 +15,7 @@
     "echarts": "^4.2.1",
     "element-ui": "^2.12.0",
     "html2canvas": "^1.0.0-rc.5",
-    "jquery": "^3.4.0",
+    "jquery": "^3.5.0",
     "moment": "^2.24.0",
     "pdfjs-dist": "^2.1.266",
     "pubsub-js": "^1.7.0",
